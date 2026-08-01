@@ -1,0 +1,6 @@
+-Wno-frame-address
+-mlongcalls
+-fno-builtin-memcpy
+-fno-builtin-memset
+-fno-builtin-bzero
+"-specs=C:/Users/Damian/source/repos/ESP32IEMPack/build/specs/picolibc.specs"

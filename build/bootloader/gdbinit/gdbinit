@@ -1,0 +1,2 @@
+source C:/Users/Damian/source/repos/ESP32IEMPack/build/bootloader/gdbinit/symbols
+source C:/Users/Damian/source/repos/ESP32IEMPack/build/bootloader/gdbinit/connect
