@@ -1,7 +1,7 @@
 {
     "version":            "1.3",
     "project_name":       "esp32iempack",
-    "project_version":    "a108486",
+    "project_version":    "ca14c1c-dirty",
     "project_path":       "C:/Users/Damian/source/repos/ESP32IEMPack",
     "idf_path":           "C:/esp/v6.0.2/esp-idf",
     "build_dir":          "C:/Users/Damian/source/repos/ESP32IEMPack/build",
