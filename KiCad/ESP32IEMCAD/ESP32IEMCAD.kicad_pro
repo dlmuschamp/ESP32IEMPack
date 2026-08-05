@@ -240,7 +240,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": "0.0.0"
+      "sch_revision": "0.0.1"
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -721,13 +721,33 @@
         "uuid": "98787dcf-424f-4647-bb79-9127f0f74bda"
       }
     ],
-    "used_designators": "C5,C11-21,S1,#PWR2,#PWR10-32,R7-8,R11-17,J1-5,SW1-3",
+    "used_designators": "C1-23,S1,#PWR1-41,R1-22,J1-5,SW1-3,U1-4,VR1",
     "variants": []
   },
   "sheets": [
     [
       "98787dcf-424f-4647-bb79-9127f0f74bda",
       "ESP32IEMCAD"
+    ],
+    [
+      "6e12d95a-ec67-48a8-b98e-82576ae3682c",
+      "Power Management"
+    ],
+    [
+      "12633c0c-fb68-4c25-af81-bead6c15ab98",
+      "ESP Reciever"
+    ],
+    [
+      "21ceb167-c50e-480a-ba2d-de2280d740ad",
+      "DAC"
+    ],
+    [
+      "ef5fa814-6562-446c-a762-5c80584cf2d0",
+      "Volume Control"
+    ],
+    [
+      "e73e1f85-85b5-4291-97fa-1640b66c2189",
+      "Amp"
     ]
   ],
   "text_variables": {},

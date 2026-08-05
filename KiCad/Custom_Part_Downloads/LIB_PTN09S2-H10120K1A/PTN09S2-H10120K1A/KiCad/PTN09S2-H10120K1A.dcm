@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP PTN09S2-H10120K1A
+D 9.5 mm, Horizontal, Dual Section, Logarithmic, 10K, Through Hole, Knurled Shaft Rotary Potentiometer
+K
+F https://www.sameskydevices.com/product/resource/ptn09sx.pdf
+$ENDCMP
+#
+#End Doc Library

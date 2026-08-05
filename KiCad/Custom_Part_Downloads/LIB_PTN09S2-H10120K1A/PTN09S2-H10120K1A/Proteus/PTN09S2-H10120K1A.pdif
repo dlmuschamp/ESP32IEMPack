@@ -1,0 +1,376 @@
+;Proteus Design Interchange Format
+(PDIF
+ (vendor "SamacSys Limited")
+ (version 1 0)
+ (library
+  (part "PTN09S2-H10120K1A"
+   (description "9.5 mm, Horizontal, Dual Section, Logarithmic, 10K, Through Hole, Knurled Shaft Rotary Potentiometer")
+   (family "ANA")
+   (package "PTN09S2H10120K1A")
+   (attribute "Datasheet Link" "https://www.sameskydevices.com/product/resource/ptn09sx.pdf")
+   (attribute "Geometry.Height" "10.66mm")
+   (attribute "Mouser Part Number" "")
+   (attribute "Mouser Price/Stock" "")
+   (attribute "Manufacturer_Name" "Same Sky")
+   (attribute "Manufacturer_Part_Number" "PTN09S2-H10120K1A")
+   (gate
+    (symbol "PTN09S2-H10120K1A")
+    (pin "CCW1" 1 PS)
+    (pin "WIPER1" 2 PS)
+    (pin "CW1" 3 PS)
+    (pin "CCW2" 4 PS)
+    (pin "WIPER2" 5 PS)
+    (pin "CW2" 6 PS)
+    (pin "COM" 7 PS)
+    (pin "N.O." 8 PS)
+   )
+  )
+  (symbol "PTN09S2-H10120K1A"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 200 100) (pt 1100 100) (pt 1100 -400) (pt 200 -400) (pt 200 100) (closed))
+   )
+   (terminal
+    (body (symbol "PIN") (pt 0 0) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -100) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -200) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -300) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 0) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -100) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -200) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -300) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+  )
+  (symbol "PIN"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 200 0))))
+  (symbol "PINSHORT"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 100 0))))
+  (package "PTN09S2H10120K1A"
+   (units MM)
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -10.8 7.25)
+      (pt 5 7.25)
+      (pt 5 -2.25)
+      (pt -10.8 -2.25)
+      (pt -10.8 7.25))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed true)
+      (pt -10.8 7.25)
+      (pt 5 7.25)
+      (pt 5 -2.25)
+      (pt -10.8 -2.25)
+      (pt -10.8 7.25))))
+   (layer OCCA
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -11.8 8.25)
+      (pt 26 8.25)
+      (pt 26 -3.25)
+      (pt -11.8 -3.25)
+      (pt -11.8 8.25))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 5 6)
+      (pt 11.5 6)
+      (pt 12 5.5)
+      (pt 12 -0.5)
+      (pt 11.5 -1)
+      (pt 5 -1))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 11.5 6)
+      (pt 11.5 -1))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 5 6)
+      (pt 11.5 6)
+      (pt 12 5.5)
+      (pt 12 -0.5)
+      (pt 11.5 -1)
+      (pt 5 -1))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 11.5 6)
+      (pt 11.5 -1))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 5 5.5)
+      (pt 13 5.5)
+      (pt 13.5 5)
+      (pt 13.5 0)
+      (pt 13 -0.5)
+      (pt 5 -0.5))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 13 5.5)
+      (pt 13 -0.5))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 13.5 5)
+      (pt 15 5)
+      (pt 15.5 5.5)
+      (pt 24.5 5.5)
+      (pt 25 5)
+      (pt 25 3)
+      (pt 15 3)
+      (pt 15 2)
+      (pt 25 2)
+      (pt 25 0)
+      (pt 24.5 -0.5)
+      (pt 15.5 -0.5)
+      (pt 15 0)
+      (pt 13.5 0))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 15 5)
+      (pt 15 3))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 15 2)
+      (pt 15 0))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 15 4.5)
+      (pt 15.5 5)
+      (pt 24.5 5)
+      (pt 25 4.5)
+      (pt 24.5 4)
+      (pt 15.5 4)
+      (pt 15 4.5)
+      (pt 25 4.5))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 15 3.8)
+      (pt 15.5 3.5)
+      (pt 24.5 3.5)
+      (pt 25 3.8))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 15 0.5)
+      (pt 15.5 0)
+      (pt 24.5 0)
+      (pt 25 0.5)
+      (pt 24.5 1)
+      (pt 15.5 1)
+      (pt 15 0.5)
+      (pt 25 0.5))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt 15 1.2)
+      (pt 15.5 1.5)
+      (pt 24.5 1.5)
+      (pt 25 1.2))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 15 3.8)
+      (pt 15.5 3.5)
+      (pt 24.5 3.5)
+      (pt 25 3.8))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 15 1.2)
+      (pt 15.5 1.5)
+      (pt 24.5 1.5)
+      (pt 25 1.2))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 25 0.5)
+      (pt 24.5 1)
+      (pt 15.5 1)
+      (pt 15 0.5)
+      (pt 15.5 0)
+      (pt 24.5 0)
+      (pt 25 0.5)
+      (pt 15 0.5))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 15 4.5)
+      (pt 15.5 4)
+      (pt 24.5 4)
+      (pt 25 4.5)
+      (pt 24.5 5)
+      (pt 15.5 5)
+      (pt 15 4.5)
+      (pt 25 4.5))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 13.5 0)
+      (pt 15 0)
+      (pt 15.5 -0.5)
+      (pt 24.5 -0.5)
+      (pt 25 0)
+      (pt 25 2)
+      (pt 15 2)
+      (pt 15 3)
+      (pt 25 3)
+      (pt 25 5)
+      (pt 24.5 5.5)
+      (pt 15.5 5.5)
+      (pt 15 5)
+      (pt 13.5 5))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 15 2)
+      (pt 15 0))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 15 5)
+      (pt 15 3))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 5 5.5)
+      (pt 13 5.5)
+      (pt 13.5 5)
+      (pt 13.5 0)
+      (pt 13 -0.5)
+      (pt 5 -0.5))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 13 5.5)
+      (pt 13 -0.5))))
+   (layer TSLK
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt 0 -2.8)
+      (arc (pt 0.000 -2.800) (pt -0.050 -2.800) (pt 0.050 -2.700) (start 180.0) (sweep -90.0))
+      (pt 0 -2.7)
+      (arc (pt 0.000 -2.700) (pt -0.050 -2.800) (pt 0.050 -2.700) (start 180.0) (sweep 90.0))
+      (pt 0 -2.8))))
+   (leg 1 (pt 0.000 0.000) (padstack 1))
+   (leg 2 (pt 0.000 2.500) (padstack 0))
+   (leg 3 (pt 0.000 5.000) (padstack 0))
+   (leg 4 (pt -2.500 0.000) (padstack 0))
+   (leg 5 (pt -2.500 2.500) (padstack 0))
+   (leg 6 (pt -2.500 5.000) (padstack 0))
+   (leg 7 (pt -8.750 0.000) (padstack 0))
+   (leg 8 (pt -8.750 5.000) (padstack 0))
+   (padstack 0
+    (hole 1)
+    (plated true)
+    (pad (layer TCOP) (round 1.500))
+    (pad (layer INNER) (round 1.500))
+    (pad (layer BCOP) (round 1.500))
+   )
+   (padstack 1
+    (hole 1)
+    (plated true)
+    (pad (layer TCOP) (square 1.500))
+    (pad (layer INNER) (round 1.500))
+    (pad (layer BCOP) (square 1.500))
+   )
+   (model "PTN09S2-H10120K1A.stp"
+    (euler 90 0 0)
+    (offset 2.5 2.5 6.400000095367432)
+   )
+  )
+ )
+)
