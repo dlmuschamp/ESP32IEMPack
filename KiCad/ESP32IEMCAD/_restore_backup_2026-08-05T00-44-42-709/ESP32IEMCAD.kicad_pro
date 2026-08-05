@@ -240,7 +240,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": "0.0.0"
+      "sch_revision": "0.0.3"
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -260,7 +260,32 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [],
+    "erc_exclusions": [
+      [
+        "footprint_link_issues|1130300|660400|6d91d87b-36f6-4915-bdd6-a5fb5621da68|00000000-0000-0000-0000-000000000000|||",
+        ""
+      ],
+      [
+        "footprint_link_issues|1485900|533400|a5871eec-950c-4198-a7a8-37fb03cc3d61|00000000-0000-0000-0000-000000000000|||",
+        ""
+      ],
+      [
+        "footprint_link_issues|876300|762000|52201d0a-8054-425f-bc5a-ff07daaf3913|00000000-0000-0000-0000-000000000000|||",
+        ""
+      ],
+      [
+        "multiple_net_names|1308100|457200|6e9a5190-176b-491c-a836-a03d39714162|272988b6-c649-4758-ad1c-63a47590ac53|/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189|/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189|/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189",
+        ""
+      ],
+      [
+        "multiple_net_names|609600|736600|9d3dcdfb-5e65-4533-8102-ed69501bff37|c1960aca-8efb-4302-83ba-a26f3803552d|/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189|/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189|/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189",
+        ""
+      ],
+      [
+        "pin_to_pin|1663700|508000|f798c5c0-5151-459e-94a8-2f0a975a32b5|d41ae583-6593-42f7-a6c9-ba74e5fcec8d|/98787dcf-424f-4647-bb79-9127f0f74bda/6e12d95a-ec67-48a8-b98e-82576ae3682c|/98787dcf-424f-4647-bb79-9127f0f74bda/6e12d95a-ec67-48a8-b98e-82576ae3682c|/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189",
+        ""
+      ]
+    ],
     "meta": {
       "version": 0
     },
@@ -721,13 +746,33 @@
         "uuid": "98787dcf-424f-4647-bb79-9127f0f74bda"
       }
     ],
-    "used_designators": "C5,C11-21,S1,#PWR2,#PWR10-36,R7-8,R11-21,J1-5,SW1-3,U4",
+    "used_designators": "C1-24,S1,#PWR1-41,#FLG1-6,R1-22,J1-5,SW1-3,U1-4,VR1",
     "variants": []
   },
   "sheets": [
     [
       "98787dcf-424f-4647-bb79-9127f0f74bda",
       "ESP32IEMCAD"
+    ],
+    [
+      "6e12d95a-ec67-48a8-b98e-82576ae3682c",
+      "Power Management"
+    ],
+    [
+      "12633c0c-fb68-4c25-af81-bead6c15ab98",
+      "ESP Reciever"
+    ],
+    [
+      "21ceb167-c50e-480a-ba2d-de2280d740ad",
+      "DAC"
+    ],
+    [
+      "ef5fa814-6562-446c-a762-5c80584cf2d0",
+      "Volume Control"
+    ],
+    [
+      "e73e1f85-85b5-4291-97fa-1640b66c2189",
+      "Amp"
     ]
   ],
   "text_variables": {},

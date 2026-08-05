@@ -7,7 +7,7 @@
 	(title_block
 		(title "ESP32 Wireless IEM Rig Reciever")
 		(date "2026-08-04")
-		(rev "0.0.3")
+		(rev "0.0.1")
 		(company "damian m")
 		(comment 1 "Data: ESP -> DAC -> AMP-> 3.5mm Jack.")
 		(comment 2 "DAC features a soft mute switch.")
@@ -16,7 +16,7 @@
 	(lib_symbols)
 	(text "Sets 5V and 3V3"
 		(exclude_from_sim no)
-		(at 39.37 38.354 0)
+		(at 41.91 40.894 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -24,168 +24,8 @@
 		)
 		(uuid "e1b4084b-9d81-4171-befe-072019be5c9d")
 	)
-	(wire
-		(pts
-			(xy 193.04 26.67) (xy 193.04 57.15)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0c7c3f7b-92ac-4ccd-a18c-5850bb9e6cfd")
-	)
-	(wire
-		(pts
-			(xy 194.31 58.42) (xy 16.51 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "26d195c4-91a1-44ee-851f-93ddc93c8332")
-	)
-	(wire
-		(pts
-			(xy 82.55 69.85) (xy 86.36 69.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2e03ddb2-f1cb-4377-a837-f8fdb57c806d")
-	)
-	(wire
-		(pts
-			(xy 82.55 67.31) (xy 86.36 67.31)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2f82dfa5-20df-437f-8d60-c9394c4a0806")
-	)
-	(wire
-		(pts
-			(xy 190.5 26.67) (xy 193.04 26.67)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "353a4348-584f-4cfe-b096-74f9dcf18cbe")
-	)
-	(wire
-		(pts
-			(xy 193.04 57.15) (xy 15.24 57.15)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "35ff1fae-ee06-447d-804c-fe5e2d6ad991")
-	)
-	(wire
-		(pts
-			(xy 15.24 67.31) (xy 17.78 67.31)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3c011436-7b33-4828-a5e2-437d5cc3002b")
-	)
-	(wire
-		(pts
-			(xy 15.24 57.15) (xy 15.24 67.31)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "437d0a46-c717-47fe-839a-c23b6635dfd1")
-	)
-	(wire
-		(pts
-			(xy 82.55 64.77) (xy 86.36 64.77)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "491cf922-3b5b-40e1-a908-cc904c6f688d")
-	)
-	(wire
-		(pts
-			(xy 194.31 24.13) (xy 194.31 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "75753acd-6f31-40b7-8b15-7fa806a057a0")
-	)
-	(wire
-		(pts
-			(xy 190.5 24.13) (xy 194.31 24.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "95e6525a-5f21-4b2c-a1f4-d5281483fc79")
-	)
-	(wire
-		(pts
-			(xy 123.19 26.67) (xy 127 26.67)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b8af308d-7a39-41fa-bdb1-4cc17141198e")
-	)
-	(wire
-		(pts
-			(xy 16.51 58.42) (xy 16.51 64.77)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "df73d663-50a1-4ff1-8863-a7e8c38c1588")
-	)
-	(wire
-		(pts
-			(xy 123.19 24.13) (xy 127 24.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ea45c610-2d41-4c56-b1a4-5636f6a61450")
-	)
-	(wire
-		(pts
-			(xy 123.19 29.21) (xy 127 29.21)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f43361b5-74f7-4d51-94e6-21a3b906387a")
-	)
-	(wire
-		(pts
-			(xy 16.51 64.77) (xy 17.78 64.77)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fbab65a4-2692-4023-aeb8-91cb8f4c1606")
-	)
 	(sheet
-		(at 67.31 21.59)
+		(at 69.85 24.13)
 		(size 55.88 33.02)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -201,7 +41,7 @@
 		)
 		(uuid "12633c0c-fb68-4c25-af81-bead6c15ab98")
 		(property "Sheetname" "ESP Reciever"
-			(at 67.31 20.8784 0)
+			(at 69.85 23.4184 0)
 			(show_name yes)
 			(do_not_autoplace no)
 			(effects
@@ -212,7 +52,7 @@
 			)
 		)
 		(property "Sheetfile" "esp_rx.kicad_sch"
-			(at 67.31 55.1946 0)
+			(at 69.85 57.7346 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -223,7 +63,7 @@
 			)
 		)
 		(pin "BCK" output
-			(at 123.19 24.13 0)
+			(at 125.73 26.67 0)
 			(uuid "21b4b003-76d9-45e2-8072-0c393cd07bee")
 			(effects
 				(font
@@ -233,7 +73,7 @@
 			)
 		)
 		(pin "DIN" output
-			(at 123.19 26.67 0)
+			(at 125.73 29.21 0)
 			(uuid "423dd780-a265-4718-ba29-f16a42688e08")
 			(effects
 				(font
@@ -243,7 +83,7 @@
 			)
 		)
 		(pin "LRCLK" output
-			(at 123.19 29.21 0)
+			(at 125.73 31.75 0)
 			(uuid "5975a5f5-62d1-49a7-859e-421aa702e2a3")
 			(effects
 				(font
@@ -261,7 +101,7 @@
 		)
 	)
 	(sheet
-		(at 127 21.59)
+		(at 129.54 24.13)
 		(size 63.5 33.02)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -277,7 +117,7 @@
 		)
 		(uuid "21ceb167-c50e-480a-ba2d-de2280d740ad")
 		(property "Sheetname" "DAC"
-			(at 127 20.8784 0)
+			(at 129.54 23.4184 0)
 			(show_name yes)
 			(do_not_autoplace no)
 			(effects
@@ -288,7 +128,7 @@
 			)
 		)
 		(property "Sheetfile" "dac.kicad_sch"
-			(at 127 55.1946 0)
+			(at 129.54 57.7346 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -299,7 +139,7 @@
 			)
 		)
 		(pin "BCK" input
-			(at 127 24.13 180)
+			(at 129.54 26.67 180)
 			(uuid "b8134391-61c6-4e2e-94f4-7d29d09d66bc")
 			(effects
 				(font
@@ -309,7 +149,7 @@
 			)
 		)
 		(pin "DIN" input
-			(at 127 26.67 180)
+			(at 129.54 29.21 180)
 			(uuid "49100a80-7152-4d27-8f9b-2f152b79d544")
 			(effects
 				(font
@@ -319,7 +159,7 @@
 			)
 		)
 		(pin "LRCLK" input
-			(at 127 29.21 180)
+			(at 129.54 31.75 180)
 			(uuid "f7a22a81-0f99-422f-ba6a-75ec8fbe22f4")
 			(effects
 				(font
@@ -329,7 +169,7 @@
 			)
 		)
 		(pin "DAC_OUT_L" output
-			(at 190.5 24.13 0)
+			(at 193.04 26.67 0)
 			(uuid "34b1f211-7b2c-4df5-b1f5-671e1b8101c5")
 			(effects
 				(font
@@ -339,7 +179,7 @@
 			)
 		)
 		(pin "DAC_OUT_R" output
-			(at 190.5 26.67 0)
+			(at 193.04 29.21 0)
 			(uuid "70ae7e23-8f0c-4b9d-9a6b-97a5c12bce70")
 			(effects
 				(font
@@ -357,7 +197,7 @@
 		)
 	)
 	(sheet
-		(at 17.78 21.59)
+		(at 20.32 24.13)
 		(size 44.45 33.02)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -373,7 +213,7 @@
 		)
 		(uuid "6e12d95a-ec67-48a8-b98e-82576ae3682c")
 		(property "Sheetname" "Power Management"
-			(at 17.78 20.8784 0)
+			(at 20.32 23.4184 0)
 			(show_name yes)
 			(do_not_autoplace no)
 			(effects
@@ -384,7 +224,7 @@
 			)
 		)
 		(property "Sheetfile" "pwr_mgmt.kicad_sch"
-			(at 17.78 55.1946 0)
+			(at 20.32 57.7346 0)
 			(show_name yes)
 			(do_not_autoplace no)
 			(effects
@@ -403,7 +243,7 @@
 		)
 	)
 	(sheet
-		(at 86.36 62.23)
+		(at 88.9 64.77)
 		(size 104.14 33.02)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -419,7 +259,7 @@
 		)
 		(uuid "e73e1f85-85b5-4291-97fa-1640b66c2189")
 		(property "Sheetname" "Amp"
-			(at 86.36 61.5184 0)
+			(at 88.9 64.0584 0)
 			(show_name yes)
 			(do_not_autoplace no)
 			(effects
@@ -430,7 +270,7 @@
 			)
 		)
 		(property "Sheetfile" "amp.kicad_sch"
-			(at 86.36 95.8346 0)
+			(at 88.9 98.3746 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -441,7 +281,7 @@
 			)
 		)
 		(pin "POST_POT_IN_L" input
-			(at 86.36 64.77 180)
+			(at 88.9 67.31 180)
 			(uuid "c409abeb-0712-45f0-8050-a434a1d651d1")
 			(effects
 				(font
@@ -451,7 +291,7 @@
 			)
 		)
 		(pin "POST_POT_IN_R" input
-			(at 86.36 67.31 180)
+			(at 88.9 69.85 180)
 			(uuid "41ab73bb-85c8-4c6e-837f-301fafd4a5c1")
 			(effects
 				(font
@@ -461,13 +301,33 @@
 			)
 		)
 		(pin "SHDN_SIGNAL" input
-			(at 86.36 69.85 180)
+			(at 88.9 72.39 180)
 			(uuid "380fa55e-1f0c-4157-8c0c-41141a46deb7")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
+			)
+		)
+		(pin "AMP_OUT_L" output
+			(at 193.04 67.31 0)
+			(uuid "0c8694e6-17e9-4f31-a76b-a03357e3aa67")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "AMP_OUT_R" output
+			(at 193.04 69.85 0)
+			(uuid "42d23b86-66b3-4d4e-801c-e79ef0a9ab7a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 			)
 		)
 		(instances
@@ -479,7 +339,7 @@
 		)
 	)
 	(sheet
-		(at 17.78 62.23)
+		(at 20.32 64.77)
 		(size 64.77 66.04)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -495,7 +355,7 @@
 		)
 		(uuid "ef5fa814-6562-446c-a762-5c80584cf2d0")
 		(property "Sheetname" "Volume Control"
-			(at 17.78 61.5184 0)
+			(at 20.32 64.0584 0)
 			(show_name yes)
 			(do_not_autoplace no)
 			(effects
@@ -506,7 +366,7 @@
 			)
 		)
 		(property "Sheetfile" "vol_ctrl.kicad_sch"
-			(at 17.78 128.8546 0)
+			(at 20.32 131.3946 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -517,7 +377,7 @@
 			)
 		)
 		(pin "DAC_OUT_L" input
-			(at 17.78 64.77 180)
+			(at 20.32 67.31 180)
 			(uuid "86dbb152-5830-405d-a438-2ebcc82260b3")
 			(effects
 				(font
@@ -527,7 +387,7 @@
 			)
 		)
 		(pin "DAC_OUT_R" input
-			(at 17.78 67.31 180)
+			(at 20.32 69.85 180)
 			(uuid "c8bfe5ef-af0c-4b34-9485-7d676d37c934")
 			(effects
 				(font
@@ -537,7 +397,7 @@
 			)
 		)
 		(pin "POST_POT_IN_L" output
-			(at 82.55 64.77 0)
+			(at 85.09 67.31 0)
 			(uuid "4d5c1851-1a3b-4e55-8442-d9dbbe7da477")
 			(effects
 				(font
@@ -547,7 +407,7 @@
 			)
 		)
 		(pin "POST_POT_IN_R" output
-			(at 82.55 67.31 0)
+			(at 85.09 69.85 0)
 			(uuid "028eb292-ebfd-42b9-9572-f700856c45b8")
 			(effects
 				(font
@@ -557,7 +417,7 @@
 			)
 		)
 		(pin "SHDN_SIGNAL" output
-			(at 82.55 69.85 0)
+			(at 85.09 72.39 0)
 			(uuid "60871c31-44c3-4a92-bbc9-7ff49a2935c0")
 			(effects
 				(font
