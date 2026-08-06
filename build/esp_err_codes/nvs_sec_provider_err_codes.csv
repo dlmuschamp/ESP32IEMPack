@@ -1,0 +1,6 @@
+name,value,file,comment
+ESP_ERR_NVS_SEC_BASE,61440,components/nvs_sec_provider/include/nvs_sec_provider.h,Starting number of error codes
+ESP_ERR_NVS_SEC_HMAC_KEY_NOT_FOUND,61441,components/nvs_sec_provider/include/nvs_sec_provider.h,HMAC Key required to generate the NVS encryption keys not found
+ESP_ERR_NVS_SEC_HMAC_KEY_BLK_ALREADY_USED,61442,components/nvs_sec_provider/include/nvs_sec_provider.h,Provided eFuse block for HMAC key generation is already in use
+ESP_ERR_NVS_SEC_HMAC_KEY_GENERATION_FAILED,61443,components/nvs_sec_provider/include/nvs_sec_provider.h,Failed to generate/write the HMAC key to eFuse
+ESP_ERR_NVS_SEC_HMAC_XTS_KEYS_DERIV_FAILED,61444,components/nvs_sec_provider/include/nvs_sec_provider.h,Failed to derive the NVS encryption keys based on the HMAC-based scheme

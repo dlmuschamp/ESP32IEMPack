@@ -9,16 +9,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 /*
-
  * Automatically generated file. DO NOT EDIT.
-
- * Espressif IoT Development Framework (ESP-IDF) 6.0.2 Configuration Header
-
+ * Espressif IoT Development Framework (ESP-IDF) 6.2.0 Configuration Header
  */
        
 /* List of deprecated options */
 /* CPU instruction prefetch padding size for flash mmap scenario */
-/* Copy from esp_secure_boot.h */
 /*
  * PMP region granularity size
  * Software may determine the PMP granularity by writing zero to pmp0cfg, then writing all ones
@@ -28,6 +24,16 @@
 /* CPU instruction prefetch padding size for memory protection scenario */
 /* Memory alignment size for PMS */
     /* rtc timer data (s_rtc_timer_retain_mem, see esp_clk.c files). For rtc_timer_data_in_rtc_mem section. */
+/*
+ * APP_BUILD_MINIMIZE_BINARY_CHANGES_PADDING
+ *
+ * Aligns the current location (.) to CONFIG_APP_BUILD_MINIMIZE_BINARY_CHANGES_PADDING.
+ * If more than half of the alignment block is already consumed,
+ * extra padding is applied to skip to the next boundary.
+ * For example, if the current location (.) is 0x1900 and the padding is 4 KB,
+ * the location will be moved to 0x3000 instead of 0x2000 because less than
+ * half of the current 4 KB block remains (0x2000 - 0x1900 < 2 KB).
+ */
 /* Default entry point */
 ENTRY(call_start_cpu0);
 SECTIONS
@@ -236,9 +242,11 @@ SECTIONS
     /* Code marked as running out of IRAM */
     _iram_text_start = ABSOLUTE(.);
     
+ 
  arrays[iram0_text] 
  mapping[iram0_text] 
- mutable[iram0_text]
+ mutable[iram0_text] 
+
   } > iram0_0_seg
   .dram0.data :
   {
@@ -251,9 +259,11 @@ SECTIONS
     *(.gnu.linkonce.s2.*)
     *(.jcr)
     
+ 
  arrays[dram0_data] 
  mapping[dram0_data] 
- mutable[dram0_data]
+ mutable[dram0_data] 
+
     _data_end = ABSOLUTE(.);
   } > dram0_0_seg
   /**
@@ -343,9 +353,11 @@ SECTIONS
   {
     _flash_rodata_start = ABSOLUTE(.);
     
+ 
  arrays[flash_rodata] 
  mapping[flash_rodata] 
- mutable[flash_rodata]
+ mutable[flash_rodata] 
+
     *(.irom1.text) /* catch stray ICACHE_RODATA_ATTR */
     *(.gnu.linkonce.r.*)
     *(.rodata1)
@@ -389,12 +401,6 @@ SECTIONS
  soc_reserved_memory_region_start = ABSOLUTE(.);
     KEEP (*(.reserved_memory_address))
     soc_reserved_memory_region_end = ABSOLUTE(.);
-    /* System init functions registered via ESP_SYSTEM_INIT_FN */
-    
- . = ALIGN(4); 
- _esp_system_init_fn_array_start = ABSOLUTE(.);
-    KEEP (*(SORT_BY_INIT_PRIORITY(.esp_system_init_fn.*)))
-    _esp_system_init_fn_array_end = ABSOLUTE(.);
     _rodata_end = ABSOLUTE(.);
     /* Literals are also RO data. */
     _lit4_start = ABSOLUTE(.);
@@ -460,9 +466,11 @@ SECTIONS
     _instruction_reserved_start = ABSOLUTE(.);
     _text_start = ABSOLUTE(.);
     
+ 
  arrays[flash_text] 
  mapping[flash_text] 
- mutable[flash_text]
+ mutable[flash_text] 
+
     *(.stub)
     *(.gnu.warning)
     *(.gnu.linkonce.literal.* .gnu.linkonce.t.*.literal .gnu.linkonce.t.*)
@@ -534,7 +542,6 @@ SECTIONS
  * SPDX-License-Identifier: Apache-2.0
  */
 /* CPU instruction prefetch padding size for flash mmap scenario */
-/* Copy from esp_secure_boot.h */
 /*
  * PMP region granularity size
  * Software may determine the PMP granularity by writing zero to pmp0cfg, then writing all ones
@@ -544,6 +551,16 @@ SECTIONS
 /* CPU instruction prefetch padding size for memory protection scenario */
 /* Memory alignment size for PMS */
     /* rtc timer data (s_rtc_timer_retain_mem, see esp_clk.c files). For rtc_timer_data_in_rtc_mem section. */
+/*
+ * APP_BUILD_MINIMIZE_BINARY_CHANGES_PADDING
+ *
+ * Aligns the current location (.) to CONFIG_APP_BUILD_MINIMIZE_BINARY_CHANGES_PADDING.
+ * If more than half of the alignment block is already consumed,
+ * extra padding is applied to skip to the next boundary.
+ * For example, if the current location (.) is 0x1900 and the padding is 4 KB,
+ * the location will be moved to 0x3000 instead of 0x2000 because less than
+ * half of the current 4 KB block remains (0x2000 - 0x1900 < 2 KB).
+ */
   /**
    * This section is not included in the binary image; it is only present in the ELF file.
    * It is used to keep certain symbols in the ELF file.
@@ -624,7 +641,6 @@ SECTIONS
  * SPDX-License-Identifier: Apache-2.0
  */
 /* CPU instruction prefetch padding size for flash mmap scenario */
-/* Copy from esp_secure_boot.h */
 /*
  * PMP region granularity size
  * Software may determine the PMP granularity by writing zero to pmp0cfg, then writing all ones
@@ -634,6 +650,16 @@ SECTIONS
 /* CPU instruction prefetch padding size for memory protection scenario */
 /* Memory alignment size for PMS */
     /* rtc timer data (s_rtc_timer_retain_mem, see esp_clk.c files). For rtc_timer_data_in_rtc_mem section. */
+/*
+ * APP_BUILD_MINIMIZE_BINARY_CHANGES_PADDING
+ *
+ * Aligns the current location (.) to CONFIG_APP_BUILD_MINIMIZE_BINARY_CHANGES_PADDING.
+ * If more than half of the alignment block is already consumed,
+ * extra padding is applied to skip to the next boundary.
+ * For example, if the current location (.) is 0x1900 and the padding is 4 KB,
+ * the location will be moved to 0x3000 instead of 0x2000 because less than
+ * half of the current 4 KB block remains (0x2000 - 0x1900 < 2 KB).
+ */
   /DISCARD/ :
   {
    /**

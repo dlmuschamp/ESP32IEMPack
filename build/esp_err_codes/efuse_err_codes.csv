@@ -1,0 +1,9 @@
+name,value,file,comment
+ESP_ERR_EFUSE,5632,components/efuse/include/esp_efuse.h,Base error code for efuse api.
+ESP_OK_EFUSE_CNT,5633,components/efuse/include/esp_efuse.h,OK the required number of bits is set.
+ESP_ERR_EFUSE_CNT_IS_FULL,5634,components/efuse/include/esp_efuse.h,Error field is full.
+ESP_ERR_EFUSE_REPEATED_PROG,5635,components/efuse/include/esp_efuse.h,Error repeated programming of programmed bits is strictly forbidden.
+ESP_ERR_CODING,5636,components/efuse/include/esp_efuse.h,Error while a encoding operation.
+ESP_ERR_NOT_ENOUGH_UNUSED_KEY_BLOCKS,5637,components/efuse/include/esp_efuse.h,Error not enough unused key blocks available
+ESP_ERR_DAMAGED_READING,5638,components/efuse/include/esp_efuse.h,Error. Burn or reset was done during a reading operation leads to damage read data. This error is internal to the efuse component and not returned by any public API.
+ESP_ERR_BURN_WR_DIS,5639,components/efuse/include/esp_efuse.h,Error to burn WR_DIS field.

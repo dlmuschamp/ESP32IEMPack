@@ -1,0 +1,63 @@
+name,value,file,comment
+ESP_ERR_WIFI_NOT_INIT,12289,components/esp_wifi/include/esp_wifi.h,WiFi driver was not installed by esp_wifi_init
+ESP_ERR_WIFI_NOT_STARTED,12290,components/esp_wifi/include/esp_wifi.h,WiFi driver was not started by esp_wifi_start
+ESP_ERR_WIFI_NOT_STOPPED,12291,components/esp_wifi/include/esp_wifi.h,WiFi driver was not stopped by esp_wifi_stop
+ESP_ERR_WIFI_IF,12292,components/esp_wifi/include/esp_wifi.h,WiFi interface error
+ESP_ERR_WIFI_MODE,12293,components/esp_wifi/include/esp_wifi.h,WiFi mode error
+ESP_ERR_WIFI_STATE,12294,components/esp_wifi/include/esp_wifi.h,WiFi internal state error
+ESP_ERR_WIFI_CONN,12295,components/esp_wifi/include/esp_wifi.h,WiFi internal control block of station or soft-AP error
+ESP_ERR_WIFI_NVS,12296,components/esp_wifi/include/esp_wifi.h,WiFi internal NVS module error
+ESP_ERR_WIFI_MAC,12297,components/esp_wifi/include/esp_wifi.h,MAC address is invalid
+ESP_ERR_WIFI_SSID,12298,components/esp_wifi/include/esp_wifi.h,SSID is invalid
+ESP_ERR_WIFI_PASSWORD,12299,components/esp_wifi/include/esp_wifi.h,Password is invalid
+ESP_ERR_WIFI_TIMEOUT,12300,components/esp_wifi/include/esp_wifi.h,Timeout error
+ESP_ERR_WIFI_WAKE_FAIL,12301,components/esp_wifi/include/esp_wifi.h,WiFi is in sleep state(RF closed) and wakeup fail
+ESP_ERR_WIFI_WOULD_BLOCK,12302,components/esp_wifi/include/esp_wifi.h,The caller would block
+ESP_ERR_WIFI_NOT_CONNECT,12303,components/esp_wifi/include/esp_wifi.h,Station still in disconnect status
+ESP_ERR_WIFI_POST,12306,components/esp_wifi/include/esp_wifi.h,Failed to post the event to WiFi task
+ESP_ERR_WIFI_INIT_STATE,12307,components/esp_wifi/include/esp_wifi.h,Invalid WiFi state when init/deinit is called
+ESP_ERR_WIFI_STOP_STATE,12308,components/esp_wifi/include/esp_wifi.h,Returned when WiFi is stopping
+ESP_ERR_WIFI_NOT_ASSOC,12309,components/esp_wifi/include/esp_wifi.h,The WiFi connection is not associated
+ESP_ERR_WIFI_TX_DISALLOW,12310,components/esp_wifi/include/esp_wifi.h,The WiFi TX is disallowed
+ESP_ERR_WIFI_TWT_FULL,12311,components/esp_wifi/include/esp_wifi.h,no available flow id
+ESP_ERR_WIFI_TWT_SETUP_TIMEOUT,12312,components/esp_wifi/include/esp_wifi.h,"Timeout of receiving twt setup response frame, timeout times can be set during twt setup"
+ESP_ERR_WIFI_TWT_SETUP_TXFAIL,12313,components/esp_wifi/include/esp_wifi.h,TWT setup frame tx failed
+ESP_ERR_WIFI_TWT_SETUP_REJECT,12314,components/esp_wifi/include/esp_wifi.h,The twt setup request was rejected by the AP
+ESP_ERR_WIFI_DISCARD,12315,components/esp_wifi/include/esp_wifi.h,Discard frame
+ESP_ERR_WIFI_ROC_IN_PROGRESS,12316,components/esp_wifi/include/esp_wifi.h,ROC op is in progress
+ESP_ERR_ESPNOW_BASE,12388,components/esp_wifi/include/esp_now.h,ESPNOW error number base.
+ESP_ERR_ESPNOW_NOT_INIT,12389,components/esp_wifi/include/esp_now.h,ESPNOW is not initialized.
+ESP_ERR_ESPNOW_ARG,12390,components/esp_wifi/include/esp_now.h,Invalid argument
+ESP_ERR_ESPNOW_NO_MEM,12391,components/esp_wifi/include/esp_now.h,Out of memory
+ESP_ERR_ESPNOW_FULL,12392,components/esp_wifi/include/esp_now.h,ESPNOW peer list is full
+ESP_ERR_ESPNOW_NOT_FOUND,12393,components/esp_wifi/include/esp_now.h,ESPNOW peer is not found
+ESP_ERR_ESPNOW_INTERNAL,12394,components/esp_wifi/include/esp_now.h,Internal error
+ESP_ERR_ESPNOW_EXIST,12395,components/esp_wifi/include/esp_now.h,ESPNOW peer has existed
+ESP_ERR_ESPNOW_IF,12396,components/esp_wifi/include/esp_now.h,Interface error
+ESP_ERR_ESPNOW_CHAN,12397,components/esp_wifi/include/esp_now.h,Channel error
+ESP_ERR_MESH_WIFI_NOT_START,16385,components/esp_wifi/include/esp_mesh.h,Wi-Fi isn't started
+ESP_ERR_MESH_NOT_INIT,16386,components/esp_wifi/include/esp_mesh.h,mesh isn't initialized
+ESP_ERR_MESH_NOT_CONFIG,16387,components/esp_wifi/include/esp_mesh.h,mesh isn't configured
+ESP_ERR_MESH_NOT_START,16388,components/esp_wifi/include/esp_mesh.h,mesh isn't started
+ESP_ERR_MESH_NOT_SUPPORT,16389,components/esp_wifi/include/esp_mesh.h,not supported yet
+ESP_ERR_MESH_NOT_ALLOWED,16390,components/esp_wifi/include/esp_mesh.h,operation is not allowed
+ESP_ERR_MESH_NO_MEMORY,16391,components/esp_wifi/include/esp_mesh.h,out of memory
+ESP_ERR_MESH_ARGUMENT,16392,components/esp_wifi/include/esp_mesh.h,illegal argument
+ESP_ERR_MESH_EXCEED_MTU,16393,components/esp_wifi/include/esp_mesh.h,packet size exceeds MTU
+ESP_ERR_MESH_TIMEOUT,16394,components/esp_wifi/include/esp_mesh.h,timeout
+ESP_ERR_MESH_DISCONNECTED,16395,components/esp_wifi/include/esp_mesh.h,disconnected with parent on station interface
+ESP_ERR_MESH_QUEUE_FAIL,16396,components/esp_wifi/include/esp_mesh.h,queue fail
+ESP_ERR_MESH_QUEUE_FULL,16397,components/esp_wifi/include/esp_mesh.h,queue full
+ESP_ERR_MESH_NO_PARENT_FOUND,16398,components/esp_wifi/include/esp_mesh.h,no parent found to join the mesh network
+ESP_ERR_MESH_NO_ROUTE_FOUND,16399,components/esp_wifi/include/esp_mesh.h,no route found to forward the packet
+ESP_ERR_MESH_OPTION_NULL,16400,components/esp_wifi/include/esp_mesh.h,no option found
+ESP_ERR_MESH_OPTION_UNKNOWN,16401,components/esp_wifi/include/esp_mesh.h,unknown option
+ESP_ERR_MESH_XON_NO_WINDOW,16402,components/esp_wifi/include/esp_mesh.h,no window for software flow control on upstream
+ESP_ERR_MESH_INTERFACE,16403,components/esp_wifi/include/esp_mesh.h,low-level Wi-Fi interface error
+ESP_ERR_MESH_DISCARD_DUPLICATE,16404,components/esp_wifi/include/esp_mesh.h,discard the packet due to the duplicate sequence number
+ESP_ERR_MESH_DISCARD,16405,components/esp_wifi/include/esp_mesh.h,discard the packet
+ESP_ERR_MESH_VOTING,16406,components/esp_wifi/include/esp_mesh.h,vote in progress
+ESP_ERR_MESH_XMIT,16407,components/esp_wifi/include/esp_mesh.h,"TX fail, the tx state is a value other than timeout and disconnect"
+ESP_ERR_MESH_QUEUE_READ,16408,components/esp_wifi/include/esp_mesh.h,error in reading queue
+ESP_ERR_MESH_PS,16409,components/esp_wifi/include/esp_mesh.h,mesh PS is not specified as enable or disable
+ESP_ERR_MESH_RECV_RELEASE,16410,components/esp_wifi/include/esp_mesh.h,release esp_mesh_recv_toDS

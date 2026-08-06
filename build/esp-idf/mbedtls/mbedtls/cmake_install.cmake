@@ -1,8 +1,8 @@
-# Install script for directory: C:/esp/v6.0.2/esp-idf/components/mbedtls/mbedtls
+# Install script for directory: /home/damian-win/esp/esp-idf/components/mbedtls/mbedtls
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/esp32iempack")
+  set(CMAKE_INSTALL_PREFIX "/usr/local")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,21 +34,21 @@ endif()
 
 # Set path to fallback-tool for dependency-resolution.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "C:/Espressif/tools/xtensa-esp-elf/esp-15.2.0_20251204/xtensa-esp-elf/bin/xtensa-esp32-elf-objdump.exe")
+  set(CMAKE_OBJDUMP "/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-objdump")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/Damian/source/repos/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
-  include("C:/Users/Damian/source/repos/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/tf-psa-crypto/cmake_install.cmake")
-  include("C:/Users/Damian/source/repos/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
-  include("C:/Users/Damian/source/repos/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/pkgconfig/cmake_install.cmake")
+  include("/home/damian-win/projects/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
+  include("/home/damian-win/projects/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/tf-psa-crypto/cmake_install.cmake")
+  include("/home/damian-win/projects/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
+  include("/home/damian-win/projects/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/pkgconfig/cmake_install.cmake")
 
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "C:/Users/Damian/source/repos/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/install_local_manifest.txt"
+  file(WRITE "/home/damian-win/projects/ESP32IEMPack/build/esp-idf/mbedtls/mbedtls/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

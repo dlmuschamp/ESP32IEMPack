@@ -1,0 +1,10 @@
+name,value,file,comment
+ESP_ERR_WIFI_REGISTRAR,12339,components/wpa_supplicant/esp_supplicant/include/esp_wps.h,WPS registrar is not supported
+ESP_ERR_WIFI_WPS_TYPE,12340,components/wpa_supplicant/esp_supplicant/include/esp_wps.h,WPS type error
+ESP_ERR_WIFI_WPS_SM,12341,components/wpa_supplicant/esp_supplicant/include/esp_wps.h,WPS state machine is not initialized
+ESP_ERR_DPP_FAILURE,12439,components/wpa_supplicant/esp_supplicant/include/esp_dpp.h,Generic failure during DPP Operation
+ESP_ERR_DPP_TX_FAILURE,12440,components/wpa_supplicant/esp_supplicant/include/esp_dpp.h,DPP Frame Tx failed OR not Acked
+ESP_ERR_DPP_INVALID_ATTR,12441,components/wpa_supplicant/esp_supplicant/include/esp_dpp.h,Encountered invalid DPP Attribute
+ESP_ERR_DPP_AUTH_TIMEOUT,12442,components/wpa_supplicant/esp_supplicant/include/esp_dpp.h,DPP Auth response was not received in time
+ESP_ERR_DPP_INVALID_LIST,12443,components/wpa_supplicant/esp_supplicant/include/esp_dpp.h,Channel list given in esp_supp_dpp_bootstrap_gen() is not valid or too big
+ESP_ERR_DPP_CONF_TIMEOUT,12444,components/wpa_supplicant/esp_supplicant/include/esp_dpp.h,DPP Configuration was not received in time

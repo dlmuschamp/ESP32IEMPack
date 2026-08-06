@@ -1,0 +1,4 @@
+name,value,file,comment
+ESP_ERR_IMAGE_BASE,8192,components/bootloader_support/include/esp_image_format.h,
+ESP_ERR_IMAGE_FLASH_FAIL,8193,components/bootloader_support/include/esp_image_format.h,
+ESP_ERR_IMAGE_INVALID,8194,components/bootloader_support/include/esp_image_format.h,

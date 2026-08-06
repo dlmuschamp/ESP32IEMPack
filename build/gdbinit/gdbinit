@@ -1,2 +1,2 @@
-source C:/Users/Damian/source/repos/ESP32IEMPack/build/gdbinit/symbols
-source C:/Users/Damian/source/repos/ESP32IEMPack/build/gdbinit/connect
+source /home/damian-win/projects/ESP32IEMPack/build/gdbinit/symbols
+source /home/damian-win/projects/ESP32IEMPack/build/gdbinit/connect

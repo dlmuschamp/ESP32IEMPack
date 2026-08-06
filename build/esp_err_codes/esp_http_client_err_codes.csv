@@ -1,0 +1,16 @@
+name,value,file,comment
+ESP_ERR_HTTP_BASE,28672,components/esp_http_client/include/esp_http_client.h,Starting number of HTTP error codes
+ESP_ERR_HTTP_MAX_REDIRECT,28673,components/esp_http_client/include/esp_http_client.h,The error exceeds the number of HTTP redirects
+ESP_ERR_HTTP_CONNECT,28674,components/esp_http_client/include/esp_http_client.h,Error open the HTTP connection
+ESP_ERR_HTTP_WRITE_DATA,28675,components/esp_http_client/include/esp_http_client.h,Error write HTTP data
+ESP_ERR_HTTP_FETCH_HEADER,28676,components/esp_http_client/include/esp_http_client.h,Error read HTTP header from server
+ESP_ERR_HTTP_INVALID_TRANSPORT,28677,components/esp_http_client/include/esp_http_client.h,There are no transport support for the input scheme
+ESP_ERR_HTTP_CONNECTING,28678,components/esp_http_client/include/esp_http_client.h,HTTP connection hasn't been established yet
+ESP_ERR_HTTP_EAGAIN,28679,components/esp_http_client/include/esp_http_client.h,Mapping of errno EAGAIN to esp_err_t
+ESP_ERR_HTTP_CONNECTION_CLOSED,28680,components/esp_http_client/include/esp_http_client.h,Read FIN from peer and the connection closed
+ESP_ERR_HTTP_NOT_MODIFIED,28681,components/esp_http_client/include/esp_http_client.h,"HTTP 304 Not Modified, no update available"
+ESP_ERR_HTTP_RANGE_NOT_SATISFIABLE,28682,components/esp_http_client/include/esp_http_client.h,"HTTP 416 Range Not Satisfiable, requested range in header is incorrect"
+ESP_ERR_HTTP_READ_TIMEOUT,28683,components/esp_http_client/include/esp_http_client.h,HTTP data read timeout
+ESP_ERR_HTTP_INCOMPLETE_DATA,28684,components/esp_http_client/include/esp_http_client.h,"Incomplete data received, less than Content-Length or last chunk"
+ESP_ERR_HTTP_REDIRECT_DOWNGRADE,28685,components/esp_http_client/include/esp_http_client.h,HTTPS origin redirected to a non-HTTPS scheme (downgrade blocked)
+ESP_ERR_HTTP_HEADER_TOO_LONG,28686,components/esp_http_client/include/esp_http_client.h,A single request header is larger than buffer_size_tx and cannot be sent (only when CONFIG_ESP_HTTP_CLIENT_STRICT_HEADER_BUFFER is enabled)

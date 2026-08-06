@@ -1,0 +1,10 @@
+name,value,file,comment
+ESP_ERR_HTTPD_BASE,45056,components/esp_http_server/include/esp_http_server.h,Starting number of HTTPD error codes
+ESP_ERR_HTTPD_HANDLERS_FULL,45057,components/esp_http_server/include/esp_http_server.h,All slots for registering URI handlers have been consumed
+ESP_ERR_HTTPD_HANDLER_EXISTS,45058,components/esp_http_server/include/esp_http_server.h,URI handler with same method and target URI already registered
+ESP_ERR_HTTPD_INVALID_REQ,45059,components/esp_http_server/include/esp_http_server.h,Invalid request pointer
+ESP_ERR_HTTPD_RESULT_TRUNC,45060,components/esp_http_server/include/esp_http_server.h,Result string truncated
+ESP_ERR_HTTPD_RESP_HDR,45061,components/esp_http_server/include/esp_http_server.h,Response header field larger than supported
+ESP_ERR_HTTPD_RESP_SEND,45062,components/esp_http_server/include/esp_http_server.h,Error occurred while sending response packet
+ESP_ERR_HTTPD_ALLOC_MEM,45063,components/esp_http_server/include/esp_http_server.h,Failed to dynamically allocate memory for resource
+ESP_ERR_HTTPD_TASK,45064,components/esp_http_server/include/esp_http_server.h,Failed to launch server task/thread

@@ -1,0 +1,6 @@
+name,value,file,comment
+ESP_ERR_TCP_TRANSPORT_BASE,57344,components/tcp_transport/include/esp_transport.h,Starting number of TCP Transport error codes
+ESP_ERR_TCP_TRANSPORT_CONNECTION_TIMEOUT,57345,components/tcp_transport/include/esp_transport.h,Connection has timed out
+ESP_ERR_TCP_TRANSPORT_CONNECTION_CLOSED_BY_FIN,57346,components/tcp_transport/include/esp_transport.h,Read FIN from peer and the connection has closed (in a clean way)
+ESP_ERR_TCP_TRANSPORT_CONNECTION_FAILED,57347,components/tcp_transport/include/esp_transport.h,Failed to connect to the peer
+ESP_ERR_TCP_TRANSPORT_NO_MEM,57348,components/tcp_transport/include/esp_transport.h,Memory allocation failed

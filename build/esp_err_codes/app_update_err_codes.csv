@@ -1,0 +1,10 @@
+name,value,file,comment
+ESP_ERR_OTA_BASE,5376,components/app_update/include/esp_ota_ops.h,Base error code for ota_ops api
+ESP_ERR_OTA_PARTITION_CONFLICT,5377,components/app_update/include/esp_ota_ops.h,Error if request was to write or erase the current running partition
+ESP_ERR_OTA_SELECT_INFO_INVALID,5378,components/app_update/include/esp_ota_ops.h,Error if OTA data partition contains invalid content
+ESP_ERR_OTA_VALIDATE_FAILED,5379,components/app_update/include/esp_ota_ops.h,Error if OTA app image is invalid
+ESP_ERR_OTA_SMALL_SEC_VER,5380,components/app_update/include/esp_ota_ops.h,Error if the firmware has a secure version less than the running firmware.
+ESP_ERR_OTA_ROLLBACK_FAILED,5381,components/app_update/include/esp_ota_ops.h,Error if flash does not have valid firmware in passive partition and hence rollback is not possible
+ESP_ERR_OTA_ROLLBACK_INVALID_STATE,5382,components/app_update/include/esp_ota_ops.h,"Error if current active firmware is still marked in pending validation state (ESP_OTA_IMG_PENDING_VERIFY), essentially first boot of firmware image post upgrade and hence firmware upgrade is not possible"
+ESP_ERR_OTA_ALREADY_IN_PROGRESS,5383,components/app_update/include/esp_ota_ops.h,Error if another OTA operation is already in progress on the same partition
+ESP_ERR_OTA_SPI_MODE_MISMATCH,5384,components/app_update/include/esp_ota_ops.h,Error if the firmware's SPI flash mode doesn't match the running firmware

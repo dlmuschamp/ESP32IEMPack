@@ -1,0 +1,27 @@
+name,value,file,comment
+ESP_ERR_NVS_BASE,4352,components/nvs_flash/include/nvs.h,Starting number of error codes
+ESP_ERR_NVS_NOT_INITIALIZED,4353,components/nvs_flash/include/nvs.h,The storage driver is not initialized
+ESP_ERR_NVS_NOT_FOUND,4354,components/nvs_flash/include/nvs.h,A requested entry couldn't be found or namespace doesn’t exist yet and mode is NVS_READONLY
+ESP_ERR_NVS_TYPE_MISMATCH,4355,components/nvs_flash/include/nvs.h,The type of set or get operation doesn't match the type of value stored in NVS
+ESP_ERR_NVS_READ_ONLY,4356,components/nvs_flash/include/nvs.h,Storage handle was opened as read only
+ESP_ERR_NVS_NOT_ENOUGH_SPACE,4357,components/nvs_flash/include/nvs.h,There is not enough space in the underlying storage to save the value
+ESP_ERR_NVS_INVALID_NAME,4358,components/nvs_flash/include/nvs.h,Namespace name doesn’t satisfy constraints
+ESP_ERR_NVS_INVALID_HANDLE,4359,components/nvs_flash/include/nvs.h,Handle has been closed or is NULL
+ESP_ERR_NVS_REMOVE_FAILED,4360,components/nvs_flash/include/nvs.h,"The value wasn’t updated because flash write operation has failed. The value was written however, and update will be finished after re-initialization of nvs, provided that flash operation doesn’t fail again."
+ESP_ERR_NVS_KEY_TOO_LONG,4361,components/nvs_flash/include/nvs.h,Key name is too long
+ESP_ERR_NVS_PAGE_FULL,4362,components/nvs_flash/include/nvs.h,Internal error; never returned by nvs API functions
+ESP_ERR_NVS_INVALID_STATE,4363,components/nvs_flash/include/nvs.h,"NVS is in an inconsistent state due to a previous error. Call nvs_flash_init and nvs_open again, then retry."
+ESP_ERR_NVS_INVALID_LENGTH,4364,components/nvs_flash/include/nvs.h,String or blob length is not sufficient to store data
+ESP_ERR_NVS_NO_FREE_PAGES,4365,components/nvs_flash/include/nvs.h,NVS partition doesn't contain any empty pages. This may happen if NVS partition was truncated. Erase the whole partition and call nvs_flash_init again.
+ESP_ERR_NVS_VALUE_TOO_LONG,4366,components/nvs_flash/include/nvs.h,Value doesn't fit into the entry or string or blob length is longer than supported by the implementation
+ESP_ERR_NVS_PART_NOT_FOUND,4367,components/nvs_flash/include/nvs.h,Partition with specified name is not found in the partition table
+ESP_ERR_NVS_NEW_VERSION_FOUND,4368,components/nvs_flash/include/nvs.h,NVS partition contains data in new format and cannot be recognized by this version of code
+ESP_ERR_NVS_XTS_ENCR_FAILED,4369,components/nvs_flash/include/nvs.h,XTS encryption failed while writing NVS entry
+ESP_ERR_NVS_XTS_DECR_FAILED,4370,components/nvs_flash/include/nvs.h,XTS decryption failed while reading NVS entry
+ESP_ERR_NVS_XTS_CFG_FAILED,4371,components/nvs_flash/include/nvs.h,XTS configuration setting failed
+ESP_ERR_NVS_XTS_CFG_NOT_FOUND,4372,components/nvs_flash/include/nvs.h,XTS configuration not found
+ESP_ERR_NVS_ENCR_NOT_SUPPORTED,4373,components/nvs_flash/include/nvs.h,NVS encryption is not supported in this version
+ESP_ERR_NVS_KEYS_NOT_INITIALIZED,4374,components/nvs_flash/include/nvs.h,NVS key partition is uninitialized
+ESP_ERR_NVS_CORRUPT_KEY_PART,4375,components/nvs_flash/include/nvs.h,NVS key partition is corrupt
+ESP_ERR_NVS_CONTENT_DIFFERS,4376,components/nvs_flash/include/nvs.h,Internal error; never returned by nvs API functions.  NVS key is different in comparison
+ESP_ERR_NVS_WRONG_ENCRYPTION,4377,components/nvs_flash/include/nvs.h,NVS partition is marked as encrypted with generic flash encryption. This is forbidden since the NVS encryption works differently.

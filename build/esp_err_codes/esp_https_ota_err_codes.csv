@@ -1,0 +1,3 @@
+name,value,file,comment
+ESP_ERR_HTTPS_OTA_BASE,36864,components/esp_https_ota/include/esp_https_ota.h,
+ESP_ERR_HTTPS_OTA_IN_PROGRESS,36865,components/esp_https_ota/include/esp_https_ota.h,OTA operation in progress

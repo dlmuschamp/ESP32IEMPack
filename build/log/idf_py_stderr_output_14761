@@ -1,0 +1,11 @@
+Command: cmake -G Ninja -B /home/damian-win/projects/ESP32IEMPack/build -DPYTHON_DEPS_CHECKED=1 -DPYTHON=/home/damian-win/.espressif/python_env/idf6.2_py3.14_env/bin/python -DESP_PLATFORM=1 -DCCACHE_ENABLE=False -DCONFIGDEP_ENABLE=True /home/damian-win/projects/ESP32IEMPack
+CMake Error at /home/damian-win/esp/esp-idf/tools/cmake/build.cmake:380 (message):
+  Failed to resolve component 'esp_now' required by component 'main': unknown
+  name.
+Call Stack (most recent call first):
+  /home/damian-win/esp/esp-idf/tools/cmake/build.cmake:423 (__build_resolve_and_add_req)
+  /home/damian-win/esp/esp-idf/tools/cmake/build.cmake:784 (__build_expand_requirements)
+  /home/damian-win/esp/esp-idf/tools/cmake/project.cmake:904 (idf_build_process)
+  CMakeLists.txt:3 (project)
+
+

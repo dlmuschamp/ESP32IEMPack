@@ -1,0 +1,7 @@
+name,value,file,comment
+ESP_ERR_ULP_BASE,4608,components/ulp/ulp_fsm/include/ulp_fsm_common.h,Offset for ULP-related error codes
+ESP_ERR_ULP_SIZE_TOO_BIG,4609,components/ulp/ulp_fsm/include/ulp_fsm_common.h,Program doesn't fit into RTC memory reserved for the ULP
+ESP_ERR_ULP_INVALID_LOAD_ADDR,4610,components/ulp/ulp_fsm/include/ulp_fsm_common.h,Load address is outside of RTC memory reserved for the ULP
+ESP_ERR_ULP_DUPLICATE_LABEL,4611,components/ulp/ulp_fsm/include/ulp_fsm_common.h,More than one label with the same number was defined
+ESP_ERR_ULP_UNDEFINED_LABEL,4612,components/ulp/ulp_fsm/include/ulp_fsm_common.h,Branch instructions references an undefined label
+ESP_ERR_ULP_BRANCH_OUT_OF_RANGE,4613,components/ulp/ulp_fsm/include/ulp_fsm_common.h,Branch target is out of range of B instruction (try replacing with BX)

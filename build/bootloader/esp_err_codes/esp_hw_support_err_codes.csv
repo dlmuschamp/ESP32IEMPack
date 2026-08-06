@@ -1,0 +1,9 @@
+name,value,file,comment
+ESP_ERR_MEMPROT_MEMORY_TYPE_INVALID,53249,components/esp_hw_support/include/esp_memprot_err.h,Memory type invalid in given context
+ESP_ERR_MEMPROT_SPLIT_ADDR_INVALID,53250,components/esp_hw_support/include/esp_memprot_err.h,Splitting address invalid in given context
+ESP_ERR_MEMPROT_SPLIT_ADDR_OUT_OF_RANGE,53251,components/esp_hw_support/include/esp_memprot_err.h,Splitting address out of range
+ESP_ERR_MEMPROT_SPLIT_ADDR_UNALIGNED,53252,components/esp_hw_support/include/esp_memprot_err.h,Splitting address not aligned to required boundaries
+ESP_ERR_MEMPROT_UNIMGMT_BLOCK_INVALID,53253,components/esp_hw_support/include/esp_memprot_err.h,Required unified-management block is not valid
+ESP_ERR_MEMPROT_WORLD_INVALID,53254,components/esp_hw_support/include/esp_memprot_err.h,Required World identifier is not valid
+ESP_ERR_MEMPROT_AREA_INVALID,53255,components/esp_hw_support/include/esp_memprot_err.h,Required Area identifier is not valid
+ESP_ERR_MEMPROT_CPUID_INVALID,53256,components/esp_hw_support/include/esp_memprot_err.h,Required CPU/Core identifier is not valid

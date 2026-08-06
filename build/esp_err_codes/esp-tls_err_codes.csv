@@ -1,0 +1,25 @@
+name,value,file,comment
+ESP_ERR_ESP_TLS_BASE,32768,components/esp-tls/esp_tls_errors.h,Starting number of ESP-TLS error codes
+ESP_ERR_ESP_TLS_CANNOT_RESOLVE_HOSTNAME,32769,components/esp-tls/esp_tls_errors.h,Error if hostname couldn't be resolved upon tls connection
+ESP_ERR_ESP_TLS_CANNOT_CREATE_SOCKET,32770,components/esp-tls/esp_tls_errors.h,Failed to create socket
+ESP_ERR_ESP_TLS_UNSUPPORTED_PROTOCOL_FAMILY,32771,components/esp-tls/esp_tls_errors.h,Unsupported protocol family
+ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST,32772,components/esp-tls/esp_tls_errors.h,Failed to connect to host
+ESP_ERR_ESP_TLS_SOCKET_SETOPT_FAILED,32773,components/esp-tls/esp_tls_errors.h,failed to set/get socket option
+ESP_ERR_ESP_TLS_CONNECTION_TIMEOUT,32774,components/esp-tls/esp_tls_errors.h,new connection in esp_tls_low_level_conn connection timeouted
+ESP_ERR_ESP_TLS_SE_FAILED,32775,components/esp-tls/esp_tls_errors.h,esp-tls use Secure Element returned failed
+ESP_ERR_ESP_TLS_TCP_CLOSED_FIN,32776,components/esp-tls/esp_tls_errors.h,esp-tls's TPC transport connection has benn closed (in a clean way)
+ESP_ERR_ESP_TLS_SERVER_HANDSHAKE_TIMEOUT,32777,components/esp-tls/esp_tls_errors.h,TLS handshake timeout
+ESP_ERR_MBEDTLS_CERT_PARTLY_OK,32784,components/esp-tls/esp_tls_errors.h,mbedtls parse certificates was partly successful
+ESP_ERR_MBEDTLS_CTR_DRBG_SEED_FAILED,32785,components/esp-tls/esp_tls_errors.h,mbedtls api returned error
+ESP_ERR_MBEDTLS_SSL_SET_HOSTNAME_FAILED,32786,components/esp-tls/esp_tls_errors.h,mbedtls api returned error
+ESP_ERR_MBEDTLS_SSL_CONFIG_DEFAULTS_FAILED,32787,components/esp-tls/esp_tls_errors.h,mbedtls api returned error
+ESP_ERR_MBEDTLS_SSL_CONF_ALPN_PROTOCOLS_FAILED,32788,components/esp-tls/esp_tls_errors.h,mbedtls api returned error
+ESP_ERR_MBEDTLS_X509_CRT_PARSE_FAILED,32789,components/esp-tls/esp_tls_errors.h,mbedtls api returned error
+ESP_ERR_MBEDTLS_SSL_CONF_OWN_CERT_FAILED,32790,components/esp-tls/esp_tls_errors.h,mbedtls api returned error
+ESP_ERR_MBEDTLS_SSL_SETUP_FAILED,32791,components/esp-tls/esp_tls_errors.h,mbedtls api returned error
+ESP_ERR_MBEDTLS_SSL_WRITE_FAILED,32792,components/esp-tls/esp_tls_errors.h,mbedtls api returned error
+ESP_ERR_MBEDTLS_PK_PARSE_KEY_FAILED,32793,components/esp-tls/esp_tls_errors.h,mbedtls api returned failed
+ESP_ERR_MBEDTLS_SSL_HANDSHAKE_FAILED,32794,components/esp-tls/esp_tls_errors.h,mbedtls api returned failed
+ESP_ERR_MBEDTLS_SSL_CONF_PSK_FAILED,32795,components/esp-tls/esp_tls_errors.h,mbedtls api returned failed
+ESP_ERR_MBEDTLS_SSL_TICKET_SETUP_FAILED,32796,components/esp-tls/esp_tls_errors.h,mbedtls api returned failed
+ESP_ERR_MBEDTLS_SSL_READ_FAILED,32797,components/esp-tls/esp_tls_errors.h,mbedtls api returned failed

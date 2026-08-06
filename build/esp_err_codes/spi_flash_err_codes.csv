@@ -1,0 +1,7 @@
+name,value,file,comment
+ESP_ERR_FLASH_OP_FAIL,24577,components/spi_flash/include/spi_flash_mmap.h,
+ESP_ERR_FLASH_OP_TIMEOUT,24578,components/spi_flash/include/spi_flash_mmap.h,
+ESP_ERR_FLASH_NOT_INITIALISED,24579,components/spi_flash/include/esp_flash_err.h,esp_flash_chip_t structure not correctly initialised by esp_flash_init().
+ESP_ERR_FLASH_UNSUPPORTED_HOST,24580,components/spi_flash/include/esp_flash_err.h,Requested operation isn't supported via this host SPI bus (chip->spi field).
+ESP_ERR_FLASH_UNSUPPORTED_CHIP,24581,components/spi_flash/include/esp_flash_err.h,Requested operation isn't supported by this model of SPI flash chip.
+ESP_ERR_FLASH_PROTECTED,24582,components/spi_flash/include/esp_flash_err.h,Write operation failed due to chip's write protection being enabled.

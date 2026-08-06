@@ -1,0 +1,21 @@
+name,value,file,comment
+ESP_FAIL,-1,components/esp_common/include/esp_err.h,Generic esp_err_t code indicating failure
+ESP_OK,0,components/esp_common/include/esp_err.h,esp_err_t value indicating success (no error)
+ESP_ERR_NO_MEM,257,components/esp_common/include/esp_err.h,Out of memory
+ESP_ERR_INVALID_ARG,258,components/esp_common/include/esp_err.h,Invalid argument
+ESP_ERR_INVALID_STATE,259,components/esp_common/include/esp_err.h,Invalid state
+ESP_ERR_INVALID_SIZE,260,components/esp_common/include/esp_err.h,Invalid size
+ESP_ERR_NOT_FOUND,261,components/esp_common/include/esp_err.h,Requested resource not found
+ESP_ERR_NOT_SUPPORTED,262,components/esp_common/include/esp_err.h,Operation or feature not supported
+ESP_ERR_TIMEOUT,263,components/esp_common/include/esp_err.h,Operation timed out
+ESP_ERR_INVALID_RESPONSE,264,components/esp_common/include/esp_err.h,Received response was invalid
+ESP_ERR_INVALID_CRC,265,components/esp_common/include/esp_err.h,CRC or checksum was invalid
+ESP_ERR_INVALID_VERSION,266,components/esp_common/include/esp_err.h,Version was invalid
+ESP_ERR_INVALID_MAC,267,components/esp_common/include/esp_err.h,MAC address was invalid
+ESP_ERR_NOT_FINISHED,268,components/esp_common/include/esp_err.h,Operation has not fully completed
+ESP_ERR_NOT_ALLOWED,269,components/esp_common/include/esp_err.h,Operation is not allowed
+ESP_ERR_WIFI_BASE,12288,components/esp_common/include/esp_err.h,Starting number of WiFi error codes
+ESP_ERR_MESH_BASE,16384,components/esp_common/include/esp_err.h,Starting number of MESH error codes
+ESP_ERR_FLASH_BASE,24576,components/esp_common/include/esp_err.h,Starting number of flash error codes
+ESP_ERR_HW_CRYPTO_BASE,49152,components/esp_common/include/esp_err.h,Starting number of HW cryptography module error codes
+ESP_ERR_MEMPROT_BASE,53248,components/esp_common/include/esp_err.h,Starting number of Memory Protection API error codes

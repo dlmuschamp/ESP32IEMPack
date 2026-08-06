@@ -1,4 +1,4 @@
-"-specs=C:/Users/Damian/source/repos/ESP32IEMPack/build/bootloader/specs/picolibc.specs"
+-specs=picolibc.specs
 -Wno-frame-address
 -mlongcalls
 -fno-builtin-memcpy
