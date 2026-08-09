@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'PTN09S2_H10120K1A'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "Same Sky", "PTN09S2-H10120K1A" (!) = "", "PTN09S2H10120K1A", "Other", "", "", "9.5 mm, Horizontal, Dual Section, Logarithmic, 10K, Through Hole, Knurled Shaft Rotary Potentiometer", "https://www.sameskydevices.com/product/resource/ptn09sx.pdf", "10.66 mm"
+END_PART
+
+END.

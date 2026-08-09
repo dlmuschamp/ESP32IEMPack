@@ -1,0 +1,16 @@
+.PTN09S2-H10120K1A :1 ;9.5 mm, Horizontal, Dual Section, Logarithmic, 10K, Through Hole, Knurled Shaft Rotary Potentiometer
+PTN09S2H10120K1A
+*STM VR
+*NGS
+*PLB 1="CCW1" 2="WIPER1" 3="CW1" 4="CCW2" 5="WIPER2" 6="CW2" 7="COM" 8="N.O."
+*MXP 8
+*DFN PTN09S2-H10120K1A
+~!Mouser Part Number (-)
+~!Mouser Price/Stock (-)
+~!Manufacturer_Name (Same Sky)
+~!Manufacturer_Part_Number (PTN09S2-H10120K1A)
+~!Link Datasheet (https://www.sameskydevices.com/product/resource/ptn09sx.pdf)
+~!Height (10.66mm)
+~!3D_Model (PTN09S2-H10120K1A)
+PTN09S2-H10120K1A
+1.1!U 2.1!U 3.1!U 4.1!U 5.1!U 6.1!U 7.1!U 8.1!U 
