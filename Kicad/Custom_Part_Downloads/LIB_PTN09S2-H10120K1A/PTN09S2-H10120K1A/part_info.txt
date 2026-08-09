@@ -1,9 +1,0 @@
-Manufacturer=Same Sky
-PartNumber=PTN09S2-H10120K1A
-PartCategory=Variable Resistor
-PackageCategory=Other
-PinCount=8
-Version=2.5
-Released=2026-05-30 06:49:56
-Downloaded=2026-08-05 04:26:01
-3D=Y
