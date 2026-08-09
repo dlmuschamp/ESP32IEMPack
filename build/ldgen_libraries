@@ -197,3 +197,4 @@
 /home/damian-win/projects/ESP32IEMPack/build/esp-idf/esp_adc/libesp_adc.a
 /home/damian-win/projects/ESP32IEMPack/build/esp-idf/main/libmain.a
 /home/damian-win/projects/ESP32IEMPack/build/esp-idf/driver/libdriver.a
+/home/damian-win/projects/ESP32IEMPack/build/esp-idf/esp_driver_ledc/libesp_driver_ledc.a

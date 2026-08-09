@@ -197,3 +197,4 @@ $<TARGET_FILE:idf::spiffs>
 $<TARGET_FILE:__idf_esp_adc>
 $<TARGET_FILE:idf::main>
 $<TARGET_FILE:__idf_driver>
+$<TARGET_FILE:__idf_esp_driver_ledc>
