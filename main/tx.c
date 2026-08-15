@@ -1,10 +1,14 @@
 #include "driver/i2s_std.h"
 #include "esp_err.h"
+#include "esp_event.h"
 #include "esp_log.h"
 #include "esp_now.h"
 #include "esp_wifi.h"
+#include "esp_wifi_types_generic.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/idf_additions.h"
 #include "freertos/task.h"
+#include "nvs.h"
 #include "nvs_flash.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -15,14 +19,15 @@
 
 // --- MACROS ---
 #define I2S_BCK_PIN 33
-#define I2S_WS_PIN 32
+#define I2S_LRCK_PIN 32
 #define I2S_DIN_PIN 35
-#define I2S_MCLK_PIN 0
+#define I2S_SCK_PIN 0 //D0
 
 // --- GLOBALS ---
 static const char *TAG = "TX_NODE";
 i2s_chan_handle_t rx_adc_chan;
 uint8_t peers_connected = 0x00;
+uint32_t dropped_packets = 0;
 
 // --- THE HANDSHAKE CALLBACK ---
 void on_esp_now_recv(const esp_now_recv_info_t *esp_now_info,
@@ -58,18 +63,54 @@ void on_esp_now_recv(const esp_now_recv_info_t *esp_now_info,
 
 // --- HARDWARE INIT ---
 void init_nvs(void) {
-    // TODO: Initialize NVS flash.
-    // Handle ESP_ERR_NVS_NO_FREE_PAGES and ESP_ERR_NVS_NEW_VERSION_FOUND by
-    // erasing and retrying.
+    esp_err_t nvs_status = nvs_flash_init();
+
+    if (nvs_status == ESP_ERR_NVS_NO_FREE_PAGES ||
+        nvs_status == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_LOGW(TAG, "Failed to initialize NVS flash. Erasing and retrying.");
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ESP_ERROR_CHECK(nvs_flash_init());
+    }
+
+    ESP_ERROR_CHECK(nvs_status);
+    ESP_LOGI(TAG, "NVS initialized successfully.");
 }
 
-void init_wifi_espnow(void) {
-    // TODO: Initialize esp_netif and the default event loop.
-    // TODO: Initialize Wi-Fi (WIFI_INIT_CONFIG_DEFAULT), set storage to RAM, set
-    // mode to STA, and start it.
 
-    // TODO: Initialize ESP-NOW.
-    // TODO: Register the receive callback function (on_esp_now_recv).
+//not doing long range mode
+void config_wifi(void) {
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    wifi_init_config_t wifi_cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&wifi_cfg));
+    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_start());
+    ESP_ERROR_CHECK(esp_wifi_set_channel(DEFAULT_CHANNEL, SECONDARY_CHANNEL));
+}
+
+
+void transmit_cb(const esp_now_send_info_t *tx_info,
+                    esp_now_send_status_t status) {
+
+    if (!tx_info) {
+        ESP_LOGE(TAG, "TX info passed a null pointer.");
+        return;
+    }
+
+    if (status != ESP_NOW_SEND_SUCCESS) {
+        dropped_packets++;
+    }
+
+    //why arent i sending the audio buffer here?
+}
+
+//decomposing this functoin
+void init_espnow(void) {
+    config_wifi();
+    ESP_ERROR_CHECK(esp_now_init());
+    ESP_ERROR_CHECK(esp_now_register_recv_cb(on_esp_now_rec));
+    ESP_ERROR_CHECK(esp_now_register_send_cb(transmit_cb));
 }
 
 void init_i2s_microphone(void) {
@@ -111,6 +152,6 @@ void app_main(void) {
             vTaskDelay(pdMS_TO_TICKS(100)); // Idling
         }
 
-        vTaskDelay(pdMS_TO_TICKS(1)); // Feed the FreeRTOS watchdog
+        //vTaskDelay(pdMS_TO_TICKS(1)); // Feed the FreeRTOS watchdog
     }
 }

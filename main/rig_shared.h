@@ -9,6 +9,7 @@
 #define ALIAS_BUFFER_SIZE 10
 #define SAMPLE_RATE 44100
 #define DEFAULT_CHANNEL 0
+#define SECONDARY_CHANNEL 1
 
 #define BASE_RX_ALIAS "IEM_RX_" // concat using snprintf()
 
@@ -17,7 +18,8 @@
 // --- OPERATING STATES ---
 
 /**
- * @brief Move to rx.c
+ * @brief Move to rx.c once tx.c is finished. keeping it here just so i can
+ * glance over and keep track of the struct
 */
 typedef enum RX_States {
   STATE_RX_BOOTING,
