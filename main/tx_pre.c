@@ -29,11 +29,8 @@
  *  WS   ---> LRCK (Word Select [Left or Right])
  *  DIN <---- DOUT (Microphone Digital Out)
  *
- *  PCM1808 note (why we use 32-bit slots):
- *  In slave mode the ADC accepts 64 BCK/frame (or 48 BCK/frame with 384fs),
- *  NOT 32 BCK/frame. 16-bit stereo slots make BCK = 32*fs, which forces DOUT
- *  to bipolar zero (all silence). 32-bit stereo slots make BCK = 64*fs.
- *  MCLK stays at 256*fs. See TI PCM1808 datasheet §7.3.5.1.2.
+ *  SNAPSHOT: pre-fix copy of tx.c (16-bit I2S slots). Kept for review.
+ *  Active firmware is tx.c — see comments there for the PCM1808 BCK fix.
  **/
 
 // DEBUG LED PIN
@@ -49,8 +46,6 @@ static const char *TAG = "TX_NODE";
 i2s_chan_handle_t i2s_adc_chan;
 uint8_t peers_connected = 0x00;
 uint32_t dropped_packets = 0;
-// I2S delivers one 32-bit word per slot; pack down to int16 later for packets.
-static int32_t raw_audio_samples[AUDIO_DATA_NUM_SAMPLES];
 
 // --- THE HANDSHAKE CALLBACK ---
 void on_esp_now_recv(const esp_now_recv_info_t *esp_now_info,
@@ -140,9 +135,7 @@ void init_i2s_microphone(void) {
 
   i2s_std_config_t i2s_std_cfg = {
     .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(SAMPLE_RATE),
-    // Must be 32-bit slots so BCK = 64*fs (PCM1808 rejects 16-bit / 32*fs).
-    .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(
-      I2S_DATA_BIT_WIDTH_32BIT, I2S_SLOT_MODE_STEREO),
+    .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO),
 
     .gpio_cfg = {.bclk = I2S_BCK_PIN,
       .ws = I2S_LRCK_PIN,
@@ -152,7 +145,7 @@ void init_i2s_microphone(void) {
     },
   };
 
-  // 256*fs is a valid PCM1808 SCKI ratio and divides cleanly with 64*fs BCK.
+
   i2s_std_cfg.clk_cfg.mclk_multiple = I2S_MCLK_MULTIPLE_256;
 
   ESP_ERROR_CHECK(i2s_new_channel(&i2s_chan_cfg, NULL, &i2s_adc_chan));
@@ -179,19 +172,17 @@ void app_main(void) {
   // Create your audio_packet_t payload struct variable and initialize
   // the packet_id to 0.
   audio_packet_t audio_samples = {.packet_id = 0};
-  // Keep outside the loop so % 20 actually throttles prints.
-  uint32_t loop_counter = 0;
+  size_t audio_data_size = sizeof(audio_samples.audio_data);
 
   while (1) {
     size_t bytes_read = 0;
     if (1) { // TODO: replace with peers_connected when done testing
-      // Read 32-bit I2S slots (needed for PCM1808 BCK timing), then convert.
-      // Use portMAX_DELAY so the task blocks until the buffer is 100% full.
-      // Do not idle with vTaskDelay after a successful read — that overruns DMA
-      // once the ADC is actually streaming.
+      // Read from i2s_adc_chan to audio_data array.
+      // Use portMAX_DELAY so the task blocks until the buffer is 100%
+      // full.
       esp_err_t i2s_read_status =
-        i2s_channel_read(i2s_adc_chan, raw_audio_samples,
-                         sizeof(raw_audio_samples), &bytes_read, portMAX_DELAY);
+        i2s_channel_read(i2s_adc_chan, audio_samples.audio_data,
+                         audio_data_size, &bytes_read, portMAX_DELAY);
 
       if (i2s_read_status != ESP_OK || bytes_read == 0) {
         ESP_LOGW(TAG, "Failed to read bytes from I2S ADC Channel.");
@@ -200,31 +191,22 @@ void app_main(void) {
         continue;
       }
 
-      size_t samples_read = bytes_read / sizeof(raw_audio_samples[0]);
-      int32_t peak_level = 0;
-
-      for (size_t i = 0; i < samples_read; i++) {
-        // PCM1808 is 24-bit, MSB-aligned in the 32-bit Philips slot. >> 16
-        // keeps the top 16 bits for our int16 packet payload.
-        int32_t sample = raw_audio_samples[i] >> 16;
-        audio_samples.audio_data[i] = (int16_t)sample;
-
-        int32_t magnitude = sample < 0 ? -sample : sample;
-        if (magnitude > peak_level) {
-          peak_level = magnitude;
-        }
-      }
-
       // TODO: remove this after testing
-      // Peak over the buffer avoids printing a near-zero sine crossing.
-      if (loop_counter++ % 20 == 0) {
-        printf("Mic peak: %ld\n", (long)peak_level);
-      }
 
+      int loop_counter = 0;
+
+      if (loop_counter++ % 20 == 0) {
+        int16_t sample_val = *((int16_t *)&audio_samples.audio_data[0]);
+        printf("Mic level: %d\n", sample_val);
+
+
+      }
       // Send once full and increment packet id
       // TODO: esp_now_send(NULL, audio_samples_address,
       // audio_samples_size);
       audio_samples.packet_id++;
+
+      vTaskDelay(pdMS_TO_TICKS(100)); // Idling
 
     } else {
       vTaskDelay(pdMS_TO_TICKS(100)); // Idling
