@@ -31,6 +31,8 @@
  *
  *  SNAPSHOT: pre-fix copy of tx.c (16-bit I2S slots). Kept for review.
  *  Active firmware is tx.c — see comments there for the PCM1808 BCK fix.
+ *  app_main renamed to deprecated_app_main so this file cannot collide if
+ *  accidentally added to the build.
  **/
 
 // DEBUG LED PIN
@@ -155,7 +157,7 @@ void init_i2s_microphone(void) {
 }
 
 // --- MAIN THREAD ---
-void app_main(void) {
+void deprecated_app_main(void) {
   printf("Booting TX Node...\n");
 
   init_nvs();
