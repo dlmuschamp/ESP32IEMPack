@@ -15,10 +15,11 @@
 
 // --- ESP-NOW CONSTRAINTS ---
 #define MAX_ESPNOW_PAYLOAD_BYTES 1470
-#define AUDIO_DATA_NUM_SAMPLES 734
+#define AUDIO_DATA_NUM_SAMPLES                                                 \
+    256 // smaller sample size reduces latency but needs higher throughput
 #define ALIAS_BUFFER_SIZE 16
 #define MAC_ADDRESS_LEN 6
-#define SAMPLE_RATE 44100
+#define SAMPLE_RATE 48000
 
 // --- ESP-NOW CHANNELS ---
 #define DEFAULT_CHANNEL 1
@@ -46,7 +47,7 @@ typedef struct {
  * addition to the actual audio data to be played by the .
  **/
 typedef struct {
-    uint8_t packet_id;
+    //    uint8_t packet_id;
     int16_t audio_data[AUDIO_DATA_NUM_SAMPLES];
 } audio_packet_t;
 
@@ -54,27 +55,28 @@ typedef struct {
 /**
  * @brief attempts to flash the nvs on the current esp.
  * The init_nvs function itself will retry once if nvs_status shows
- * ESP_ERR_NVS_NO_FREE_PAGES or ESP_ERR_NVS_NEW_VERSION_FOUND. Throws a fatal
- * error otherwise.
+ * ESP_ERR_NVS_NO_FREE_PAGES or ESP_ERR_NVS_NEW_VERSION_FOUND.
+ * @return ESP_OK on success, or the first failing NVS API esp_err_t.
  **/
-void init_nvs(void);
+esp_err_t init_nvs(void);
 
 /**
  * @brief attempts to initialize wifi on the current esp.
  * Sets to default config, wifi mode to WIFI_MODE_STA, storage to
  * WIFI_STORAGE_RAM, and primary and secondary channels to the DEFAULT_CHANNEL
- * and SECONDARY_CHANNEL macros respectively. Throws a fatal error otherwise.
+ * and SECONDARY_CHANNEL macros respectively.
+ * @return ESP_OK on success, or the first failing Wi-Fi API esp_err_t.
  **/
-void init_wifi(void);
+esp_err_t init_wifi(void);
 
 /**
  * @brief attempts to initialize the espnow device and set its callback
- * functions for recieving and transmitting packets. Throws a fatal error
- * otherwise.
+ * functions for recieving and transmitting packets.
  * @param recv_cb the callback function to run when a packet is recieved
  * @param send_cb the callback function to run when a packet is sent
  * successfully.
+ * @return ESP_OK on success, or the first failing ESP-NOW API esp_err_t.
  **/
-void init_espnow(esp_now_recv_cb_t recv_cb, esp_now_send_cb_t send_cb);
+esp_err_t init_espnow(esp_now_recv_cb_t recv_cb, esp_now_send_cb_t send_cb);
 
 #endif // RIG_SHARED_H

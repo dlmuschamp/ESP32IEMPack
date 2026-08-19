@@ -62,7 +62,8 @@ esp_now_rate_config_t peer_rate_cfg = {.rate = WIFI_PHY_RATE_24M,
 /**
  * @brief checks if recieved packet is an RX-pack requesting to connect with the
  * TX-pack. Adds the RX-pack as a TX-pack peer if it contains a valid alias.
- * Ignores if already connected or not a valid RX-pack.
+ * Ignores if already connected or not a valid RX-pack. Logs invalid packets
+ * without aborting; packet loss and malformed RX pings are not fatal.
  * @param *esp_now_info the packet meta-data containing the SRC_ADDRESS
  * @param *data pointer to full packet data
  * @param data_size size of recieved packet
@@ -71,12 +72,12 @@ static void recv_cb(const esp_now_recv_info_t *esp_now_info,
                     const uint8_t *data, int data_size) {
 
     if (!esp_now_info) {
-        ESP_LOGE(TX, "Recieved NULL pointer on recv_cb.");
+        ESP_LOGW(TX, "Recieved NULL pointer on recv_cb.");
         return;
     }
 
     if (data_size != sizeof(pairing_req_packet_t)) {
-        ESP_LOGE(TX,
+        ESP_LOGW(TX,
                  "Received data size differs from pairing_req_packet_t size.");
         return;
     }
@@ -95,7 +96,7 @@ static void recv_cb(const esp_now_recv_info_t *esp_now_info,
         esp_now_set_peer_rate_config(new_peer.peer_addr, &peer_rate_cfg);
 
     if (rate_status != ESP_OK) {
-        ESP_LOGE(TX, "Failed to configure peer rate.");
+        ESP_LOGW(TX, "Failed to configure peer rate.");
         return;
     } else {
         ESP_LOGI(TX, "Configured peer rate successfully.");
@@ -113,7 +114,7 @@ static void recv_cb(const esp_now_recv_info_t *esp_now_info,
     } else if (add_status == ESP_ERR_ESPNOW_EXIST) {
         ESP_LOGI(TX, "RX already paired.");
     } else {
-        ESP_LOGE(TX, "Failed to add RX as peer.");
+        ESP_LOGW(TX, "Failed to add RX as peer.");
         pair_state_t fail_msg = PAIR_FAIL;
         esp_now_send(new_peer.peer_addr, (uint8_t *)&fail_msg,
                      sizeof(fail_msg));
@@ -123,9 +124,8 @@ static void recv_cb(const esp_now_recv_info_t *esp_now_info,
 // --- HARDWARE INIT ---
 
 /**
- * @brief verifies if a valid outgoing packet was recieved by an rx-pack. Throws
- * an error if the outgoing packet is null. Increments the number of dropped
- * packets if packet not recieved by at least one rx-pack.
+ * @brief logs if transmit meta-data is null. Increments dropped_packets if the
+ * packet was not received by at least one RX. Packet loss is not fatal.
  * @param *info transmit packet meta-data
  * @param status transmitted packet status
  **/
@@ -133,20 +133,22 @@ static void send_cb(const esp_now_send_info_t *info,
                     esp_now_send_status_t status) {
 
     if (!info) {
-        ESP_LOGE(TX, "TX info is a NULL pointer.");
+        ESP_LOGW(TX, "TX info is a NULL pointer.");
         return;
     }
 
     if (status != ESP_NOW_SEND_SUCCESS) {
         dropped_packets++;
+        ESP_LOGI(TX, "Dropped packets: %lu", (unsigned long)dropped_packets);
     }
 }
 
 /**
  * @brief configure the esp to communicate with the external PCM1808 ADC by
  * configuring the i2s channel, configs, and enabling it.
+ * @return ESP_OK on success, or the first failing I2S API esp_err_t.
  **/
-static void init_i2s_pcm1808(void) {
+static esp_err_t init_i2s_pcm1808(void) {
     i2s_chan_config_t i2s_chan_cfg =
         I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_0, I2S_ROLE_MASTER);
 
@@ -167,20 +169,33 @@ static void init_i2s_pcm1808(void) {
     // 256*fs is a valid PCM1808 SCKI ratio and divides cleanly with 64*fs BCK.
     i2s_std_cfg.clk_cfg.mclk_multiple = I2S_MCLK_MULTIPLE_256;
 
-    ESP_ERROR_CHECK(i2s_new_channel(&i2s_chan_cfg, NULL, &i2s_adc_chan));
-    ESP_ERROR_CHECK(i2s_channel_init_std_mode(i2s_adc_chan, &i2s_std_cfg));
-    ESP_ERROR_CHECK(i2s_channel_enable(i2s_adc_chan));
+    esp_err_t err = i2s_new_channel(&i2s_chan_cfg, NULL, &i2s_adc_chan);
+    if (err != ESP_OK) {
+        ESP_LOGE(TX, "Failed to create I2S ADC channel.");
+        return err;
+    }
+    err = i2s_channel_init_std_mode(i2s_adc_chan, &i2s_std_cfg);
+    if (err != ESP_OK) {
+        ESP_LOGE(TX, "Failed to init I2S ADC std mode.");
+        return err;
+    }
+    err = i2s_channel_enable(i2s_adc_chan);
+    if (err != ESP_OK) {
+        ESP_LOGE(TX, "Failed to enable I2S ADC channel.");
+        return err;
+    }
     gpio_set_drive_capability(0, GPIO_DRIVE_CAP_3);
+    return ESP_OK;
 }
 
 // --- MAIN THREAD ---
 void app_main(void) {
     printf("Booting TX Node...\n");
 
-    init_nvs();
-    init_wifi();
-    init_espnow(recv_cb, send_cb);
-    init_i2s_pcm1808();
+    ESP_ERROR_CHECK(init_nvs());
+    ESP_ERROR_CHECK(init_wifi());
+    ESP_ERROR_CHECK(init_espnow(recv_cb, send_cb));
+    ESP_ERROR_CHECK(init_i2s_pcm1808());
 
     printf("Waiting for RX bodypacks to ping...\n");
 
