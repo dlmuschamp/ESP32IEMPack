@@ -17,7 +17,7 @@
 rule C_COMPILER__bootloader.2eelf_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -25,7 +25,7 @@ rule C_COMPILER__bootloader.2eelf_unscanned_
 # Rule for linking C executable.
 
 rule C_EXECUTABLE_LINKER__bootloader.2eelf_
-  command = $PRE_LINK && /home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+  command = $PRE_LINK && /home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking C executable $TARGET_FILE
   restat = $RESTAT
 
@@ -44,7 +44,7 @@ rule CUSTOM_COMMAND
 rule C_COMPILER____idf_xtensa_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -52,7 +52,7 @@ rule C_COMPILER____idf_xtensa_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_xtensa_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -63,7 +63,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_xtensa_
 rule C_COMPILER____idf_soc_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -71,7 +71,7 @@ rule C_COMPILER____idf_soc_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_soc_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -82,7 +82,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_soc_
 rule C_COMPILER____idf_hal_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -90,7 +90,7 @@ rule C_COMPILER____idf_hal_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_hal_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -101,7 +101,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_hal_
 rule C_COMPILER____idf_esp_hal_gpio_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -109,7 +109,7 @@ rule C_COMPILER____idf_esp_hal_gpio_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_gpio_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -120,7 +120,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_gpio_
 rule C_COMPILER____idf_esp_hal_pmu_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -128,7 +128,7 @@ rule C_COMPILER____idf_esp_hal_pmu_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_pmu_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -139,7 +139,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_pmu_
 rule C_COMPILER____idf_esp_hal_uart_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -147,7 +147,7 @@ rule C_COMPILER____idf_esp_hal_uart_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_uart_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -158,7 +158,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_uart_
 rule C_COMPILER____idf_esp_hal_gpspi_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -166,7 +166,7 @@ rule C_COMPILER____idf_esp_hal_gpspi_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_gpspi_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -177,7 +177,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_gpspi_
 rule C_COMPILER____idf_esp_hal_clock_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -185,7 +185,7 @@ rule C_COMPILER____idf_esp_hal_clock_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_clock_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -196,7 +196,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_clock_
 rule C_COMPILER____idf_esp_hal_mspi_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -204,7 +204,7 @@ rule C_COMPILER____idf_esp_hal_mspi_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_mspi_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -215,7 +215,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_mspi_
 rule C_COMPILER____idf_spi_flash_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -223,7 +223,7 @@ rule C_COMPILER____idf_spi_flash_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_spi_flash_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -234,7 +234,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_spi_flash_
 rule C_COMPILER____idf_esp_bootloader_format_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -242,7 +242,7 @@ rule C_COMPILER____idf_esp_bootloader_format_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_bootloader_format_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -253,7 +253,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_bootloader_format_
 rule C_COMPILER____idf_micro-ecc_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -261,7 +261,7 @@ rule C_COMPILER____idf_micro-ecc_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_micro-ecc_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -272,7 +272,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_micro-ecc_
 rule C_COMPILER____idf_esp_hal_timg_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -280,7 +280,7 @@ rule C_COMPILER____idf_esp_hal_timg_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_timg_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -291,7 +291,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_timg_
 rule C_COMPILER____idf_esp_hal_wdt_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -299,7 +299,7 @@ rule C_COMPILER____idf_esp_hal_wdt_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_wdt_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -310,7 +310,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_wdt_
 rule C_COMPILER____idf_esp_hal_i2s_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -318,7 +318,7 @@ rule C_COMPILER____idf_esp_hal_i2s_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_i2s_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -329,7 +329,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_i2s_
 rule C_COMPILER____idf_esp_hal_ana_conv_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -337,7 +337,7 @@ rule C_COMPILER____idf_esp_hal_ana_conv_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_ana_conv_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -348,7 +348,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_ana_conv_
 rule C_COMPILER____idf_esp_hal_security_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -356,7 +356,7 @@ rule C_COMPILER____idf_esp_hal_security_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_security_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -367,7 +367,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hal_security_
 rule C_COMPILER____idf_esp_security_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -375,7 +375,7 @@ rule C_COMPILER____idf_esp_security_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_security_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -386,7 +386,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_security_
 rule C_COMPILER____idf_bootloader_support_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -394,7 +394,7 @@ rule C_COMPILER____idf_bootloader_support_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_bootloader_support_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -405,7 +405,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_bootloader_support_
 rule C_COMPILER____idf_efuse_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -413,7 +413,7 @@ rule C_COMPILER____idf_efuse_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_efuse_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -424,7 +424,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_efuse_
 rule C_COMPILER____idf_esp_system_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -432,7 +432,7 @@ rule C_COMPILER____idf_esp_system_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_system_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -443,7 +443,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_system_
 rule C_COMPILER____idf_esp_hw_support_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -451,7 +451,7 @@ rule C_COMPILER____idf_esp_hw_support_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_hw_support_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -462,7 +462,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_hw_support_
 rule C_COMPILER____idf_esp_common_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -470,7 +470,7 @@ rule C_COMPILER____idf_esp_common_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_common_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -481,7 +481,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_common_
 rule ASM_COMPILER____idf_esp_rom_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building ASM object $out
 
 
@@ -491,7 +491,7 @@ rule ASM_COMPILER____idf_esp_rom_unscanned_
 rule C_COMPILER____idf_esp_rom_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -499,7 +499,7 @@ rule C_COMPILER____idf_esp_rom_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_esp_rom_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -510,7 +510,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_esp_rom_
 rule C_COMPILER____idf_log_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -518,7 +518,7 @@ rule C_COMPILER____idf_log_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_log_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -529,7 +529,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_log_
 rule C_COMPILER____idf_main_unscanned_
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building C object $out
 
 
@@ -537,7 +537,7 @@ rule C_COMPILER____idf_main_unscanned_
 # Rule for linking C static library.
 
 rule C_STATIC_LIBRARY_LINKER____idf_main_
-  command = $PRE_LINK && /usr/sbin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && xtensa-esp32-elf-gcc-ar qc $TARGET_FILE $LINK_FLAGS $in && xtensa-esp32-elf-gcc-ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT
 
@@ -546,7 +546,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_main_
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /usr/sbin/cmake --regenerate-during-build -S/home/damian-win/esp/esp-idf/components/bootloader/subproject -B/home/damian-win/projects/ESP32IEMPack/build/bootloader
+  command = /usr/bin/cmake --regenerate-during-build -S/home/luciano/esp/esp-idf/components/bootloader/subproject -B/home/luciano/Projects/ESP32IEMPack/build/bootloader
   description = Re-running CMake...
   generator = 1
 
@@ -555,7 +555,7 @@ rule RERUN_CMAKE
 # Rule for cleaning additional files.
 
 rule CLEAN_ADDITIONAL
-  command = /usr/sbin/cmake -DCONFIG=$CONFIG -P CMakeFiles/clean_additional.cmake
+  command = /usr/bin/cmake -DCONFIG=$CONFIG -P CMakeFiles/clean_additional.cmake
   description = Cleaning additional files...
 
 
@@ -563,7 +563,7 @@ rule CLEAN_ADDITIONAL
 # Rule for cleaning all built files.
 
 rule CLEAN
-  command = /usr/sbin/ninja $FILE_ARG -t clean $TARGETS
+  command = /usr/bin/ninja $FILE_ARG -t clean $TARGETS
   description = Cleaning all built files...
 
 
@@ -571,6 +571,6 @@ rule CLEAN
 # Rule for printing all primary targets available.
 
 rule HELP
-  command = /usr/sbin/ninja -t targets
+  command = /usr/bin/ninja -t targets
   description = All primary targets available:
 

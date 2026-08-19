@@ -15,4 +15,4 @@ endif()
 
 idf_component_register(SRCS "${COMPONENT_SRCS}"
                        INCLUDE_DIRS "."
-                       REQUIRES "driver" "esp_wifi" "nvs_flash" "esp_driver_i2s" "esp_adc" "esp_driver_ledc")
+                       REQUIRES  driver esp_wifi nvs_flash esp_driver_i2s esp_adc esp_driver_ledc freertos esp_driver_gpio)
