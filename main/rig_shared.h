@@ -14,9 +14,14 @@
 #include <sys/types.h>
 
 // --- ESP-NOW CONSTRAINTS ---
-#define MAX_ESPNOW_PAYLOAD_BYTES 1470
-#define AUDIO_DATA_NUM_SAMPLES                                                 \
-    256 // smaller sample size reduces latency but needs higher throughput
+// ESP32-WROOM on IDF ≥ 5.4 speaks ESP-NOW v2 (up to ESP_NOW_MAX_DATA_LEN_V2).
+// Keep audio_packet_t ≤ that limit. Confirm at runtime with esp_now_get_version().
+#define MAX_ESPNOW_PAYLOAD_BYTES ESP_NOW_MAX_DATA_LEN_V2
+// Interleaved stereo int16s per packet. Must be even (L/R pairs).
+// 192 samples = 96 frames @ 48 kHz ≈ 2.0 ms/packet, 384 B, ~500 pkt/s.
+// Balance: low packetization delay without flooding 2.4 GHz in a crowd.
+#define AUDIO_DATA_NUM_SAMPLES 192
+#define AUDIO_FRAMES_PER_PACKET (AUDIO_DATA_NUM_SAMPLES / 2)
 #define ALIAS_BUFFER_SIZE 16
 #define MAC_ADDRESS_LEN 6
 #define SAMPLE_RATE 48000
@@ -42,12 +47,10 @@ typedef struct {
 } pairing_req_packet_t;
 
 /**
- * @brief An (encrypted after refactor) packet sent from the TX to the RX.
- * Includes a packet_id to keep track of the number of dropped packets in
- * addition to the actual audio data to be played by the .
+ * @brief PCM payload from TX → RX (unencrypted for now).
+ * Size must stay ≤ ESP_NOW_MAX_DATA_LEN_V2 (ESP-NOW v2 / IDF ≥ 5.4).
  **/
 typedef struct {
-    //    uint8_t packet_id;
     int16_t audio_data[AUDIO_DATA_NUM_SAMPLES];
 } audio_packet_t;
 

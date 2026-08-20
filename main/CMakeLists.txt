@@ -1,13 +1,13 @@
 # Enforce explicit selection of the build target
 if($ENV{IEM_NODE} MATCHES "RX")
     message(STATUS "Build target is set to RECEIVER (rx.c)")
-    set(COMPONENT_SRCS "rx.c")
+    set(COMPONENT_SRCS "rx.c" "rig_shared.c")
 elseif($ENV{IEM_NODE} MATCHES "TX")
     message(STATUS "Build target is set to TRANSMITTER (tx.c)")
-    set(COMPONENT_SRCS "tx.c")
+    set(COMPONENT_SRCS "tx.c" "rig_shared.c")
 elseif($ENV{IEM_NODE} MATCHES "MON")
     message(STATUS "Build target is set to MONITOR (mon.c)")
-    set(COMPONENT_SRCS "mon.c")
+    set(COMPONENT_SRCS "mon.c" "rig_shared.c")
 else()
     # This halts the build immediately if no valid variable is provided
     message(FATAL_ERROR "ABORTED: You must specify a valid target! (e.g., IEM_NODE=RX idf.py build)")
