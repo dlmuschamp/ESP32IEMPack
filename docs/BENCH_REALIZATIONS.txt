@@ -1,0 +1,112 @@
+ESP32 IEM Pack — Bench Realizations (2026-08-20 night)
+======================================================
+Author context: first embedded C project, first ESP32, first ESP-IDF /
+FreeRTOS, first serious datasheet reading, first KiCad board work.
+
+These notes capture what we learned the hard way while getting TX→RX
+audio streaming over ESP-NOW. Prefer this file + README.org over tribal
+memory from chat logs.
+
+
+1. POWER IS THE LINK
+--------------------
+- TX on laptop USB paired reliably; TX on the small pack battery often
+  never even saw RX pairing ads (TX stayed in "Waiting for RX peers").
+- Two 10000 mAh power banks powering BOTH packs: immediate pair, louder
+  audio. Strong evidence the flaky link was TX undervolt / current starve
+  when Wi‑Fi + I2S wake together — not "RF is impossible."
+- Laptop USB was "enough current + regulation," but opening serial on
+  CP2102 often toggles DTR/RTS and REBOOTS the board → looks like a
+  random audio cutout. Do not open TX serial if you want the stream to
+  stay up.
+- Power banks fixed pairing current; they did NOT add filtering. Cheap
+  cables + bare rails → more DAC static/crackle. Amp makes it worse.
+  Need bulk + 0.1 µF local caps near ESP 3V3 / codec supplies, short
+  grounds, short I2S wires.
+
+
+2. WHAT "WORKING AUDIO" ACTUALLY MEANS
+--------------------------------------
+Branches:
+  working_audio_v1  — freeze of first known streaming tree
+  working_audio_v2  — reconnect stack that sounded best on bench
+                      (soft-join, PS_NONE, 720-sample packets)
+
+Common to good builds:
+  - WIFI_PS_NONE (modem sleep drops ESP-NOW ads while idle)
+  - ESP-NOW v2, audio_packet_t = 720 int16 samples (1440 B) @ 48 kHz
+  - PCM1808: 32-bit Philips slots, MCLK ×256 (64 BCK/frame). Do NOT use
+    16-bit slots (ADC goes silent). Do NOT casually switch to 24-bit
+    data + MCLK ×384 without a known-good rollback plan — it broke us.
+  - Channel 1, unencrypted ESP-NOW for bring-up
+  - Soft join: correctly sized audio while pairing is proof of delivery
+    when PAIR_SUCCESS ACK is starved by the audio flood
+
+v2 extras (helps + hurts):
+  - Soft reconnect from audio  → good
+  - TX clears peer on send_cb fail streak / ~1.5 s timeout → needed for
+    re-pair, also explains sudden cutouts if the air/power is marginal
+  - PHY 12M (v1 had 24M)
+  - Pace esp_now_send on send_cb
+
+
+3. PAIRING / RECONNECT PITFALLS
+-------------------------------
+- A lone 1-byte 0x01 (PAIR_SUCCESS) from ANY nearby ESP can flip RX into
+  playback, start DAC clocks, and STOP advertising → TX sits idle forever.
+  Prefer: remember ACK, but only enter playback on soft-join from a real
+  audio_packet_t (or use a stronger ACK token later).
+- While RX is in playback with silence, keep sending repair ads after
+  ~400 ms idle so a rebooted TX can re-pair without an RX power cycle.
+- RX in pairing with I2S disabled: ~1 Hz "click" in headphones often
+  matches pairing heartbeat (Wi‑Fi TX current into the amp), NOT BCK.
+- One USB cable = you only ever see one side. Dual serial (desktop) is
+  the right way to debug cutouts.
+
+
+4. I2S / AUDIO PATH
+-------------------
+- PCM1808 slave needs 64 BCK/frame → use 32-bit stereo slots.
+- Pack 32-bit I2S words down with >>16 for int16 on the air.
+- PCM5102: FMT low = I2S; DEMP NC/low = de-emphasis off (NC is OK).
+- FLT: normal-latency FIR can sound softer than low-latency mode.
+- "Sounds like a low-pass filter" is still an open software/hardware
+  profile issue AFTER the link is stable — do not chase timbre while
+  power/pairing is broken.
+- Ambient hiss with no music at high laptop gain is mostly ADC/line
+  noise; fine to defer.
+
+
+5. TOOLING / FLASH DISCIPLINE
+-----------------------------
+- IEM_NODE=TX|RX is configure-time. Always reconfigure (or fullclean)
+  before flash after switching roles, or you will flash the wrong image
+  onto the wrong pack (we did this once).
+- Keep stamped bins under firmware_out/ (gitignored), e.g.
+  working_audio_v2_tx.bin / working_audio_v2_rx.bin
+- Build: IEM_NODE=TX idf.py build
+         IEM_NODE=RX idf.py reconfigure build
+- Prefer powering packs from dedicated supplies for listening tests;
+  use USB only for flash/monitor.
+
+
+6. HARDWARE NEXT (NOISE / CRACKLE)
+----------------------------------
+- Bulk electrolytic on 5V near each ESP + 0.1 µF at codec AVDD/DVDD
+- Short star ground back to supply 0V
+- Short I2S jumpers; avoid long Dupont nests on breadboard
+- Better cables than the stock ESP32 USB leads for analog listening
+
+
+7. PROCESS LESSON
+-----------------
+Bring-up order that wasted the least time once we knew it:
+  1) Prove DAC with square_wave_test / known PCM
+  2) Prove ADC capture + pack format
+  3) Prove ESP-NOW with small packets, then v2 audio size
+  4) Fix power so BOTH packs can TX Wi‑Fi without brownout
+  5) Harden pairing/reconnect
+  6) Only then chase timbre / filtering / amp
+
+If pairing fails: check power first, then which image is on which board,
+then whether RX is advertising vs stuck in playback, then RF.

@@ -1,0 +1,168 @@
+#+TITLE: ESP32 Wireless IEM Pack
+#+AUTHOR: Damian Luciano Muschamp
+#+OPTIONS: toc:3 num:nil
+
+* What this is
+
+A two-pack wireless in-ear monitor (IEM) prototype:
+
+- *TX pack* — ESP32-WROOM + PCM1808 ADC captures line/stereo PCM and
+  streams it over *ESP-NOW v2*.
+- *RX pack* — ESP32-WROOM + PCM5102 DAC plays the stream into a headphone
+  amp / IEMs.
+
+This repo is the firmware (ESP-IDF, C, FreeRTOS) plus KiCad hardware
+work. It is *not* a finished product UI — it is a bring-up of the audio
+link.
+
+* Honest origin story (why this README exists)
+
+This is Luciano's first serious pass at:
+
+- Embedded C (not Arduino-sketch style as the end goal)
+- ESP32 + *ESP-IDF*
+- *FreeRTOS* tasks, queues, dual-core pinning
+- Reading TI / Espressif *datasheets* and driver docs for real decisions
+- *KiCad* for schematics / board work for the first time
+- Wireless audio (ESP-NOW, PHY rates, power-save footguns)
+- I2S codecs (PCM1808 ADC, PCM5102 DAC)
+
+A lot of nights were spent learning vocabulary (BCK, LRCK, MCLK, slots,
+Philips vs MSB, ESP-NOW v1 vs v2) while the hardware was still on a
+breadboard with questionable power. This document is meant to be the
+map you wished you had on day one — including the mistakes.
+
+* Current status (as of working_audio_v2 / late Aug 2026)
+
+| Item | Status |
+|------+--------|
+| TX capture (PCM1808, 32-bit I2S slots, MCLK×256) | Working |
+| ESP-NOW v2 audio packets (720×int16 ≈ 7.5 ms @ 48 kHz) | Working |
+| RX playback (PCM5102) | Working |
+| Pairing + soft-join when ACK is starved | Working |
+| Steady audio on adequate power (e.g. two USB power banks) | Working |
+| Timbre ("sounds low-pass filtered") | Open |
+| Clean power / low crackle on breadboard | Open (hardware) |
+| TFT UI / polished product firmware | Not the focus yet |
+
+Frozen branches:
+
+- ~working_audio_v1~ — first known streaming snapshot
+- ~working_audio_v2~ — best reconnect + steady audio snapshot so far
+
+See also: [[file:docs/BENCH_REALIZATIONS.txt][docs/BENCH_REALIZATIONS.txt]] for the long form of what we
+learned on the bench.
+
+* Hardware (bring-up)
+
+** Roles
+
+| Pack | MCU | Audio IC | Role |
+|------+-----+----------+------|
+| TX | ESP32-WROOM-32U (ext antenna) | PCM1808 | I2S master RX ← ADC |
+| RX | ESP32-WROOM-32U | PCM5102 | I2S master TX → DAC |
+
+** I2S notes that matter
+
+- PCM1808 in slave mode wants *64 BCK/frame* → configure *32-bit stereo*
+  Philips slots. 16-bit slots (32 BCK/frame) → silent ADC.
+- MCLK ×256 is a valid PCM1808 ratio and matched our working builds.
+  A casual jump to 24-bit data + MCLK×384 broke a known-good path —
+  only revisit with a rollback bin ready.
+- PCM5102: FMT low = I2S; DEMP low/NC = de-emphasis off.
+
+** Power (the lesson that unlocked pairing)
+
+Marginal power on the TX pack looks exactly like "RF is broken":
+
+- TX on weak battery → often never receives pairing ads.
+- TX on laptop USB → pairs; opening ~idf.py monitor~ / pyserial can
+  still *reboot* the board via CP2102 DTR/RTS → audio drops.
+- Two decent USB power banks on *both* packs → instant pair, louder
+  audio (more supply noise / crackle without caps).
+
+For listening tests, prefer dedicated supplies. Use USB for flash and
+short log peeks. Add bulk electrolytics + 0.1 µF at codec rails before
+chasing "digital crackle."
+
+KiCad schematics / PCB work live under ~KiCad/~.
+
+* Firmware overview
+
+** Build / flash (ESP-IDF)
+
+~IEM_NODE~ is *configure-time*. Wrong node + stale build = wrong image
+on the wrong pack (we bricked a bring-up evening that way once).
+
+#+begin_src bash
+source ~/esp/esp-idf/export.sh   # or your IDF install
+
+# Transmitter
+IEM_NODE=TX idf.py fullclean   # when switching roles
+IEM_NODE=TX idf.py reconfigure build
+IEM_NODE=TX idf.py -p /dev/ttyUSB0 flash
+
+# Receiver
+IEM_NODE=RX idf.py fullclean
+IEM_NODE=RX idf.py reconfigure build
+IEM_NODE=RX idf.py -p /dev/ttyUSB0 flash
+#+end_src
+
+Stamped binaries (gitignored): ~firmware_out/~  
+e.g. ~working_audio_v2_tx.bin~, ~working_audio_v2_rx.bin~.
+
+** Main sources
+
+| File | Purpose |
+|------+---------|
+| ~main/tx.c~ | TX FSM: idle → pair → capture/stream |
+| ~main/rx.c~ | RX FSM: pair → playback; soft-join / repair ads |
+| ~main/rig_shared.h~ / ~.c~ | Packet layouts, Wi‑Fi / ESP-NOW init, PS_NONE |
+| ~main/rx_temp_debug.h~ | Optional RX_DBG logs (toggle with macro) |
+| ~main/square_wave_test.c~ | Early DAC sanity (not the shipping app) |
+
+** Protocol sketch
+
+1. RX advertises a short ~IEM_RX_…~ alias (broadcast, and unicast to last
+   TX when known).
+2. TX queues the request, ~esp_now_add_peer~, ACKs ~PAIR_SUCCESS~, then
+   streams ~audio_packet_t~.
+3. If ACKs are starved by audio, RX *soft-joins* on a correctly sized
+   audio packet (app-layer proof of delivery).
+4. TX may clear a dead peer on MAC send-fail / timeout so it can idle
+   and accept a new advert.
+5. Prefer not starting DAC playback on a lone 1-byte ~0x01~ ACK (any
+   nearby ESP can spoof that and leave RX mute-and-not-advertising).
+
+** FreeRTOS / dual core (what you bump into first)
+
+- Wi‑Fi / ESP-NOW callbacks run in the Wi‑Fi task — keep them short
+  (queue work; do not ~esp_now_add_peer~ / heavy I2S in the callback).
+- Audio capture (TX) and playback (RX) are pinned to core 1 with a
+  dedicated stack size (~AUDIO_TASK_STACK~).
+- Pointer pools + FreeRTOS queues bound latency (drop-oldest under
+  load) instead of unbounded buffering.
+
+* Learning path (recommended order)
+
+1. Blink / UART logging on ESP-IDF (prove the toolchain).
+2. Square wave → PCM5102 (prove DAC + I2S pins).
+3. PCM1808 capture → log peaks (prove ADC clocks / bit packing).
+4. Tiny ESP-NOW ping, then grow to v2 payload size.
+5. *Fix power* so both packs can transmit Wi‑Fi without brownout.
+6. Pairing FSM + reconnect.
+7. Only then: timbre, filtering, amp, UI.
+
+Reading datasheets is not optional on this project — the PCM1808 BCK
+rule alone is a multi-hour footgun if you skip §serial audio interface.
+
+* Known open issues
+
+- Dull / LPF-like timbre vs the source.
+- Breadboard crackle / supply noise (caps, grounds, short I2S).
+- Reconnect still imperfect under bad power or USB serial reboots.
+- Product UI / display path from the old README is deferred.
+
+* Author
+
+Damian Luciano Muschamp

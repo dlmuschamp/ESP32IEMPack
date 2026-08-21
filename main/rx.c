@@ -38,6 +38,10 @@
 #define LINK_CHECK_INTERVAL_MS 100
 // No audio packet for this long → drop back to pairing.
 #define CONNECTION_TIMEOUT_MS 2000
+// While still in playback, poke TX with pair ads after this much silence so a
+// rebooted/idle TX can re-pair without an RX power cycle (USB serial open
+// resets TX via CP2102 DTR and was leaving RX mute until manual reboot).
+#define REPAIR_ADVERTISE_AFTER_MS 400
 // Pointer-pool jitter buffer (queues hold pointers, not full packets).
 // 12 × ~7.5 ms ≈ 90 ms worst case; drop-oldest keeps latency bounded.
 #define NUM_QUEUE_SLOTS 12
@@ -283,10 +287,16 @@ static void handle_pairing_result(const uint8_t *data, const uint8_t *tx_mac) {
             memcpy(paired_tx_mac, tx_mac, ESP_NOW_ETH_ALEN);
             have_paired_tx = true;
         }
-        ESP_LOGI(PAIR, "Paired with TX; entering audio playback.");
-        rx_dbg_mode("PAIR_SUCCESS", RX_MODE_AUDIO_PLAYBACK);
-        last_packet_time = xTaskGetTickCount();
-        cur_mode = RX_MODE_AUDIO_PLAYBACK;
+        // Do NOT start DAC on a lone 1-byte ACK — any nearby ESP sending 0x01
+        // would enter playback, stop advertising, and leave TX idle forever
+        // (bench: ~1s click / no re-pair after TX USB reset). Playback starts
+        // only on soft join from a matching audio_packet_t.
+        ESP_LOGI(PAIR,
+                 "Got PAIR_SUCCESS from %02X:%02X:%02X:%02X:%02X:%02X; "
+                 "keep advertising until audio soft join.",
+                 tx_mac ? tx_mac[0] : 0, tx_mac ? tx_mac[1] : 0,
+                 tx_mac ? tx_mac[2] : 0, tx_mac ? tx_mac[3] : 0,
+                 tx_mac ? tx_mac[4] : 0, tx_mac ? tx_mac[5] : 0);
         return;
     }
 
@@ -442,33 +452,37 @@ static void audio_playback_task(void *pvParameters) {
 }
 
 /**
+ * @brief One pairing advert: broadcast, plus unicast to last TX if known.
+ */
+static void send_one_pairing_advert(void) {
+    pairing_req_packet_t req = {0};
+    snprintf(req.alias, sizeof(req.alias), "%s", unique_alias);
+
+    esp_err_t err = esp_now_send(BROADCAST_MAC, (uint8_t *)&req, sizeof(req));
+    if (err != ESP_OK) {
+        ESP_LOGW(PAIR, "Pairing broadcast failed: %s", esp_err_to_name(err));
+    }
+
+    if (have_paired_tx) {
+        err = esp_now_send(paired_tx_mac, (uint8_t *)&req, sizeof(req));
+        if (err != ESP_OK) {
+            ESP_LOGW(PAIR, "Pairing unicast failed: %s", esp_err_to_name(err));
+        }
+    }
+}
+
+/**
  * @brief Broadcast (and unicast-to-last-TX) pairing requests until mode changes.
  */
 static void send_pairing_req(void) {
-    pairing_req_packet_t req = {0};
-    snprintf(req.alias, sizeof(req.alias), "%s", unique_alias);
     uint32_t heartbeat = 0;
 
-    ESP_LOGI(PAIR, "Advertising pairing request as %s%s.", req.alias,
+    ESP_LOGI(PAIR, "Advertising pairing request as %s%s.", unique_alias,
              have_paired_tx ? " (broadcast+unicast)" : " (broadcast)");
     rx_dbg_mode("enter_pairing", RX_MODE_PAIRING);
 
     while (cur_mode == RX_MODE_PAIRING) {
-        esp_err_t err =
-            esp_now_send(BROADCAST_MAC, (uint8_t *)&req, sizeof(req));
-        if (err != ESP_OK) {
-            ESP_LOGW(PAIR, "Pairing broadcast failed: %s",
-                     esp_err_to_name(err));
-        }
-
-        // Unicast hits a busy TX much more reliably than broadcast.
-        if (have_paired_tx) {
-            err = esp_now_send(paired_tx_mac, (uint8_t *)&req, sizeof(req));
-            if (err != ESP_OK) {
-                ESP_LOGW(PAIR, "Pairing unicast failed: %s",
-                         esp_err_to_name(err));
-            }
-        }
+        send_one_pairing_advert();
 
         heartbeat++;
         if ((heartbeat % 5) == 0) {
@@ -583,16 +597,28 @@ static void run_audio_playback_state(void) {
         return;
     }
 
+    TickType_t last_repair_advert = 0;
+
     while (cur_mode == RX_MODE_AUDIO_PLAYBACK) {
         vTaskDelay(pdMS_TO_TICKS(LINK_CHECK_INTERVAL_MS));
 
-        TickType_t idle_ticks = xTaskGetTickCount() - last_packet_time;
+        TickType_t now = xTaskGetTickCount();
+        TickType_t idle_ticks = now - last_packet_time;
         if (idle_ticks > pdMS_TO_TICKS(CONNECTION_TIMEOUT_MS)) {
             uint32_t idle_ms =
                 (uint32_t)(idle_ticks * portTICK_PERIOD_MS);
             ESP_LOGW(AUDIO, "TX link timeout; returning to pairing.");
             rx_dbg_link("link timeout", idle_ms, CONNECTION_TIMEOUT_MS);
             cur_mode = RX_MODE_PAIRING;
+            break;
+        }
+
+        if (idle_ticks > pdMS_TO_TICKS(REPAIR_ADVERTISE_AFTER_MS) &&
+            (now - last_repair_advert) >= pdMS_TO_TICKS(PAIRING_INTERVAL_MS)) {
+            send_one_pairing_advert();
+            last_repair_advert = now;
+            RX_DBG_LOGI("repair advert while playback idle %lu ms",
+                        (unsigned long)(idle_ticks * portTICK_PERIOD_MS));
         }
     }
 
