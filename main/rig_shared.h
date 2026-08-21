@@ -15,17 +15,18 @@
 
 // --- ESP-NOW CONSTRAINTS ---
 // ESP32-WROOM on IDF ≥ 5.4 speaks ESP-NOW v2 (up to ESP_NOW_MAX_DATA_LEN_V2).
-// Keep audio_packet_t ≤ that limit. Confirm at runtime with esp_now_get_version().
+// Keep audio_packet_t ≤ that limit. Confirm at runtime with
+// esp_now_get_version().
 #define MAX_ESPNOW_PAYLOAD_BYTES ESP_NOW_MAX_DATA_LEN_V2
 // Interleaved stereo int16s per packet. Must be even (L/R pairs).
-// 192 samples = 96 frames @ 48 kHz ≈ 2.0 ms/packet, 384 B, ~500 pkt/s.
-// Balance: low packetization delay without flooding 2.4 GHz in a crowd.
-#define AUDIO_DATA_NUM_SAMPLES 192
+// 720 samples = 360 frames @ 48 kHz ≈ 7.5 ms/packet, 1440 B (< 1470 v2 max),
+// ~133 pkt/s — much less ESP-NOW / queue pressure than 2–3 ms packets.
+#define AUDIO_DATA_NUM_SAMPLES 720
 #define AUDIO_FRAMES_PER_PACKET (AUDIO_DATA_NUM_SAMPLES / 2)
 #define ALIAS_BUFFER_SIZE 16
 #define MAC_ADDRESS_LEN 6
 #define SAMPLE_RATE 48000
-
+#define AUDIO_TASK_STACK 12288
 // --- ESP-NOW CHANNELS ---
 #define DEFAULT_CHANNEL 1
 #define SECONDARY_CHANNEL WIFI_SECOND_CHAN_NONE
@@ -35,6 +36,8 @@
 
 // --- ENUMS ---
 typedef enum { PAIR_SUCCESS = 0x01, PAIR_FAIL = 0x02 } pair_state_t;
+// On-wire pairing ACK/NACK length (always send this many bytes from TX).
+#define PAIR_ACK_LEN 1
 
 // --- STRUCTS ---
 /**
@@ -82,4 +85,9 @@ esp_err_t init_wifi(void);
  **/
 esp_err_t init_espnow(esp_now_recv_cb_t recv_cb, esp_now_send_cb_t send_cb);
 
+/**
+ * @brief Checks the current espnow version and aborts app_main if current
+ * version is earlier than v2.
+ **/
+void verify_espnow_ver();
 #endif // RIG_SHARED_H
