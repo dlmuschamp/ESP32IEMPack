@@ -32,21 +32,25 @@
 
 // --- TIMING / BUFFERS ---
 // Pairing broadcast interval while unpaired.
-#define PAIRING_INTERVAL_MS 500
+#define PAIRING_INTERVAL_MS 200
 // Link-loss poll period while playing audio.
 #define LINK_CHECK_INTERVAL_MS 100
 // No audio packet for this long → drop back to pairing.
 #define CONNECTION_TIMEOUT_MS 2000
-// Emergency jitter buffer only (steady state should stay near empty).
-// 3 × ~2.0 ms ≈ 6 ms if completely full — should not be the normal path.
-#define NUM_QUEUE_SLOTS 3
+// Pointer-pool jitter buffer (queues hold pointers, not full packets).
+// 12 × ~7.5 ms ≈ 90 ms worst case; drop-oldest keeps latency bounded.
+#define NUM_QUEUE_SLOTS 12
+// Start playback after this many packets so the first I2S write doesn't underrun.
+#define PLAYBACK_PREBUFFER_PACKETS 3
 // Match one audio packet per DMA descriptor for low I2S path delay.
-#define I2S_DMA_DESC_NUM 3
+#define I2S_DMA_DESC_NUM 4
 #define I2S_DMA_FRAME_NUM AUDIO_FRAMES_PER_PACKET
-#define AUDIO_TASK_STACK 8192
-#define AUDIO_TASK_PRIO 5
+// Above Wi-Fi callbacks enough to drain the queue under burst load.
+#define AUDIO_TASK_PRIO 12
 #define AUDIO_TASK_CORE 1
 #define AUDIO_TASK_STOP_WAIT_MS 500
+// How often to print jitter-queue drop totals while playing.
+#define DROP_LOG_INTERVAL_MS 2000
 
 // --- MODES ---
 typedef enum {
@@ -60,9 +64,17 @@ static const uint8_t BROADCAST_MAC[ESP_NOW_ETH_ALEN] = {0xFF, 0xFF, 0xFF,
                                                         0xFF, 0xFF, 0xFF};
 
 static i2s_chan_handle_t i2s_dac_chan;
-static QueueHandle_t audio_queue;
+// Pool + pointer queues: Wi-Fi task only memcpy's once; queues move pointers.
+static audio_packet_t packet_pool[NUM_QUEUE_SLOTS];
+static QueueHandle_t free_q;
+static QueueHandle_t filled_q;
 static char unique_alias[ALIAS_BUFFER_SIZE] = {0};
-static uint32_t dropped_packets = 0;
+static uint32_t queue_drops = 0;
+static bool count_queue_drops = false;
+// Last TX that ACKed us — used for unicast re-pair (broadcast is easy to miss
+// while TX is blasting audio).
+static uint8_t paired_tx_mac[ESP_NOW_ETH_ALEN] = {0};
+static bool have_paired_tx = false;
 
 // Updated from ESP-NOW recv callback; read on the app_main state machine.
 static volatile rx_mode_t cur_mode = RX_MODE_BOOTING;
@@ -122,6 +134,8 @@ static esp_err_t init_broadcast_peer(void) {
 
 /**
  * @brief I2S master TX to PCM5102 (DOUT only; simplex RX pack).
+ *        Native 16-bit Philips slots (PCM5102-friendly). Left disabled until
+ *        playback so BCK/LRCK don't click in the IEMs during pairing.
  * @return ESP_OK on success, or the first failing I2S esp_err_t.
  */
 static esp_err_t init_i2s_pcm5102(void) {
@@ -155,53 +169,119 @@ static esp_err_t init_i2s_pcm5102(void) {
                     },
             },
     };
+    // Classic ESP32 defaults msb_right=true for ≤16-bit, which often dulls /
+    // smears HF into PCM5102. Force MSB-first alignment.
+#if SOC_I2S_HW_VERSION_1
+    std_cfg.slot_cfg.msb_right = false;
+#endif
+    std_cfg.clk_cfg.mclk_multiple = I2S_MCLK_MULTIPLE_256;
 
     err = i2s_channel_init_std_mode(i2s_dac_chan, &std_cfg);
     if (err != ESP_OK) {
         ESP_LOGE(INIT, "Failed to init I2S DAC std mode.");
         return err;
     }
-    err = i2s_channel_enable(i2s_dac_chan);
-    if (err != ESP_OK) {
-        ESP_LOGE(INIT, "Failed to enable I2S DAC channel.");
-        return err;
-    }
+    // Intentionally not enabled here — enable in run_audio_playback_state().
     return ESP_OK;
 }
 
+static esp_err_t enable_i2s_dac(void) {
+    esp_err_t err = i2s_channel_enable(i2s_dac_chan);
+    // Already-enabled is fine on re-enter after a partial teardown.
+    if (err == ESP_ERR_INVALID_STATE) {
+        return ESP_OK;
+    }
+    if (err != ESP_OK) {
+        ESP_LOGE(AUDIO, "Failed to enable I2S DAC channel.");
+    }
+    return err;
+}
+
+static void disable_i2s_dac(void) {
+    if (!i2s_dac_chan) {
+        return;
+    }
+    esp_err_t err = i2s_channel_disable(i2s_dac_chan);
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(AUDIO, "Failed to disable I2S DAC: %s", esp_err_to_name(err));
+    }
+}
+
 /**
- * @brief Create the FreeRTOS queue that decouples ESP-NOW recv from I2S write.
+ * @brief Create free/filled pointer queues and stock the free pool.
  * @return ESP_OK, or ESP_ERR_NO_MEM if creation fails.
  */
 static esp_err_t init_audio_queue(void) {
-    audio_queue = xQueueCreate(NUM_QUEUE_SLOTS, sizeof(audio_packet_t));
-    if (!audio_queue) {
-        ESP_LOGE(INIT, "Failed to create audio queue.");
+    free_q = xQueueCreate(NUM_QUEUE_SLOTS, sizeof(audio_packet_t *));
+    filled_q = xQueueCreate(NUM_QUEUE_SLOTS, sizeof(audio_packet_t *));
+    if (!free_q || !filled_q) {
+        ESP_LOGE(INIT, "Failed to create audio pointer queues.");
         return ESP_ERR_NO_MEM;
+    }
+
+    for (int i = 0; i < NUM_QUEUE_SLOTS; i++) {
+        audio_packet_t *slot = &packet_pool[i];
+        if (xQueueSend(free_q, &slot, 0) != pdTRUE) {
+            ESP_LOGE(INIT, "Failed to stock free packet pool.");
+            return ESP_ERR_NO_MEM;
+        }
     }
     return ESP_OK;
 }
 
 // --- HELPERS ---
 
-/** @brief Discard any buffered audio (used on disconnect / re-pair). */
+/** @brief Return all filled slots to the free pool (disconnect / re-pair). */
 static void flush_audio_queue(void) {
-    if (!audio_queue) {
+    if (!filled_q || !free_q) {
         return;
     }
-    audio_packet_t discard;
-    while (xQueueReceive(audio_queue, &discard, 0) == pdTRUE) {
+    audio_packet_t *slot = NULL;
+    while (xQueueReceive(filled_q, &slot, 0) == pdTRUE) {
+        xQueueSend(free_q, &slot, 0);
     }
 }
 
 /**
- * @brief Apply TX pairing ACK/NACK. Primes link timer on success.
- * @param data Pointer to a pair_state_t payload.
+ * @brief Remember TX MAC and ensure it is an ESP-NOW peer for unicast re-pair.
  */
-static void handle_pairing_result(const uint8_t *data) {
-    const pair_state_t result = *(const pair_state_t *)data;
+static void remember_tx_peer(const uint8_t *tx_mac) {
+    if (!tx_mac) {
+        return;
+    }
+    memcpy(paired_tx_mac, tx_mac, ESP_NOW_ETH_ALEN);
+    have_paired_tx = true;
+
+    if (esp_now_is_peer_exist(paired_tx_mac)) {
+        return;
+    }
+
+    esp_now_peer_info_t peer = {
+        .channel = DEFAULT_CHANNEL,
+        .ifidx = WIFI_IF_STA,
+        .encrypt = false,
+    };
+    memcpy(peer.peer_addr, paired_tx_mac, ESP_NOW_ETH_ALEN);
+    esp_err_t err = esp_now_add_peer(&peer);
+    if (err != ESP_OK && err != ESP_ERR_ESPNOW_EXIST) {
+        ESP_LOGW(PAIR, "Failed to add TX peer for unicast re-pair: %s",
+                 esp_err_to_name(err));
+        have_paired_tx = false;
+    }
+}
+
+/**
+ * @brief Apply TX pairing ACK/NACK. Only flips mode here — peer add is deferred
+ *        so we do not call esp_now_add_peer from the Wi-Fi recv task.
+ */
+static void handle_pairing_result(const uint8_t *data, const uint8_t *tx_mac) {
+    const pair_state_t result = (pair_state_t)data[0];
 
     if (result == PAIR_SUCCESS) {
+        if (tx_mac) {
+            memcpy(paired_tx_mac, tx_mac, ESP_NOW_ETH_ALEN);
+            have_paired_tx = true;
+        }
         ESP_LOGI(PAIR, "Paired with TX; entering audio playback.");
         last_packet_time = xTaskGetTickCount();
         cur_mode = RX_MODE_AUDIO_PLAYBACK;
@@ -213,69 +293,140 @@ static void handle_pairing_result(const uint8_t *data) {
 }
 
 /**
- * @brief Enqueue one audio packet for the playback task (non-blocking).
+ * @brief Copy one audio packet into a pool slot and hand it to playback.
+ *        If no free slot, steal the oldest filled slot (stay realtime).
  * @param audio_packet Pointer to an audio_packet_t payload.
  */
 static void handle_audio_packet(const uint8_t *audio_packet) {
-    if (!audio_queue) {
+    if (!free_q || !filled_q || !audio_packet) {
         return;
     }
 
     last_packet_time = xTaskGetTickCount();
-    if (xQueueSend(audio_queue, audio_packet, 0) != pdTRUE) {
-        dropped_packets++;
-        ESP_LOGW(AUDIO, "Jitter queue full; dropped packet (total %lu).",
-                 (unsigned long)dropped_packets);
+
+    audio_packet_t *slot = NULL;
+    if (xQueueReceive(free_q, &slot, 0) != pdTRUE) {
+        // Pool empty: drop oldest filled packet and reuse its slot.
+        if (xQueueReceive(filled_q, &slot, 0) != pdTRUE) {
+            return;
+        }
+        if (count_queue_drops) {
+            queue_drops++;
+        }
+    }
+
+    memcpy(slot, audio_packet, sizeof(*slot));
+    if (xQueueSend(filled_q, &slot, 0) != pdTRUE) {
+        // Should be rare; return slot to free pool.
+        xQueueSend(free_q, &slot, 0);
+        if (count_queue_drops) {
+            queue_drops++;
+        }
     }
 }
 
 // --- TASKS ---
 
 /**
- * @brief Core-1 consumer: queue → I2S DAC. Exits when audio_task_stop is set.
+ * @brief Core-1 consumer: filled pool → I2S DAC. Exits when audio_task_stop set.
  */
 static void audio_playback_task(void *pvParameters) {
     (void)pvParameters;
-    audio_packet_t packet;
+    audio_packet_t *slot = NULL;
+    static int16_t silence[AUDIO_DATA_NUM_SAMPLES];
     size_t bytes_written;
+    TickType_t last_drop_log = xTaskGetTickCount();
+    uint32_t last_logged_drops = 0;
+    bool primed = false;
+
+    memset(silence, 0, sizeof(silence));
 
     while (!audio_task_stop) {
-        if (xQueueReceive(audio_queue, &packet, pdMS_TO_TICKS(50)) != pdTRUE) {
-            continue;
-        }
-        if (audio_task_stop) {
-            break;
+        if (!primed) {
+            if (uxQueueMessagesWaiting(filled_q) < PLAYBACK_PREBUFFER_PACKETS) {
+                vTaskDelay(pdMS_TO_TICKS(1));
+                continue;
+            }
+            primed = true;
+            count_queue_drops = true;
+            ESP_LOGI(AUDIO, "Playback primed (%d packets). depth=%u",
+                     PLAYBACK_PREBUFFER_PACKETS,
+                     (unsigned)uxQueueMessagesWaiting(filled_q));
         }
 
-        esp_err_t err =
-            i2s_channel_write(i2s_dac_chan, packet.audio_data,
-                              sizeof(packet.audio_data), &bytes_written,
-                              portMAX_DELAY);
-        if (err != ESP_OK) {
-            ESP_LOGW(AUDIO, "I2S write failed: %s", esp_err_to_name(err));
+        if (xQueueReceive(filled_q, &slot, pdMS_TO_TICKS(20)) == pdTRUE) {
+            if (audio_task_stop) {
+                xQueueSend(free_q, &slot, 0);
+                break;
+            }
+
+            esp_err_t err = i2s_channel_write(
+                i2s_dac_chan, slot->audio_data, sizeof(slot->audio_data),
+                &bytes_written, portMAX_DELAY);
+            xQueueSend(free_q, &slot, 0);
+            slot = NULL;
+            if (err != ESP_OK) {
+                ESP_LOGW(AUDIO, "I2S write failed: %s", esp_err_to_name(err));
+            }
+        } else {
+            // Underrun: feed silence so the DAC clock keeps running.
+            i2s_channel_write(i2s_dac_chan, silence, sizeof(silence),
+                              &bytes_written, portMAX_DELAY);
+        }
+
+        TickType_t now = xTaskGetTickCount();
+        if ((now - last_drop_log) >= pdMS_TO_TICKS(DROP_LOG_INTERVAL_MS)) {
+            uint32_t delta = queue_drops - last_logged_drops;
+            UBaseType_t depth = uxQueueMessagesWaiting(filled_q);
+            if (delta > 0 || depth > PLAYBACK_PREBUFFER_PACKETS + 1) {
+                ESP_LOGI(AUDIO,
+                         "queue drops +%lu / %d ms (total %lu), depth=%u",
+                         (unsigned long)delta, DROP_LOG_INTERVAL_MS,
+                         (unsigned long)queue_drops, (unsigned)depth);
+            }
+            last_logged_drops = queue_drops;
+            last_drop_log = now;
         }
     }
 
+    if (slot != NULL) {
+        xQueueSend(free_q, &slot, 0);
+    }
+    count_queue_drops = false;
     audio_task_handle = NULL;
     vTaskDelete(NULL);
 }
 
 /**
- * @brief Broadcast pairing requests until cur_mode leaves PAIRING.
+ * @brief Broadcast (and unicast-to-last-TX) pairing requests until mode changes.
  */
 static void send_pairing_req(void) {
     pairing_req_packet_t req = {0};
     snprintf(req.alias, sizeof(req.alias), "%s", unique_alias);
 
-    ESP_LOGI(PAIR, "Advertising pairing request as %s.", req.alias);
+    ESP_LOGI(PAIR, "Advertising pairing request as %s%s.", req.alias,
+             have_paired_tx ? " (broadcast+unicast)" : " (broadcast)");
 
     while (cur_mode == RX_MODE_PAIRING) {
-        esp_err_t err = esp_now_send(BROADCAST_MAC, (uint8_t *)&req, sizeof(req));
+        esp_err_t err =
+            esp_now_send(BROADCAST_MAC, (uint8_t *)&req, sizeof(req));
         if (err != ESP_OK) {
-            ESP_LOGW(PAIR, "Pairing broadcast failed: %s", esp_err_to_name(err));
+            ESP_LOGW(PAIR, "Pairing broadcast failed: %s",
+                     esp_err_to_name(err));
         }
+
+        // Unicast hits a busy TX much more reliably than broadcast.
+        if (have_paired_tx) {
+            err = esp_now_send(paired_tx_mac, (uint8_t *)&req, sizeof(req));
+            if (err != ESP_OK) {
+                ESP_LOGW(PAIR, "Pairing unicast failed: %s",
+                         esp_err_to_name(err));
+            }
+        }
+
         vTaskDelay(pdMS_TO_TICKS(PAIRING_INTERVAL_MS));
     }
+    ESP_LOGI(PAIR, "Left pairing advertise loop (mode changed).");
 }
 
 // --- CALLBACKS ---
@@ -292,8 +443,14 @@ static void recv_cb(const esp_now_recv_info_t *info, const uint8_t *data,
 
     const rx_mode_t mode = cur_mode;
 
-    if (mode == RX_MODE_PAIRING && data_size == (int)sizeof(pair_state_t)) {
-        handle_pairing_result(data);
+    // Accept 1-byte ACK (current TX) or legacy sizeof(pair_state_t) (old TX).
+    // Status is always in the first byte on little-endian.
+    if (mode == RX_MODE_PAIRING && data_size >= PAIR_ACK_LEN &&
+        (data_size == PAIR_ACK_LEN ||
+         data_size == (int)sizeof(pair_state_t))) {
+        ESP_LOGI(PAIR, "Got pairing ACK/NACK (%d bytes, status=0x%02X).",
+                 data_size, data[0]);
+        handle_pairing_result(data, info->src_addr);
         return;
     }
 
@@ -301,6 +458,12 @@ static void recv_cb(const esp_now_recv_info_t *info, const uint8_t *data,
         data_size == (int)sizeof(audio_packet_t)) {
         handle_audio_packet(data);
         return;
+    }
+
+    if (mode == RX_MODE_PAIRING) {
+        ESP_LOGW(CB,
+                 "Ignoring size=%d while pairing (want %d or %d byte ACK).",
+                 data_size, PAIR_ACK_LEN, (int)sizeof(pair_state_t));
     }
 }
 
@@ -314,9 +477,7 @@ static void send_cb(const esp_now_send_info_t *info,
         return;
     }
     if (status != ESP_NOW_SEND_SUCCESS) {
-        dropped_packets++;
-        ESP_LOGD(CB, "ESP-NOW send failed (total %lu).",
-                 (unsigned long)dropped_packets);
+        ESP_LOGD(CB, "Pairing send failed.");
     }
 }
 
@@ -325,14 +486,27 @@ static void send_cb(const esp_now_send_info_t *info,
  */
 static void run_audio_playback_state(void) {
     audio_task_stop = false;
+    count_queue_drops = false;
+    queue_drops = 0;
     last_packet_time = xTaskGetTickCount();
     flush_audio_queue();
+
+    // Safe context for esp_now_add_peer (not inside recv_cb).
+    if (have_paired_tx) {
+        remember_tx_peer(paired_tx_mac);
+    }
+
+    if (enable_i2s_dac() != ESP_OK) {
+        cur_mode = RX_MODE_PAIRING;
+        return;
+    }
 
     BaseType_t created = xTaskCreatePinnedToCore(
         audio_playback_task, "AudioPlayback", AUDIO_TASK_STACK, NULL,
         AUDIO_TASK_PRIO, &audio_task_handle, AUDIO_TASK_CORE);
     if (created != pdPASS) {
         ESP_LOGE(AUDIO, "Failed to create audio playback task.");
+        disable_i2s_dac();
         cur_mode = RX_MODE_PAIRING;
         return;
     }
@@ -360,6 +534,7 @@ static void run_audio_playback_state(void) {
     }
 
     flush_audio_queue();
+    disable_i2s_dac();
 }
 
 void app_main(void) {
@@ -372,18 +547,7 @@ void app_main(void) {
             ESP_ERROR_CHECK(init_nvs());
             ESP_ERROR_CHECK(init_wifi());
             ESP_ERROR_CHECK(init_espnow(recv_cb, send_cb));
-
-            uint32_t espnow_ver = 0;
-            ESP_ERROR_CHECK(esp_now_get_version(&espnow_ver));
-            ESP_LOGI(INIT, "ESP-NOW version %lu (need 2 for >250 B packets).",
-                     (unsigned long)espnow_ver);
-            if (espnow_ver < 2) {
-                ESP_LOGE(INIT,
-                         "ESP-NOW v2 required for audio_packet_t (%u B).",
-                         (unsigned)sizeof(audio_packet_t));
-                abort();
-            }
-
+            verify_espnow_ver();
             ESP_ERROR_CHECK(init_broadcast_peer());
             ESP_ERROR_CHECK(init_unique_alias());
             ESP_ERROR_CHECK(init_audio_queue());
