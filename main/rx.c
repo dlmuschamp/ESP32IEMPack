@@ -295,31 +295,42 @@ static void handle_pairing_result(const uint8_t *data, const uint8_t *tx_mac) {
 }
 
 /**
- * @brief Soft re-pair: if we already know a TX and it is still streaming audio
- *        while we are advertising, treat the stream itself as proof of link.
+ * @brief Soft join/re-pair from live audio while advertising.
  *
- * Evidence (ESP-IDF ESP-NOW docs): MAC success does not guarantee the app got
- * the frame; app-layer ACK is recommended. Continuous correctly-sized audio
- * from the remembered TX is stronger proof than a pairing ACK that is easily
- * starved while TX is blasting ~1440 B packets.
+ * Evidence from bench (RX monitor): TX was already streaming correctly-sized
+ * audio (1440 B) while RX waited for PAIR_SUCCESS. Soft reconnect previously
+ * required have_paired_tx, so first boot ignored the stream forever when the
+ * ACK was lost/starved. ESP-IDF notes app-layer proof of delivery; a matching
+ * audio_packet_t is that proof for this single-TX IEM.
  *
- * Only flips mode — do not enqueue here. run_audio_playback_state() flushes
- * the queue on entry; enqueuing first would throw away the soft-reconnect
- * packet and any others that race in before the audio task starts.
+ * Only flips mode — do not enqueue here (playback entry flushes the queue).
  *
- * @return true if we re-entered playback.
+ * @return true if we entered playback.
  */
 static bool try_soft_reconnect_from_audio(const uint8_t *src_mac) {
-    if (!have_paired_tx || !src_mac) {
+    if (!src_mac) {
         return false;
     }
-    if (memcmp(src_mac, paired_tx_mac, ESP_NOW_ETH_ALEN) != 0) {
+
+    if (have_paired_tx &&
+        memcmp(src_mac, paired_tx_mac, ESP_NOW_ETH_ALEN) != 0) {
         RX_DBG_LOGW("audio while pairing from unknown TX; ignoring");
         return false;
     }
 
-    ESP_LOGI(PAIR, "Soft reconnect: audio from known TX while pairing.");
-    rx_dbg_mode("SOFT_RECONNECT", RX_MODE_AUDIO_PLAYBACK);
+    if (!have_paired_tx) {
+        memcpy(paired_tx_mac, src_mac, ESP_NOW_ETH_ALEN);
+        have_paired_tx = true;
+        ESP_LOGI(PAIR,
+                 "First-pair soft join from audio "
+                 "%02X:%02X:%02X:%02X:%02X:%02X (ACK missed/starved).",
+                 src_mac[0], src_mac[1], src_mac[2], src_mac[3], src_mac[4],
+                 src_mac[5]);
+    } else {
+        ESP_LOGI(PAIR, "Soft reconnect: audio from known TX while pairing.");
+    }
+
+    rx_dbg_mode("SOFT_JOIN", RX_MODE_AUDIO_PLAYBACK);
     last_packet_time = xTaskGetTickCount();
     cur_mode = RX_MODE_AUDIO_PLAYBACK;
     return true;
@@ -513,12 +524,18 @@ static void recv_cb(const esp_now_recv_info_t *info, const uint8_t *data,
     }
 
     if (mode == RX_MODE_PAIRING) {
-        rx_dbg_recv((int)mode, data_size, info->src_addr,
-                    (int)sizeof(audio_packet_t), PAIR_ACK_LEN);
-        ESP_LOGW(CB,
-                 "Ignoring size=%d while pairing (want %d-byte ACK or %d-byte "
-                 "audio for soft reconnect).",
-                 data_size, PAIR_ACK_LEN, (int)sizeof(audio_packet_t));
+        // Rate-limit: TX audio flood was spamming the monitor (~133 Hz).
+        static TickType_t last_ignore_log = 0;
+        TickType_t now = xTaskGetTickCount();
+        if ((now - last_ignore_log) >= pdMS_TO_TICKS(1000)) {
+            last_ignore_log = now;
+            rx_dbg_recv((int)mode, data_size, info->src_addr,
+                        (int)sizeof(audio_packet_t), PAIR_ACK_LEN);
+            ESP_LOGW(CB,
+                     "Ignoring size=%d while pairing (want %d-byte ACK or "
+                     "%d-byte audio for soft join).",
+                     data_size, PAIR_ACK_LEN, (int)sizeof(audio_packet_t));
+        }
     }
 }
 
