@@ -51,16 +51,22 @@
 
 // --- TIMING / BUFFERS ---
 // Poll period while idling for peers or watching peer count while transmitting.
-#define MODE_POLL_INTERVAL_MS 100
+#define MODE_POLL_INTERVAL_MS 50
 // Match one audio packet per DMA descriptor for low I2S path delay.
 #define I2S_DMA_DESC_NUM 4
 #define I2S_DMA_FRAME_NUM AUDIO_FRAMES_PER_PACKET
 #define AUDIO_TASK_PRIO 12
 #define AUDIO_TASK_CORE 1
 // How many times to fire PAIR_SUCCESS (audio TX can starve a single ACK).
-#define PAIR_ACK_REPEAT 5
+#define PAIR_ACK_REPEAT 8
 // After a re-pair request, skip this many audio sends so ACKs get airtime.
-#define PAIR_ACK_AUDIO_SKIP 8
+// ~8 * 7.5 ms ≈ 60 ms of silence for pairing frames to land.
+#define PAIR_ACK_AUDIO_SKIP 16
+// No MAC-layer send success for this long → peer is gone (ESP-IDF: send_cb
+// returns FAIL when destination does not exist / frame never ACKed at MAC).
+#define TX_LINK_TIMEOUT_MS 1500
+// Consecutive send_cb FAILs before we treat the link as dead (faster path).
+#define TX_SEND_FAIL_STREAK_LIMIT 40
 
 // --- MODES ---
 typedef enum {
@@ -88,6 +94,12 @@ static QueueHandle_t pair_req_q;
 static volatile tx_mode_t cur_mode = TX_MODE_BOOTING;
 static volatile bool audio_task_stop = false;
 static TaskHandle_t audio_task_handle = NULL;
+// Link health from send_cb (Wi-Fi task) — read on transmit state machine.
+static volatile TickType_t last_send_ok_tick = 0;
+static volatile uint32_t send_fail_streak = 0;
+// Docs: wait for prior send_cb before the next esp_now_send to avoid CB
+// disorder / NO_MEM under burst load.
+static volatile bool send_in_flight = false;
 
 // I2S delivers one 32-bit word per slot; pack down to int16 for packets.
 static int32_t raw_audio_samples[AUDIO_DATA_NUM_SAMPLES];
@@ -95,7 +107,9 @@ static int32_t raw_audio_samples[AUDIO_DATA_NUM_SAMPLES];
 static audio_packet_t tx_packet;
 
 static esp_now_rate_config_t peer_rate_cfg = {
-    .rate = WIFI_PHY_RATE_24M,
+    // 12M is more robust than 24M in moderate crowd / multipath; airtime for
+    // a 1440 B v2 frame is still well under our 7.5 ms packet period.
+    .rate = WIFI_PHY_RATE_12M,
     .phymode = WIFI_PHY_MODE_11G,
     .ersu = false,
     .dcm = false,
@@ -213,8 +227,11 @@ static void handle_connect_new_peer(esp_now_peer_info_t *new_peer) {
 
     memcpy(paired_peer_mac, new_peer->peer_addr, ESP_NOW_ETH_ALEN);
     have_paired_peer = true;
+    last_send_ok_tick = xTaskGetTickCount();
+    send_fail_streak = 0;
 
     // ACK before rate_config — default PHY is more reliable for pairing.
+    // Docs: esp_now_set_peer_rate_config must run AFTER esp_now_add_peer.
     uint8_t succ_byte = (uint8_t)PAIR_SUCCESS;
     int ack_ok = 0;
     for (int i = 0; i < PAIR_ACK_REPEAT; i++) {
@@ -222,7 +239,7 @@ static void handle_connect_new_peer(esp_now_peer_info_t *new_peer) {
             ESP_OK) {
             ack_ok++;
         }
-        vTaskDelay(pdMS_TO_TICKS(2));
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
     pair_ack_audio_skip = PAIR_ACK_AUDIO_SKIP;
     ESP_LOGI(PAIR, "Sent PAIR_SUCCESS ACK x%d (%d ok).", PAIR_ACK_REPEAT,
@@ -328,10 +345,25 @@ static void audio_capture_task(void *pvParameters) {
             continue;
         }
 
+        // Pace sends to send_cb (ESP-IDF recommendation). Cap wait so a stuck
+        // CB cannot freeze capture forever.
+        TickType_t wait_start = xTaskGetTickCount();
+        while (send_in_flight &&
+               (xTaskGetTickCount() - wait_start) < pdMS_TO_TICKS(10)) {
+            vTaskDelay(pdMS_TO_TICKS(1));
+        }
+
+        send_in_flight = true;
         esp_err_t send_err =
-            esp_now_send(NULL, (uint8_t *)&tx_packet, sizeof(tx_packet));
+            esp_now_send(have_paired_peer ? paired_peer_mac : NULL,
+                         (uint8_t *)&tx_packet, sizeof(tx_packet));
         if (send_err != ESP_OK) {
+            send_in_flight = false;
             dropped_packets++;
+            // Docs: ESP_ERR_ESPNOW_NO_MEM → delay before the next send.
+            if (send_err == ESP_ERR_ESPNOW_NO_MEM) {
+                vTaskDelay(pdMS_TO_TICKS(1));
+            }
         }
 
         TickType_t now = xTaskGetTickCount();
@@ -364,10 +396,13 @@ static void run_idling_state(void) {
 }
 
 /**
- * @brief Run capture on core 1; return to idle when peer count hits zero.
+ * @brief Run capture on core 1; return to idle when peer count hits zero
+ *        or MAC-layer send health says the RX is gone.
  */
 static void run_transmitting_state(void) {
     audio_task_stop = false;
+    last_send_ok_tick = xTaskGetTickCount();
+    send_fail_streak = 0;
 
     BaseType_t created = xTaskCreatePinnedToCore(
         audio_capture_task, "AudioCapture", AUDIO_TASK_STACK, NULL,
@@ -389,6 +424,21 @@ static void run_transmitting_state(void) {
         // RX can re-pair and we can start a fresh transmit session.
         if (audio_task_handle == NULL) {
             clear_paired_peer("audio task died");
+            break;
+        }
+
+        // Link loss: ESP-IDF send_cb FAIL means MAC did not confirm delivery
+        // (peer gone / channel mismatch / air loss). Drop peer so we idle and
+        // can accept a clean re-pair instead of blasting into the void.
+        TickType_t now = xTaskGetTickCount();
+        bool timed_out = (now - last_send_ok_tick) >
+                         pdMS_TO_TICKS(TX_LINK_TIMEOUT_MS);
+        bool fail_streak = send_fail_streak >= TX_SEND_FAIL_STREAK_LIMIT;
+        if (timed_out || fail_streak) {
+            ESP_LOGW(TRANSMIT,
+                     "RX link lost (timeout=%d streak=%lu); clearing peer.",
+                     timed_out ? 1 : 0, (unsigned long)send_fail_streak);
+            clear_paired_peer(timed_out ? "send timeout" : "send fail streak");
             break;
         }
     }
@@ -429,7 +479,11 @@ static void recv_cb(const esp_now_recv_info_t *esp_now_info,
 }
 
 /**
- * @brief ESP-NOW send status. Air failures counted; audio task logs periodically.
+ * @brief ESP-NOW send status. Air failures counted; used for TX link-loss.
+ *
+ * Evidence (ESP-IDF ESP-NOW docs): send_cb returns ESP_NOW_SEND_SUCCESS only if
+ * the data was received successfully on the MAC layer; otherwise FAIL (peer
+ * missing, channel mismatch, air loss, etc.).
  */
 static void send_cb(const esp_now_send_info_t *info,
                     esp_now_send_status_t status) {
@@ -437,9 +491,15 @@ static void send_cb(const esp_now_send_info_t *info,
         ESP_LOGW(CB, "NULL send_info in send_cb.");
         return;
     }
-    if (status != ESP_NOW_SEND_SUCCESS) {
-        dropped_packets++;
+    if (status == ESP_NOW_SEND_SUCCESS) {
+        last_send_ok_tick = xTaskGetTickCount();
+        send_fail_streak = 0;
+        send_in_flight = false;
+        return;
     }
+    dropped_packets++;
+    send_fail_streak++;
+    send_in_flight = false;
 }
 
 void app_main(void) {

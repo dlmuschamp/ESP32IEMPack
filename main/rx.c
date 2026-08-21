@@ -20,6 +20,7 @@
 #include "hal/i2s_types.h"
 #include "portmacro.h"
 #include "rig_shared.h"
+#include "rx_temp_debug.h" /* TEMP: set RX_TEMP_DEBUG_ENABLE 0 when done */
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -283,6 +284,7 @@ static void handle_pairing_result(const uint8_t *data, const uint8_t *tx_mac) {
             have_paired_tx = true;
         }
         ESP_LOGI(PAIR, "Paired with TX; entering audio playback.");
+        rx_dbg_mode("PAIR_SUCCESS", RX_MODE_AUDIO_PLAYBACK);
         last_packet_time = xTaskGetTickCount();
         cur_mode = RX_MODE_AUDIO_PLAYBACK;
         return;
@@ -290,6 +292,37 @@ static void handle_pairing_result(const uint8_t *data, const uint8_t *tx_mac) {
 
     ESP_LOGW(PAIR, "Pairing failed; will keep advertising.");
     cur_mode = RX_MODE_PAIRING;
+}
+
+/**
+ * @brief Soft re-pair: if we already know a TX and it is still streaming audio
+ *        while we are advertising, treat the stream itself as proof of link.
+ *
+ * Evidence (ESP-IDF ESP-NOW docs): MAC success does not guarantee the app got
+ * the frame; app-layer ACK is recommended. Continuous correctly-sized audio
+ * from the remembered TX is stronger proof than a pairing ACK that is easily
+ * starved while TX is blasting ~1440 B packets.
+ *
+ * Only flips mode — do not enqueue here. run_audio_playback_state() flushes
+ * the queue on entry; enqueuing first would throw away the soft-reconnect
+ * packet and any others that race in before the audio task starts.
+ *
+ * @return true if we re-entered playback.
+ */
+static bool try_soft_reconnect_from_audio(const uint8_t *src_mac) {
+    if (!have_paired_tx || !src_mac) {
+        return false;
+    }
+    if (memcmp(src_mac, paired_tx_mac, ESP_NOW_ETH_ALEN) != 0) {
+        RX_DBG_LOGW("audio while pairing from unknown TX; ignoring");
+        return false;
+    }
+
+    ESP_LOGI(PAIR, "Soft reconnect: audio from known TX while pairing.");
+    rx_dbg_mode("SOFT_RECONNECT", RX_MODE_AUDIO_PLAYBACK);
+    last_packet_time = xTaskGetTickCount();
+    cur_mode = RX_MODE_AUDIO_PLAYBACK;
+    return true;
 }
 
 /**
@@ -403,9 +436,11 @@ static void audio_playback_task(void *pvParameters) {
 static void send_pairing_req(void) {
     pairing_req_packet_t req = {0};
     snprintf(req.alias, sizeof(req.alias), "%s", unique_alias);
+    uint32_t heartbeat = 0;
 
     ESP_LOGI(PAIR, "Advertising pairing request as %s%s.", req.alias,
              have_paired_tx ? " (broadcast+unicast)" : " (broadcast)");
+    rx_dbg_mode("enter_pairing", RX_MODE_PAIRING);
 
     while (cur_mode == RX_MODE_PAIRING) {
         esp_err_t err =
@@ -424,15 +459,23 @@ static void send_pairing_req(void) {
             }
         }
 
+        heartbeat++;
+        if ((heartbeat % 5) == 0) {
+            rx_dbg_pair_heartbeat(heartbeat, have_paired_tx ? 1 : 0);
+        }
+
         vTaskDelay(pdMS_TO_TICKS(PAIRING_INTERVAL_MS));
     }
     ESP_LOGI(PAIR, "Left pairing advertise loop (mode changed).");
+    rx_dbg_mode("left_pairing", (int)cur_mode);
 }
 
 // --- CALLBACKS ---
 
 /**
  * @brief ESP-NOW receive: pairing ACKs in PAIRING, audio in PLAYBACK only.
+ *        Soft-reconnect: audio from a remembered TX while PAIRING re-enters
+ *        playback (see try_soft_reconnect_from_audio).
  */
 static void recv_cb(const esp_now_recv_info_t *info, const uint8_t *data,
                     int data_size) {
@@ -450,20 +493,32 @@ static void recv_cb(const esp_now_recv_info_t *info, const uint8_t *data,
          data_size == (int)sizeof(pair_state_t))) {
         ESP_LOGI(PAIR, "Got pairing ACK/NACK (%d bytes, status=0x%02X).",
                  data_size, data[0]);
+        rx_dbg_recv((int)mode, data_size, info->src_addr,
+                    (int)sizeof(audio_packet_t), PAIR_ACK_LEN);
         handle_pairing_result(data, info->src_addr);
         return;
     }
 
-    if (mode == RX_MODE_AUDIO_PLAYBACK &&
-        data_size == (int)sizeof(audio_packet_t)) {
-        handle_audio_packet(data);
-        return;
+    if (data_size == (int)sizeof(audio_packet_t)) {
+        if (mode == RX_MODE_AUDIO_PLAYBACK) {
+            handle_audio_packet(data);
+            return;
+        }
+        if (mode == RX_MODE_PAIRING &&
+            try_soft_reconnect_from_audio(info->src_addr)) {
+            // Mode is now PLAYBACK; this packet is intentionally not queued
+            // (playback entry flushes). Subsequent packets will stream.
+            return;
+        }
     }
 
     if (mode == RX_MODE_PAIRING) {
+        rx_dbg_recv((int)mode, data_size, info->src_addr,
+                    (int)sizeof(audio_packet_t), PAIR_ACK_LEN);
         ESP_LOGW(CB,
-                 "Ignoring size=%d while pairing (want %d or %d byte ACK).",
-                 data_size, PAIR_ACK_LEN, (int)sizeof(pair_state_t));
+                 "Ignoring size=%d while pairing (want %d-byte ACK or %d-byte "
+                 "audio for soft reconnect).",
+                 data_size, PAIR_ACK_LEN, (int)sizeof(audio_packet_t));
     }
 }
 
@@ -514,9 +569,12 @@ static void run_audio_playback_state(void) {
     while (cur_mode == RX_MODE_AUDIO_PLAYBACK) {
         vTaskDelay(pdMS_TO_TICKS(LINK_CHECK_INTERVAL_MS));
 
-        if ((xTaskGetTickCount() - last_packet_time) >
-            pdMS_TO_TICKS(CONNECTION_TIMEOUT_MS)) {
+        TickType_t idle_ticks = xTaskGetTickCount() - last_packet_time;
+        if (idle_ticks > pdMS_TO_TICKS(CONNECTION_TIMEOUT_MS)) {
+            uint32_t idle_ms =
+                (uint32_t)(idle_ticks * portTICK_PERIOD_MS);
             ESP_LOGW(AUDIO, "TX link timeout; returning to pairing.");
+            rx_dbg_link("link timeout", idle_ms, CONNECTION_TIMEOUT_MS);
             cur_mode = RX_MODE_PAIRING;
         }
     }
@@ -552,6 +610,9 @@ void app_main(void) {
             ESP_ERROR_CHECK(init_unique_alias());
             ESP_ERROR_CHECK(init_audio_queue());
             ESP_ERROR_CHECK(init_i2s_pcm5102());
+            RX_DBG_LOGI("boot ok; audio_packet_t=%u B samples=%d",
+                        (unsigned)sizeof(audio_packet_t),
+                        AUDIO_DATA_NUM_SAMPLES);
             cur_mode = RX_MODE_PAIRING;
             break;
         }
