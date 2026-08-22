@@ -163,6 +163,21 @@ IEM jack on a *side face*. Keep pot traces away from the antenna keepout.
 - Match breakout reality: many modules already have rail caps; VIN
   coupling is what was often missing on the breadboard.
 
+** Assembly / passives package size
+
+- Default resistors and most ceramic caps to *0805* if you (or a first
+  proto) will *hand-solder*. Still compact for an Altoids-sized pack;
+  much easier than 0603/0402 with a normal iron + flux.
+- *0603* is doable by hand with practice; *0402* is a pain — avoid for
+  hand assembly.
+- If a later JLCPCB/PCBWay full SMT run is the plan, 0603 (or denser)
+  is fine for factory assembly; keep 0805 for DNP/hand-tweaked parts
+  (e.g. GROUP A / GROUP B gain resistors) so you can change them on
+  the bench.
+- Modules that stay hard either way: ESP32-WROOM, USB-C receptacle,
+  fine-pitch codecs — budget hot air / stencil or pay for PCBA on
+  those, not “just upsize the passives.”
+
 ** Shipping firmware hygiene
 
 - Production images: ~IEM_NODE=TX|RX~ only (~main/tx.c~, ~main/rx.c~).
