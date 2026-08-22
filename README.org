@@ -32,7 +32,7 @@ Philips vs MSB, ESP-NOW v1 vs v2) while the hardware was still on a
 breadboard with questionable power. This document is meant to be the
 map you wished you had on day one — including the mistakes.
 
-* Current status (as of working_audio_v2 / late Aug 2026)
+* Current status (late Aug 2026)
 
 | Item | Status |
 |------+--------|
@@ -41,17 +41,54 @@ map you wished you had on day one — including the mistakes.
 | RX playback (PCM5102) | Working |
 | Pairing + soft-join when ACK is starved | Working |
 | Steady audio on adequate power (e.g. two USB power banks) | Working |
-| Timbre ("sounds low-pass filtered") | Open |
+| Digital path HF (DAC-only + TX tone over air) | Proven crisp |
+| Real jack→ADC timbre (“soft LPF”) + breadboard buzz | Open (analog / layout) |
 | Clean power / low crackle on breadboard | Open (hardware) |
 | TFT UI / polished product firmware | Not the focus yet |
 
-Frozen branches:
+Frozen / reference branches:
 
 - ~working_audio_v1~ — first known streaming snapshot
 - ~working_audio_v2~ — best reconnect + steady audio snapshot so far
+- ~main~ — shipping TX/RX + archived isolation tests under ~main/testing/~
 
-See also: [[file:docs/BENCH_REALIZATIONS.txt][docs/BENCH_REALIZATIONS.txt]] for the long form of what we
-learned on the bench.
+Long-form CER notes: [[file:docs/BENCH_REALIZATIONS.txt][docs/BENCH_REALIZATIONS.txt]].
+Isolation procedure: [[file:docs/SOUND_PROFILE_TESTS.txt][docs/SOUND_PROFILE_TESTS.txt]].
+
+* Findings (2026-08-21 sound-profile night) — CER summary
+
+** Claim: Soft-LPF on *digital* audio is ruled out
+
+- *Evidence:* ~RX_DAC_TEST~ sine_8k / chirp crisp; ~TX_TONE~ over air into
+  shipping RX also crisp; direct laptop→IEMs bright.
+- *Reasoning:* Known-bright PCM survives packing + ESP-NOW + PCM5102.
+  Dullness that appears only with the real PCM1808 / jack path is not
+  “ESP-NOW filtering highs.”
+
+** Claim: Real-music dullness + buzz is analog / breadboard / level
+
+- *Evidence:* Real music much quieter than digital tones; laptop <30% ≈
+  noise; gain×8 louder but more crackle; 1 µF VIN caps marginal; shorter
+  3.5 mm cable did not kill buzz; open GND dropped center (vocals/bass).
+- *Reasoning:* Weak ADC level sits near the noise floor; Dupont / shared
+  ground / breakout limits look like LPF+buzz. PCB layout is the next
+  falsification — not more firmware EQ.
+
+** Claim: TX_TONE steady ticks were mostly a FreeRTOS pace bug
+
+- *Evidence:* ~pdMS_TO_TICKS(8)~ == 0 at ~FREERTOS_HZ=100~; RX queue drops
+  flooded; ~esp_timer~ 7.5 ms pace fixed most ticks (code in
+  ~main/testing/~).
+- *Reasoning:* Shipping TX paces via blocking I2S reads; tone mode had
+  to invent realtime pacing.
+
+** Claim: Buzz may be a breadboard limitation (plus possible USB ground loop)
+
+- *Evidence:* Persists with shorter cable; can improve when TX is on a
+  power bank vs same-laptop USB+jack; digital path without ADC is clean.
+- *Reasoning:* Ground loops and long analog jumpers are expected on a
+  bench; a short-trace PCB with datasheet coupling/decoupling is the
+  proper A/B.
 
 * Hardware (bring-up)
 
@@ -60,7 +97,7 @@ learned on the bench.
 | Pack | MCU | Audio IC | Role |
 |------+-----+----------+------|
 | TX | ESP32-WROOM-32U (ext antenna) | PCM1808 | I2S master RX ← ADC |
-| RX | ESP32-WROOM-32U | PCM5102 | I2S master TX → DAC |
+| RX | ESP32-WROOM-32U (planned 32U + U.FL) | PCM5102 | I2S master TX → DAC |
 
 ** I2S notes that matter
 
@@ -70,6 +107,8 @@ learned on the bench.
   A casual jump to 24-bit data + MCLK×384 broke a known-good path —
   only revisit with a rollback bin ready.
 - PCM5102: FMT low = I2S; DEMP low/NC = de-emphasis off.
+- PCM1808 VIN: AC-couple with ~1 µF (TI app circuit; internal ~60 kΩ
+  sets ~2.7 Hz HPF). Do *not* add an external 60 kΩ for that formula.
 
 ** Power (the lesson that unlocked pairing)
 
@@ -87,38 +126,84 @@ chasing "digital crackle."
 
 KiCad schematics / PCB work live under ~KiCad/~.
 
+* KiCad mapping notes (read before pouring copper)
+
+Pack architecture (mechanical first): plastic shell ~Altoids *size* (not
+metal tin). *ESP32-WROOM-32U* + external 2.4 GHz 50 Ω U.FL antenna —
+*no DIY impedance matching* (module already brings 50 Ω to U.FL).
+Antenna and volume pot on *opposite corners of the top face*; USB-C /
+coiled battery power enter at the *bottom* (battery off-pack); 3.5 mm
+IEM jack on a *side face*. Keep pot traces away from the antenna keepout.
+
+** RX DAC / line toward pot (PCM5102)
+
+- Open the *TI PCM5102 datasheet* and follow the *OUTL / OUTR* example
+  aimed at a *LINE IN* into a *~10 kΩ* load — *page 27* (series R +
+  shunt C network; same idea on both channels).
+- Treat that filtered line node as *PRE_POT_IN_L / PRE_POT_IN_R* (not
+  “headphone drive”).
+- Feed PRE_POT into a *10 kΩ log dual-gang* pot; call the wipers
+  *POST_POT_L / POST_POT_R* and drive the headphone amp from POST_POT.
+- You may *ignore / delete* the older paper voltage-divider between
+  ~dac_out_l/r~ and ~prepotL/R~ if page-27 LINEOUT already is PRE_POT_IN.
+  Revisit only if levels still disagree after a clean PCB listen.
+
+** Amp gain resistors (leave for later)
+
+- On the paper desk schematic, resistors labeled *GROUP A* share one
+  value; *GROUP B* share another; *A is not necessarily equal to B*.
+- Leave GROUP A / GROUP B *unpopulated (DNP)* or hand-solder after
+  listening — these set amp gain after you find ideal ratios. Do not
+  freeze them in the first JLCPCB/PCBWay assembly BOM.
+
+** TX ADC (PCM1808)
+
+- Series *~1 µF* into VINL / VINR; AGND–DGND under the package; VREF /
+  VCC / VDD local 0.1 µF (+ bulk where the datasheet shows).
+- Match breakout reality: many modules already have rail caps; VIN
+  coupling is what was often missing on the breadboard.
+
+** Shipping firmware hygiene
+
+- Production images: ~IEM_NODE=TX|RX~ only (~main/tx.c~, ~main/rx.c~).
+- Isolation / peak-log / tone tools live under ~main/testing/~ — do *not*
+  merge those diagnostics back into shipping sources for fab bring-up
+  bins. Rebuild tests only when debugging.
+
 * Firmware overview
 
 ** Build / flash (ESP-IDF)
 
 ~IEM_NODE~ is *configure-time*. Wrong node + stale build = wrong image
-on the wrong pack (we bricked a bring-up evening that way once).
+on the wrong pack.
 
 #+begin_src bash
 source ~/esp/esp-idf/export.sh   # or your IDF install
 
-# Transmitter
-IEM_NODE=TX idf.py fullclean   # when switching roles
+# Shipping transmitter / receiver
 IEM_NODE=TX idf.py reconfigure build
 IEM_NODE=TX idf.py -p /dev/ttyUSB0 flash
 
-# Receiver
-IEM_NODE=RX idf.py fullclean
 IEM_NODE=RX idf.py reconfigure build
 IEM_NODE=RX idf.py -p /dev/ttyUSB0 flash
+
+# Archived isolation builds (main/testing/)
+IEM_NODE=RX_DAC_TEST idf.py reconfigure build flash
+IEM_NODE=TX_TONE idf.py reconfigure build flash
+IEM_NODE=TX_BUZZ_DEBUG idf.py reconfigure build flash
 #+end_src
 
-Stamped binaries (gitignored): ~firmware_out/~  
-e.g. ~working_audio_v2_tx.bin~, ~working_audio_v2_rx.bin~.
+Stamped binaries (gitignored): ~firmware_out/~.
 
 ** Main sources
 
 | File | Purpose |
 |------+---------|
-| ~main/tx.c~ | TX FSM: idle → pair → capture/stream |
-| ~main/rx.c~ | RX FSM: pair → playback; soft-join / repair ads |
+| ~main/tx.c~ | Shipping TX FSM: idle → pair → capture/stream |
+| ~main/rx.c~ | Shipping RX FSM: pair → playback; soft-join / repair ads |
 | ~main/rig_shared.h~ / ~.c~ | Packet layouts, Wi‑Fi / ESP-NOW init, PS_NONE |
 | ~main/rx_temp_debug.h~ | Optional RX_DBG logs (toggle with macro) |
+| ~main/testing/~ | Sound-profile / peak-log diagnostics (not shipping) |
 | ~main/square_wave_test.c~ | Early DAC sanity (not the shipping app) |
 
 ** Protocol sketch
@@ -151,18 +236,22 @@ e.g. ~working_audio_v2_tx.bin~, ~working_audio_v2_rx.bin~.
 4. Tiny ESP-NOW ping, then grow to v2 payload size.
 5. *Fix power* so both packs can transmit Wi‑Fi without brownout.
 6. Pairing FSM + reconnect.
-7. Only then: timbre, filtering, amp, UI.
+7. Digital tone isolation (DAC-only, then TX tone over air).
+8. Only then: PCB layout / amp / timbre on a real board.
 
 Reading datasheets is not optional on this project — the PCM1808 BCK
 rule alone is a multi-hour footgun if you skip §serial audio interface.
 
 * Known open issues
 
-- Dull / LPF-like timbre vs the source.
+- Real jack→ADC dull / LPF-like timbre (analog / breadboard; digital
+  path proven OK).
 - Breadboard crackle / supply noise (caps, grounds, short I2S).
 - Reconnect still imperfect under bad power or USB serial reboots.
-- Product UI / display path from the old README is deferred.
+- Product UI / display path deferred.
+- KiCad PCB outlines still stubby — schematic/layout next.
 
 * Author
 
 Damian Luciano Muschamp
+EOF

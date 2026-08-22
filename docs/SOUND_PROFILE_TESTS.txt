@@ -1,0 +1,52 @@
+SOUND PROFILE ISOLATION TESTS
+=============================
+Diagnostic sources live under main/testing/ (not shipping tx.c/rx.c).
+
+Why the old 440 Hz square was a weak LPF detector
+-------------------------------------------------
+- Fundamental at 440 Hz sits well below any mild treble roll-off.
+- A square *does* have odd harmonics (1320, 2200, 3080, …) but a soft LPF
+  that starts around 5–8 kHz only nicks the upper buzz. Subjectively it
+  can still “sound like a square,” especially on IEMs vs Bluetooth buds
+  with totally different transducers.
+- Matching Bluetooth 440 Hz in one ear vs IEM in the other only proves
+  pitch / rough loudness at one mid frequency — not that 8–12 kHz energy
+  survives the path.
+- Isolation (single tone, no music reference) also hides dullness: there
+  is nothing bright to compare against.
+
+What these builds add
+---------------------
+1) IEM_NODE=RX_DAC_TEST  → testing/rx_dac_profile_test.c
+   Local PCM5102 only (same 48 kHz / msb_right path as shipping rx.c).
+   Cycles: sine_440 → sine_8k → alt_440_8k → square_440 → chirp_200_12k
+   (8 s each). No ESP-NOW. USB on RX; TX can stay off.
+
+2) IEM_NODE=TX_TONE  → testing/tx_tone_bypass.c
+   Same pairing / ESP-NOW as shipping TX, but ADC/I2S capture is skipped.
+   Digitally generated tones are packed as int16 and sent (esp_timer pace).
+   Flash normal IEM_NODE=RX on the receiver.
+
+3) IEM_NODE=TX_BUZZ_DEBUG  → testing/tx_buzz_debug.c
+   Shipping TX capture path + periodic ADC pre-gain peak logs.
+
+Decision table (listen, then pick the row that matches)
+-------------------------------------------------------
+RX_DAC_TEST sine_8k / chirp dull or dead
+  → RX I2S / PCM5102 / FLT / wiring / headphones — not TX ADC or >>16.
+
+RX_DAC_TEST bright, but TX_TONE over air dull
+  → Packing / ESP-NOW path / shipping RX playback — not PCM1808 analog.
+
+Both bright, only real laptop/ADC audio dull
+  → PCM1808 analog front-end, jack/wiring/breadboard, or source level.
+
+Build / flash
+-------------
+IEM_NODE=RX_DAC_TEST idf.py reconfigure build flash
+IEM_NODE=TX_TONE idf.py reconfigure build flash
+IEM_NODE=TX_BUZZ_DEBUG idf.py reconfigure build flash
+IEM_NODE=TX|RX idf.py reconfigure build flash   # shipping
+
+See docs/BENCH_REALIZATIONS.txt (CER notes) and main/testing/README.txt.
+EOF
