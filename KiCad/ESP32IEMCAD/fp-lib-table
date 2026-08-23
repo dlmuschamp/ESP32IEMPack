@@ -1,6 +1,0 @@
-(fp_lib_table
-	(version 7)
-	(lib (name "LM3940IMPX-3.3_NOPB") (type "KiCad") (uri "C:/Users/Damian/source/repos/ESP32IEMPack/KiCad/Custom_Part_Downloads/LM3940IMPX-3.3_NOPB") (options "") (descr ""))
-	(lib (name "MAX97220AETE_T") (type "KiCad") (uri "C:/Users/Damian/source/repos/ESP32IEMPack/KiCad/Custom_Part_Downloads/MAX97220AETE_T") (options "") (descr ""))
-	(lib (name "PTN09S2-H10120K1A") (type "KiCad") (uri "C:/Users/Damian/source/repos/ESP32IEMPack/KiCad/Custom_Part_Downloads/PTN09S2-H10120K1A") (options "") (descr ""))
-)
