@@ -1,0 +1,231 @@
+* ESP32 Wireless IEM Pack
+
+A first-pass wireless in-ear monitor (IEM) system: one ESP32 transmitter pack
+and one ESP32 receiver pack. The RX path is ~ESP-NOW -> ESP32 -> I2S ->
+PCM5102 DAC -> volume pot -> MAX97220A headphone amp -> 3.5 mm jack~.
+
+This repo is a work in progress. The breadboard version plays audio. The KiCad
+project in =KiCad/RX_SKETCHES/= is that breadboard transferred onto hierarchical
+sheets --- not a finished layout. There is *no display on this version*.
+
+** First project
+
+This is Damian Luciano Muschamp's first self-guided embedded systems project,
+and the first time using C, ESP32s, reading datasheets / spec sheets, and
+KiCad. The notes and "common mistakes" section below are written with that in
+mind.
+
+** Firmware
+
+All application code is *C*. It runs on *FreeRTOS* under *ESP-IDF*, using the
+related Espressif libraries (ESP-NOW / Wi-Fi, I2S, ADC, LEDC, NVS). There is
+*no Arduino* in this project. There is *no hardware abstraction layer* --- the
+firmware calls ESP-IDF APIs directly.
+
+- =main/tx.c= :: Transmitter. Done for this version (ESP-NOW, ADC pot, LED,
+  audio packet path).
+- =main/rx.c= :: Receiver entry. Still the thin side of the pair; build with
+  =IEM_NODE=RX= when you flash it.
+- =main/square_wave_test.c= :: Bench I2S tone used to prove the DAC path.
+- =main/rig_shared.h= :: Shared packet and state types for TX and RX.
+
+A packet sniffer / monitor node was an early idea. It is *not* part of this
+version. It could come back later as a future extension (=IEM_NODE=MON= is a
+leftover hook in =main/CMakeLists.txt=). Do not treat =sniffer.c= as shipping
+firmware.
+
+Build a node after exporting the target:
+
+#+BEGIN_SRC bash
+IEM_NODE=TX idf.py build
+# IEM_NODE=RX when flashing the receiver
+#+END_SRC
+
+=main/CMakeLists.txt= refuses to build if =IEM_NODE= is missing. That is
+intentional so you do not flash the wrong image.
+
+** What this version is (and is not)
+
+| Topic    | This version                                      | Not this version                          |
+|----------+---------------------------------------------------+-------------------------------------------|
+| Display  | None                                              | A screen or later UI                      |
+| RX power | USB-C from a 10,000 mAh 5 V bank -> LM3940 3.3 V  | TP4056 + 2000 mAh LiPo / 3xAA             |
+| TX power | The same kind of 10,000 mAh 5 V bank as the RX    | A different chemistry or one shared bank  |
+| Radio    | ESP32-WROOM-32U + external 2.4 GHz U.FL pigtail   | On-module PCB antenna (32E / 32D)         |
+| Audio    | I2S to a PCM5102, then a headphone amp            | I2C (the DAC is I2S)                      |
+| Firmware | C + FreeRTOS + ESP-IDF                            | Arduino, a HAL, or a sniffer node         |
+| PCB      | Footprint dump / ratsnest only                    | Routed board ready to order               |
+
+TX and RX each get their *own* identical 10,000 mAh bank. Do not power both
+packs from one bank if you want them to roam independently.
+
+** Repo map
+
+#+BEGIN_SRC
+main/                  ESP-IDF C firmware (FreeRTOS)
+  rig_shared.h         Shared packet / state types (TX and RX)
+  tx.c                 Transmitter --- done for this version
+  rx.c                 Receiver entry
+  square_wave_test.c   Bench I2S tone for the DAC path
+KiCad/RX_SKETCHES/     RX hierarchical schematic (WIP)
+KiCad/TX_SKETCHES/     TX placeholder
+KiCad/Custom_Part_Downloads/  SnapEDA symbols / footprints
+#+END_SRC
+
+** Hardware (RX 1.0.0 KiCad)
+
+Hierarchical sheets, in signal order:
+
+1. =pwr_mgmt= --- USB-C (CC pulldowns), CP2102C UART bridge, LM3940 5 V -> 3.3 V
+2. =esp_rx= --- ESP32-WROOM-32U
+3. =dac= --- PCM5102
+4. =vol_ctrl= --- dual-gang log pot + 0% switch
+5. =amp= --- MAX97220A to the 3.5 mm jack
+
+*** Firmware I2S map (do not "improve" these GPIOs)
+
+These match the working breadboard and =main/square_wave_test.c=:
+
+| Hierarchical label | ESP32 GPIO | Firmware name                                      |
+|--------------------+------------+----------------------------------------------------|
+| =BCK=              | IO33       | =BCK_PIN=                                          |
+| =LRCLK=            | IO32       | =LRCK_PIN=                                         |
+| =DIN=              | IO25       | =DOUT_PIN= (ESP data *out* to the DAC data *in*)   |
+
+UART programming: =TXD= = TXD0/IO1, =RXD= = RXD0/IO3. Auto-program straps:
+=ESP_EN= = EN, =ESP_IO0= = IO0.
+
+*** Antenna (required)
+
+The *32U* module has a U.FL connector and *no PCB antenna*. Wi-Fi / ESP-NOW
+will be dead without a *2.4 GHz antenna on a U.FL / IPEX pigtail* mated to the
+module. Do not leave this off the BOM. The schematic symbol for that pigtail
+(=ANT1=) lives on the follow-up fixes branch so you can merge this folder-sync
+PR first.
+
+If you would rather have an on-board antenna later, that is a different module
+(WROOM-32E / 32D), not a missing copper pour on the 32U.
+
+*** Analog (PCM5102 datasheet vs experiments)
+
+The PCM5102 datasheet analog network for a ~10 kOhm load is:
+
+=OUTL/OUTR -> 470 ohm series -> PRE_POT=, with *2.2 nF from that node to GND*.
+
+The MAX97220A input impedance is also about *10 kOhm*, so that filter is the
+right starting point. The 1 kOhm / 10 ohm pad on the volume sheet was an
+experiment, not the datasheet circuit.
+
+MAX97220A voltage gain is *fixed +3.5 dB*. The 10 kOhm resistors around the amp
+are the single-ended input network, not an IC "gain pin." Leave them
+unpopulated on a hand-built proto so you can try values. Populate them (start
+10 kOhm) only if you order a fully assembled board. Use a MAX97220*D* if you
+want resistor-programmed gain.
+
+*** Hand assembly
+
+Use *0805* for every resistor and capacitor you will solder yourself, including
+10 / 22 / 33 uF. 0603 is OK if you are already comfortable. Do not use 0402 or
+0201. KiCad's default =C_0201_0603Metric= / =R_0201_0603Metric= names look like
+"0603" but they are imperial *0201*.
+
+ICs stay their real packages (WROOM module, TSSOP-20, TQFN-16, SOT-223,
+WQFN-24).
+
+** Current status
+
+- [X] Breadboard RX path plays (ESP32 I2S -> PCM5102 -> amp -> IEMs)
+- [X] =tx.c= transmitter firmware for this version
+- [X] Repo + KiCad folder split (=RX_SKETCHES= / =TX_SKETCHES=)
+- [X] RX hierarchical schematic transferred from the breadboard (WIP)
+- [ ] Fit the U.FL antenna; confirm ESP-NOW range
+- [ ] Finish the RX firmware path that consumes packets into I2S
+- [ ] Run ERC, then floorplan and route the RX PCB
+- [ ] TX schematic (same 10,000 mAh USB-C bank idea)
+
+No display work on this revision. No sniffer / monitor node on this revision.
+
+** Common KiCad / first-board mistakes
+
+First KiCad project, first C project, first ESP-IDF board, first time reading
+IC spec sheets, first multi-IC audio schematic. The list below is the stuff
+that already bit this schematic. Check it every time you move a part or add a
+hierarchical label.
+
+*** 1. Rotating a symbol does not remap pin numbers
+
+Pin 3 is still =EN= after a 270 degree rotate. KiCad only rotates the *drawing*
+and the *sheet coordinates* of the pins around the symbol origin. Hierarchical
+labels and wires that stay put will attach to whichever pin rotated into that
+spot.
+
+After any rotate: click each pin, read the name, then move the label onto
+*that* pin. Do not assume "left side is still EN."
+
+*** 2. Hierarchical labels connect through wires, not vibes
+
+A label sitting near a pin is not connected. ERC and the ratsnest follow
+*wires and pin ends*. After a rotate, a label can look "on" the chip and still
+sit on empty space or on the wrong pin (=ESP_IO0= on =EN=, =BCK= on =DEMP=,
+=SHDN_SIGNAL= on =C1N=).
+
+Triple-check every hierarchical label against the *pin name*, not the side of
+the box.
+
+*** 3. Same-ish names are different pins
+
+| You meant                         | Easy to hit instead      | What happens                              |
+|-----------------------------------+--------------------------+-------------------------------------------|
+| PCM5102 =BCK= / =DIN= / =LRCK=    | =DEMP= / =XSMT= / =FMT=  | DAC never gets PCM; clocks toggle config  |
+| MAX97220 =~{SHDN}=                | =C1N= (charge-pump cap)  | Volume switch does not mute; VSS breaks   |
+| ESP =TXD0= / =RXD0=               | =SENSOR_VN= / empty      | USB-C UART programming dies               |
+| I2S                               | I2C                      | Wrong bus, wrong pins, wrong mental model |
+
+Read the pin *name* in the status bar before you drop the label.
+
+*** 4. Firmware GPIO numbers are the contract
+
+=#define BCK_PIN 33= is IO33 on the module, period. Do not "clean up" the
+schematic onto IO18/19/23 unless you change the C defines too. Label =DIN= on
+the DAC is the ESP's *DOUT*.
+
+*** 5. The footprint field is a part you have to buy and solder
+
+If the field says =R_0201_0603Metric=, you will get 0201s. Bulk 10 uF parts
+basically do not exist in 0201, and you will not hand-assemble them. Set 0805
+(or 0603) *before* you Update PCB from Schematic.
+
+*** 6. DNP does not delete the net
+
+KiCad "Do not populate" still leaves the schematic wires. If you DNP a *series*
+resistor, the path goes open unless you add a solder-bridge / short. If you DNP
+a *shunt*, leaving the pads empty is correct (no short to GND).
+
+*** 7. 32U vs 32E, A vs D, datasheet vs doodle
+
+- *32U* = U.FL only. *32E/32D* = PCB antenna. Pick one and BOM the matching RF
+  parts.
+- *MAX97220A* is not *MAX97220D*. The letter is the gain mode.
+- Prefer the datasheet application circuit (470 ohm + 2.2 nF here) over a pad
+  you tried on the bench, unless you measured why the pad is better.
+
+*** 8. The =.kicad_pcb= is not a board until it has Edge.Cuts and tracks
+
+A pile of footprints with a ratsnest is a placeholder. After schematic net or
+footprint changes, *Update PCB from Schematic*. Do not send that file to a fab.
+
+*** 9. Power and analog will buzz on a breadboard
+
+Long jumpers, no ground plane, and an ESP32 radio next to a DAC is a buzz/hiss
+machine. That does not automatically mean the circuit is wrong. A PCB with
+short I2S, local decoupling, and a solid GND will almost certainly be quieter.
+It is not guaranteed to be silent on the first spin.
+
+*** 10. Keep the project notes honest
+
+If the schematic is USB-C + LDO and no display, =README.org= must not still say
+LiPo + TFT, Arduino, or a HAL that is not in the tree.
+
+** Author
+
+Damian Luciano Muschamp
