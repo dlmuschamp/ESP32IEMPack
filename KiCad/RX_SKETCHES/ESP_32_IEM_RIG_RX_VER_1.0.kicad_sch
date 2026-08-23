@@ -7,16 +7,47 @@
 	(title_block
 		(title "ESP32 Wireless IEM Rig Reciever")
 		(date "2026-08-04")
-		(rev "0.0.3")
+		(rev "1.0.0")
 		(company "damian m")
-		(comment 1 "Data: ESP -> DAC -> AMP-> 3.5mm Jack.")
+		(comment 1 "Data: TX -> RX -> DAC -> AMP-> 3.5mm Jack.")
 		(comment 2 "DAC features a soft mute switch.")
 		(comment 3 "Dual Gang pot has a hard mute at 0% volume.")
+		(comment 4 "Supports updates over USB-C using UART.")
 	)
 	(lib_symbols)
-	(text "Sets 5V and 3V3"
+	(text "Voltage Dividers for both Left and Right channels\nto bring volume to safer pre-amp levels. \nVolume controlled by logarithmic dual gang pot.\nVol Pot completely turns off AMP at 0%.\n"
 		(exclude_from_sim no)
-		(at 39.37 38.354 0)
+		(at 50.546 93.218 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "42a9e0ec-7893-4cba-ab5a-6de77e0210b0")
+	)
+	(text "Recieves audio data from ESP TX then processes \nand sends it to the rest of the audio pipeline."
+		(exclude_from_sim no)
+		(at 96.266 39.37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "832171c3-30f3-42ca-b09d-48c9960d1af7")
+	)
+	(text "Connects to stereo 3.5mm input jack for IEM use. "
+		(exclude_from_sim no)
+		(at 138.938 80.518 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "9dec3db6-27c1-4c22-b0e3-8fc90ab8da05")
+	)
+	(text "Sets 5V and 3V3 using LDO. \nPowered by 10,000mAh 5V/2.0A power bank.\nUSB-C 16 pin. \nSupports USB-C updates via UART."
+		(exclude_from_sim no)
+		(at 39.878 38.862 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -24,9 +55,29 @@
 		)
 		(uuid "e1b4084b-9d81-4171-befe-072019be5c9d")
 	)
+	(text "Set to the I2C format. \nBy default configured to maximize audio quality.\nSoftware-level mute switch.\nHigh Quality or Low Latency switch."
+		(exclude_from_sim no)
+		(at 159.766 38.354 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "f06c4d90-c13a-4761-9054-74b347757743")
+	)
 	(wire
 		(pts
-			(xy 193.04 26.67) (xy 193.04 57.15)
+			(xy 124.46 57.15) (xy 16.51 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "037c3b39-559e-487d-b14b-0a54511e1d1f")
+	)
+	(wire
+		(pts
+			(xy 193.04 26.67) (xy 193.04 59.69)
 		)
 		(stroke
 			(width 0)
@@ -36,7 +87,17 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 58.42) (xy 16.51 58.42)
+			(xy 62.23 26.67) (xy 67.31 26.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "139190d6-0cf0-445e-b926-928d56a33116")
+	)
+	(wire
+		(pts
+			(xy 194.31 60.96) (xy 16.51 60.96)
 		)
 		(stroke
 			(width 0)
@@ -46,7 +107,7 @@
 	)
 	(wire
 		(pts
-			(xy 82.55 69.85) (xy 86.36 69.85)
+			(xy 82.55 71.12) (xy 86.36 71.12)
 		)
 		(stroke
 			(width 0)
@@ -56,7 +117,7 @@
 	)
 	(wire
 		(pts
-			(xy 82.55 67.31) (xy 86.36 67.31)
+			(xy 82.55 68.58) (xy 86.36 68.58)
 		)
 		(stroke
 			(width 0)
@@ -76,7 +137,7 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 57.15) (xy 15.24 57.15)
+			(xy 193.04 59.69) (xy 15.24 59.69)
 		)
 		(stroke
 			(width 0)
@@ -86,7 +147,7 @@
 	)
 	(wire
 		(pts
-			(xy 15.24 67.31) (xy 17.78 67.31)
+			(xy 15.24 68.58) (xy 17.78 68.58)
 		)
 		(stroke
 			(width 0)
@@ -96,7 +157,7 @@
 	)
 	(wire
 		(pts
-			(xy 15.24 57.15) (xy 15.24 67.31)
+			(xy 15.24 59.69) (xy 15.24 68.58)
 		)
 		(stroke
 			(width 0)
@@ -106,7 +167,7 @@
 	)
 	(wire
 		(pts
-			(xy 82.55 64.77) (xy 86.36 64.77)
+			(xy 82.55 66.04) (xy 86.36 66.04)
 		)
 		(stroke
 			(width 0)
@@ -116,13 +177,63 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 24.13) (xy 194.31 58.42)
+			(xy 62.23 29.21) (xy 67.31 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "51dc57d7-2498-4077-b80c-5fa573cfbc57")
+	)
+	(wire
+		(pts
+			(xy 124.46 31.75) (xy 124.46 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5c7da388-b1cd-44f2-8cff-ab3bd6774593")
+	)
+	(wire
+		(pts
+			(xy 194.31 24.13) (xy 194.31 60.96)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "75753acd-6f31-40b7-8b15-7fa806a057a0")
+	)
+	(wire
+		(pts
+			(xy 16.51 57.15) (xy 16.51 24.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7ddc24a0-4691-48d2-bc29-9504e61140c6")
+	)
+	(wire
+		(pts
+			(xy 123.19 31.75) (xy 124.46 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7eb01057-8672-490e-92bd-5405cb587fd5")
+	)
+	(wire
+		(pts
+			(xy 16.51 24.13) (xy 17.78 24.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82d1c5d2-6375-4f07-aadd-65c03cb95e65")
 	)
 	(wire
 		(pts
@@ -136,6 +247,16 @@
 	)
 	(wire
 		(pts
+			(xy 62.23 24.13) (xy 67.31 24.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b4005bc8-e591-473b-b002-b982172ed462")
+	)
+	(wire
+		(pts
 			(xy 123.19 26.67) (xy 127 26.67)
 		)
 		(stroke
@@ -146,7 +267,7 @@
 	)
 	(wire
 		(pts
-			(xy 16.51 58.42) (xy 16.51 64.77)
+			(xy 16.51 60.96) (xy 16.51 66.04)
 		)
 		(stroke
 			(width 0)
@@ -176,7 +297,7 @@
 	)
 	(wire
 		(pts
-			(xy 16.51 64.77) (xy 17.78 64.77)
+			(xy 16.51 66.04) (xy 17.78 66.04)
 		)
 		(stroke
 			(width 0)
@@ -252,8 +373,48 @@
 				(justify right)
 			)
 		)
+		(pin "ESP_EN" input
+			(at 67.31 24.13 180)
+			(uuid "96a318f9-c40d-441e-9a33-67472bae3b32")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ESP_IO0" input
+			(at 67.31 26.67 180)
+			(uuid "b85011f9-4774-42bc-a1ed-eb0584a5a2ef")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "TXD" input
+			(at 67.31 29.21 180)
+			(uuid "daee5680-b351-4118-97fb-f1881691aa78")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "RXD" output
+			(at 123.19 31.75 0)
+			(uuid "f3acd868-16a7-4006-b3ba-a0411fa52b27")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda"
 					(page "3")
 				)
@@ -349,7 +510,7 @@
 			)
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda"
 					(page "4")
 				)
@@ -394,8 +555,48 @@
 				(justify left top)
 			)
 		)
+		(pin "RXD" input
+			(at 17.78 24.13 180)
+			(uuid "eac1f830-9d62-404e-a702-2f1fb8d06e86")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ESP_EN" output
+			(at 62.23 24.13 0)
+			(uuid "47a996f4-8f8d-44a3-bfa3-1c91afa8e8d3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ESP_IO0" output
+			(at 62.23 26.67 0)
+			(uuid "e24e758c-a918-420a-8d77-2da6e0f5666b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "TXD" output
+			(at 62.23 29.21 0)
+			(uuid "6e27448e-2562-4924-adcd-fb4bf83ff680")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda"
 					(page "2")
 				)
@@ -403,7 +604,7 @@
 		)
 	)
 	(sheet
-		(at 86.36 62.23)
+		(at 86.36 63.5)
 		(size 104.14 33.02)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -419,7 +620,7 @@
 		)
 		(uuid "e73e1f85-85b5-4291-97fa-1640b66c2189")
 		(property "Sheetname" "Amp"
-			(at 86.36 61.5184 0)
+			(at 86.36 62.7884 0)
 			(show_name yes)
 			(do_not_autoplace no)
 			(effects
@@ -430,7 +631,7 @@
 			)
 		)
 		(property "Sheetfile" "amp.kicad_sch"
-			(at 86.36 95.8346 0)
+			(at 86.36 97.1046 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -441,7 +642,7 @@
 			)
 		)
 		(pin "POST_POT_IN_L" input
-			(at 86.36 64.77 180)
+			(at 86.36 66.04 180)
 			(uuid "c409abeb-0712-45f0-8050-a434a1d651d1")
 			(effects
 				(font
@@ -451,7 +652,7 @@
 			)
 		)
 		(pin "POST_POT_IN_R" input
-			(at 86.36 67.31 180)
+			(at 86.36 68.58 180)
 			(uuid "41ab73bb-85c8-4c6e-837f-301fafd4a5c1")
 			(effects
 				(font
@@ -461,7 +662,7 @@
 			)
 		)
 		(pin "SHDN_SIGNAL" input
-			(at 86.36 69.85 180)
+			(at 86.36 71.12 180)
 			(uuid "380fa55e-1f0c-4157-8c0c-41141a46deb7")
 			(effects
 				(font
@@ -471,7 +672,7 @@
 			)
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda"
 					(page "6")
 				)
@@ -479,7 +680,7 @@
 		)
 	)
 	(sheet
-		(at 17.78 62.23)
+		(at 17.78 63.5)
 		(size 64.77 66.04)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -495,7 +696,7 @@
 		)
 		(uuid "ef5fa814-6562-446c-a762-5c80584cf2d0")
 		(property "Sheetname" "Volume Control"
-			(at 17.78 61.5184 0)
+			(at 17.78 62.7884 0)
 			(show_name yes)
 			(do_not_autoplace no)
 			(effects
@@ -506,7 +707,7 @@
 			)
 		)
 		(property "Sheetfile" "vol_ctrl.kicad_sch"
-			(at 17.78 128.8546 0)
+			(at 17.78 130.1246 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -517,7 +718,7 @@
 			)
 		)
 		(pin "DAC_OUT_L" input
-			(at 17.78 64.77 180)
+			(at 17.78 66.04 180)
 			(uuid "86dbb152-5830-405d-a438-2ebcc82260b3")
 			(effects
 				(font
@@ -527,7 +728,7 @@
 			)
 		)
 		(pin "DAC_OUT_R" input
-			(at 17.78 67.31 180)
+			(at 17.78 68.58 180)
 			(uuid "c8bfe5ef-af0c-4b34-9485-7d676d37c934")
 			(effects
 				(font
@@ -537,7 +738,7 @@
 			)
 		)
 		(pin "POST_POT_IN_L" output
-			(at 82.55 64.77 0)
+			(at 82.55 66.04 0)
 			(uuid "4d5c1851-1a3b-4e55-8442-d9dbbe7da477")
 			(effects
 				(font
@@ -547,7 +748,7 @@
 			)
 		)
 		(pin "POST_POT_IN_R" output
-			(at 82.55 67.31 0)
+			(at 82.55 68.58 0)
 			(uuid "028eb292-ebfd-42b9-9572-f700856c45b8")
 			(effects
 				(font
@@ -557,7 +758,7 @@
 			)
 		)
 		(pin "SHDN_SIGNAL" output
-			(at 82.55 69.85 0)
+			(at 82.55 71.12 0)
 			(uuid "60871c31-44c3-4a92-bbc9-7ff49a2935c0")
 			(effects
 				(font
@@ -567,7 +768,7 @@
 			)
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda"
 					(page "5")
 				)

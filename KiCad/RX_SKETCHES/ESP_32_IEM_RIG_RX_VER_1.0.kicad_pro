@@ -240,7 +240,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": "0.0.0"
+      "sch_revision": "1.0.0"
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -488,7 +488,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "ESP32IEMCAD.kicad_pro",
+    "filename": "ESP_32_IEM_RIG_RX_VER_1.0.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -611,72 +611,12 @@
           "label": "Datasheet",
           "name": "Datasheet",
           "show": true
-        },
-        {
-          "group_by": false,
-          "label": "MP",
-          "name": "MP",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Package",
-          "name": "Package",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Price",
-          "name": "Price",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Purchase-URL",
-          "name": "Purchase-URL",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "SnapEDA_Link",
-          "name": "SnapEDA_Link",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "MF",
-          "name": "MF",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Description",
-          "name": "Description",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Check_prices",
-          "name": "Check_prices",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "#",
-          "name": "${ITEM_NUMBER}",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Availability",
-          "name": "Availability",
-          "show": false
         }
       ],
       "filter_string": "",
       "group_symbols": true,
       "include_excluded_from_bom": true,
-      "name": "",
+      "name": "Default Editing",
       "sort_asc": true,
       "sort_field": "Reference"
     },
@@ -695,14 +635,14 @@
       "intersheets_ref_show": false,
       "intersheets_ref_suffix": "",
       "junction_size_choice": 3,
-      "label_size_ratio": 0.25,
+      "label_size_ratio": 0.375,
       "operating_point_overlay_i_precision": 3,
       "operating_point_overlay_i_range": "~A",
       "operating_point_overlay_v_precision": 3,
       "operating_point_overlay_v_range": "~V",
       "overbar_offset_ratio": 1.23,
-      "pin_symbol_size": 0.0,
-      "text_offset_ratio": 0.08
+      "pin_symbol_size": 25.0,
+      "text_offset_ratio": 0.15
     },
     "legacy_lib_dir": "",
     "legacy_lib_list": [],
@@ -716,18 +656,38 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "ESP32IEMCAD.kicad_sch",
-        "name": "ESP32IEMCAD",
+        "filename": "ESP_32_IEM_RIG_RX_VER_1.0.kicad_sch",
+        "name": "Root",
         "uuid": "98787dcf-424f-4647-bb79-9127f0f74bda"
       }
     ],
-    "used_designators": "C5,C11-21,S1,#PWR2,#PWR10-36,R7-8,R11-21,J1-5,SW1-3,U4",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [
     [
       "98787dcf-424f-4647-bb79-9127f0f74bda",
-      "ESP32IEMCAD"
+      "Root"
+    ],
+    [
+      "6e12d95a-ec67-48a8-b98e-82576ae3682c",
+      "Power Management"
+    ],
+    [
+      "12633c0c-fb68-4c25-af81-bead6c15ab98",
+      "ESP Reciever"
+    ],
+    [
+      "21ceb167-c50e-480a-ba2d-de2280d740ad",
+      "DAC"
+    ],
+    [
+      "ef5fa814-6562-446c-a762-5c80584cf2d0",
+      "Volume Control"
+    ],
+    [
+      "e73e1f85-85b5-4291-97fa-1640b66c2189",
+      "Amp"
     ]
   ],
   "text_variables": {},

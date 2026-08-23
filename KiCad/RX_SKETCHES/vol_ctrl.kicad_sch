@@ -7,9 +7,9 @@
 	(title_block
 		(title "ESP32 Wireless IEM Rig Reciever")
 		(date "2026-08-04")
-		(rev "0.0.3")
+		(rev "1.0.0")
 		(company "damian m")
-		(comment 1 "Data: ESP -> DAC -> AMP-> 3.5mm Jack.")
+		(comment 1 "Data: TX -> RX -> DAC -> AMP-> 3.5mm Jack.")
 		(comment 2 "AMP_IN_L/R follows a voltage divdier to lower volume to safer levels before hitting AMP.")
 		(comment 3 "Volume Knob with integrated off switch to kill amp from playing any audio. ")
 		(comment 4 "POST_POT_IN_R/L becomes the input to the amp.")
@@ -1088,7 +1088,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 98.806 30.734 90)
 			(hide yes)
 			(show_name no)
@@ -1128,7 +1128,7 @@
 			(uuid "7b47250c-1564-4982-a123-c34f24bfdcc1")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "R18")
 					(unit 1)
@@ -1170,7 +1170,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 122.936 87.884 90)
 			(hide yes)
 			(show_name no)
@@ -1210,7 +1210,7 @@
 			(uuid "3b831727-0ecf-4e32-b4cd-6a045975c70e")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "R22")
 					(unit 1)
@@ -1288,7 +1288,7 @@
 			(uuid "375ebf95-ce0a-4e5b-8e5b-cc1a7644f89c")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "#PWR035")
 					(unit 1)
@@ -1330,7 +1330,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 111.506 45.974 90)
 			(hide yes)
 			(show_name no)
@@ -1370,7 +1370,7 @@
 			(uuid "7a4c0b24-90a0-4f54-ba95-c6be545e5a5d")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "R21")
 					(unit 1)
@@ -1448,7 +1448,7 @@
 			(uuid "b3e4995a-3274-418c-8229-e80225a5edfb")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "#PWR039")
 					(unit 1)
@@ -1488,7 +1488,7 @@
 				)
 			)
 		)
-		(property "Footprint" "PTN09S2H10120K1A"
+		(property "Footprint" "PTN09S2-H10120K1A:PTN09S2H10120K1A"
 			(at 116.84 171.12 0)
 			(hide yes)
 			(show_name no)
@@ -1608,7 +1608,7 @@
 			(uuid "36fa16a4-1c32-403b-8b7a-1ddd6386a232")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "VR1")
 					(unit 1)
@@ -1686,7 +1686,7 @@
 			(uuid "e0c060b8-e177-4a0e-afe6-30951d31cff6")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "#PWR037")
 					(unit 1)
@@ -1764,7 +1764,7 @@
 			(uuid "d5d1859d-d1e0-484e-8430-b52d89d60e19")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "#PWR038")
 					(unit 1)
@@ -1806,7 +1806,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 98.806 45.974 90)
 			(hide yes)
 			(show_name no)
@@ -1846,7 +1846,7 @@
 			(uuid "9011ee0b-3859-422d-8c6a-6c495b1bf3a0")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "R19")
 					(unit 1)
@@ -1924,7 +1924,7 @@
 			(uuid "96b60fa7-6bba-4650-a6a3-c2741ac4a95d")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "#PWR034")
 					(unit 1)
@@ -2002,7 +2002,7 @@
 			(uuid "9ca35e6f-d7b6-4cbc-b46c-a2644bf1cbfb")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "#PWR040")
 					(unit 1)
@@ -2044,7 +2044,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 111.506 30.734 90)
 			(hide yes)
 			(show_name no)
@@ -2084,7 +2084,7 @@
 			(uuid "7a088903-35d5-4c0a-99f8-011e458e2f38")
 		)
 		(instances
-			(project "ESP32IEMCAD"
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/ef5fa814-6562-446c-a762-5c80584cf2d0"
 					(reference "R20")
 					(unit 1)
