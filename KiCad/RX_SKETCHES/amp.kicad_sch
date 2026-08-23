@@ -1421,7 +1421,7 @@
 		)
 		(uuid "109012d5-58ca-40e1-9815-604a733393d0")
 	)
-	(text "SHDN_SIGNAL LOW acts as setting the volume to a \"true 0%\" \nby shutting off the IEM amp.\n\nThis is in contrast to the DAC Soft mute which acts as a \nmute toggle without \nchanging the volume. \n\nAmp follows the pseudo-differential input configuration \nbecause the DAC output is a single-ended input.\n"
+	(text "SHDN_SIGNAL LOW acts as setting the volume to a \"true 0%\" \nby shutting off the IEM amp.\n\nThis is in contrast to the DAC Soft mute which acts as a \nmute toggle without \nchanging the volume. \n\nAmp follows the pseudo-differential input configuration \nbecause the DAC output is a single-ended input.\n\nR1-R6, R9, R10 are DNP (Do Not Populate) on hand-built\nprotos so gain / input attenuation can be chosen later.\nPopulate (start 10k) on a fully assembled board.\nMAX97220A gain is fixed +3.5 dB; use MAX97220D for\nresistor-programmed gain. See docs/hardware_revisions.org.\n"
 		(exclude_from_sim no)
 		(at 19.558 118.872 0)
 		(effects
@@ -1610,7 +1610,7 @@
 	)
 	(wire
 		(pts
-			(xy 132.08 49.53) (xy 135.89 49.53)
+			(xy 134.62 49.53) (xy 147.32 49.53)
 		)
 		(stroke
 			(width 0)
@@ -1780,7 +1780,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 49.53) (xy 173.99 49.53)
+			(xy 147.32 49.53) (xy 173.99 49.53)
 		)
 		(stroke
 			(width 0)
@@ -1800,7 +1800,7 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 59.69) (xy 88.9 62.23)
+			(xy 88.9 67.31) (xy 88.9 69.85)
 		)
 		(stroke
 			(width 0)
@@ -1970,7 +1970,7 @@
 	)
 	(wire
 		(pts
-			(xy 96.52 62.23) (xy 88.9 62.23)
+			(xy 96.52 67.31) (xy 88.9 67.31)
 		)
 		(stroke
 			(width 0)
@@ -2000,7 +2000,7 @@
 	)
 	(wire
 		(pts
-			(xy 173.99 77.47) (xy 173.99 52.07)
+			(xy 165.1 52.07) (xy 173.99 52.07)
 		)
 		(stroke
 			(width 0)
@@ -2208,324 +2208,8 @@
 		)
 		(uuid "f16b00a5-46d8-4f88-b253-265b425791ed")
 	)
-	(wire
-		(pts
-			(xy 139.7 80.01) (xy 173.99 80.01)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1ff3e8fb-68c9-49b8-b9d9-153efda83252")
-	)
-	(wire
-		(pts
-			(xy 173.99 80.01) (xy 173.99 54.61)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c19b279d-a22d-430e-b3a9-25dc5094c15c")
-	)
-	(wire
-		(pts
-			(xy 138.43 77.47) (xy 173.99 77.47)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "78054377-575b-468d-ba83-63a06e906f6e")
-	)
-	(wire
-		(pts
-			(xy 132.08 49.53) (xy 132.08 52.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "22d9aa72-91f3-4c85-a962-9c5f285093b0")
-	)
-	(wire
-		(pts
-			(xy 139.7 49.53) (xy 139.7 54.61)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d25f0f6b-b24e-4a62-9410-3a98adffb320")
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 137.16 49.53 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "30c6edd5-bbe5-4888-9c89-d32923951a68")
-		(property "Reference" "C29"
-			(at 140.97 48.26 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "1u"
-			(at 140.97 50.800000000000004 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
-			(at 137.16 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 137.16 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Unpolarized capacitor"
-			(at 137.16 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "fc35ea7c-3300-4916-b052-292aa9ab1728")
-		)
-		(pin "1"
-			(uuid "c53111e1-7354-45f1-8aad-7c202362df70")
-		)
-		(instances
-			(project "ESP_32_IEM_RIG_RX_VER_1.0"
-				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189"
-					(reference "C29")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 139.7 54.61 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "0474b3a9-0fcb-4ba1-8c65-3e3ea4ff6594")
-		(property "Reference" "#PWR081"
-			(at 139.7 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 139.7 53.339999999999996 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 139.7 54.61 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 139.7 54.61 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 139.7 54.61 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "4315f97a-b054-4e53-9515-887ee179f1a9")
-		)
-		(instances
-			(project "ESP_32_IEM_RIG_RX_VER_1.0"
-				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189"
-					(reference "#PWR081")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 167.64 49.53 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "12cebe7a-2618-4c78-b15d-cfa82e19efea")
-		(property "Reference" "#PWR082"
-			(at 167.64 53.34 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 167.64 48.26 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 167.64 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 167.64 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 167.64 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "3abc42f0-10ff-4c74-ba77-014c2a129fe5")
-		)
-		(instances
-			(project "ESP_32_IEM_RIG_RX_VER_1.0"
-				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189"
-					(reference "#PWR082")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 132.08 49.53) (xy 133.35 49.53)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fbad7bf0-ea93-40b3-ac39-0fb4c887c5a1")
-	)
-	(wire
-		(pts
-			(xy 140.97 49.53) (xy 139.7 49.53)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d2395af9-43cc-4c77-a95c-1a62f91da5ce")
-	)
-	(text "SHDN_SIGNAL -> pin 16 ~{SHDN} (active low).\nC7 1uF is the C1P-C1N flying cap, not on SHDN.\n\nR1-R6, R9, R10 are DNP on hand-built protos\nso gain / input attenuation can be socketed.\nPopulate them (start 10k) on a fully assembled board.\nMAX97220A gain is fixed +3.5 dB; these Rs are the\nsingle-ended input network, not an IC gain pin.\nUse MAX97220D if you want resistor-programmed gain.\n\nJack: Tip=OUTL, Ring=OUTR, Sleeve=GND (DirectDrive).\nPVSS is the -V charge-pump rail: C29 1uF to PGND.\nSVSS/BIAS is tied to PVSS (0R / wire) per the datasheet.\nDo not route PVSS or SVSS to the headphone jack."
-		(exclude_from_sim no)
-		(at 20.32 20.32 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c6b7007c-c68a-482a-834a-acfaa159c202")
-	)
 	(label "AMP_OUT_R"
-		(at 160.02 77.47 0)
+		(at 134.62 54.61 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2535,7 +2219,7 @@
 		(uuid "90808cac-ed76-449e-b6e8-a8cdd71963e7")
 	)
 	(label "AMP_OUT_L"
-		(at 160.02 80.01 0)
+		(at 134.62 48.26 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2568,7 +2252,7 @@
 	)
 	(hierarchical_label "SHDN_SIGNAL"
 		(shape input)
-		(at 96.52 67.31 180)
+		(at 96.52 62.23 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2608,7 +2292,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
 			(at 50.8 58.7248 0)
 			(hide yes)
 			(show_name no)
@@ -2844,7 +2528,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
 			(at 120.65 20.6248 0)
 			(hide yes)
 			(show_name no)
@@ -3002,7 +2686,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 61.214 58.674 90)
 			(hide yes)
 			(show_name no)
@@ -3167,7 +2851,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 69.596 66.294 90)
 			(hide yes)
 			(show_name no)
@@ -3325,7 +3009,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 61.214 45.974 90)
 			(hide yes)
 			(show_name no)
@@ -3639,7 +3323,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 61.214 98.044 90)
 			(hide yes)
 			(show_name no)
@@ -3718,7 +3402,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
 			(at 151.13 79.0448 0)
 			(hide yes)
 			(show_name no)
@@ -4021,7 +3705,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
 			(at 151.13 20.6248 0)
 			(hide yes)
 			(show_name no)
@@ -4101,7 +3785,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
 			(at 50.8 46.0248 0)
 			(hide yes)
 			(show_name no)
@@ -4181,7 +3865,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
 			(at 50.8 85.3948 0)
 			(hide yes)
 			(show_name no)
@@ -4261,7 +3945,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 101.854 32.004 90)
 			(hide yes)
 			(show_name no)
@@ -4496,7 +4180,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
 			(at 50.8 98.0948 0)
 			(hide yes)
 			(show_name no)
@@ -4624,7 +4308,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 92.71 59.69 270)
+		(at 92.71 69.85 270)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4634,7 +4318,7 @@
 		(dnp no)
 		(uuid "ca73d8a9-6dd9-4a44-8877-46dff87b55b1")
 		(property "Reference" "C7"
-			(at 92.71 64.262 90)
+			(at 92.71 74.422 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4644,7 +4328,7 @@
 			)
 		)
 		(property "Value" "1u"
-			(at 92.71 66.548 90)
+			(at 92.71 76.708 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4653,7 +4337,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
 			(at 88.9 70.8152 0)
 			(hide yes)
 			(show_name no)
@@ -4733,7 +4417,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
 			(at 151.13 66.3448 0)
 			(hide yes)
 			(show_name no)
@@ -4813,7 +4497,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 61.214 85.344 90)
 			(hide yes)
 			(show_name no)
@@ -4895,7 +4579,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 69.596 78.994 90)
 			(hide yes)
 			(show_name no)
@@ -5131,7 +4815,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
 			(at 106.934 100.584 90)
 			(hide yes)
 			(show_name no)

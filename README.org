@@ -84,13 +84,16 @@ Hierarchical sheets, in signal order:
 
 *** Firmware I2S map (do not "improve" these GPIOs)
 
-These match the working breadboard and =main/square_wave_test.c=:
+RX contract is =main/rx.c= on branch =main= (=DOUT_PIN 25=). TX uses
+=DIN_PIN 35= on the *transmitter* board only.
 
 | Hierarchical label | ESP32 GPIO | Firmware name                                      |
 |--------------------+------------+----------------------------------------------------|
 | =BCK=              | IO33       | =BCK_PIN=                                          |
 | =LRCLK=            | IO32       | =LRCK_PIN=                                         |
-| =DIN=              | IO25       | =DOUT_PIN= (ESP data *out* to the DAC data *in*)   |
+| =DOUT=             | IO25       | =DOUT_PIN= (ESP *out* -> PCM5102 pin *DIN*)        |
+
+Hardware change log (what / why / evidence): =docs/hardware_revisions.org=.
 
 UART programming: =TXD= = TXD0/IO1, =RXD= = RXD0/IO3. Auto-program straps:
 =ESP_EN= = EN, =ESP_IO0= = IO0.
@@ -115,7 +118,9 @@ sheet (=R16=/=R17= 470 ohm, =C20=/=C21= 2.2 nF):
 The MAX97220A input impedance is also about *10 kOhm*, so that filter is the
 right starting point. The experimental 1 kOhm / 10 ohm pad on =vol_ctrl= is
 *DNP*, with a short across the 1 kOhm positions so an empty series part does
-not open the audio path.
+not open the audio path. You do *not* need that pad for level safety if the
+pot and amp gain are enough --- filtered =DAC_OUT= can feed the pot directly
+(see =docs/hardware_revisions.org=).
 
 MAX97220A voltage gain is *fixed +3.5 dB*. Input network resistors =R1=--=R6=,
 =R9=, =R10= are *DNP* on hand-built protos so you can try values. Populate them

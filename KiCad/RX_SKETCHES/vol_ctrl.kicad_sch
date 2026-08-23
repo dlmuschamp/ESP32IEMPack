@@ -741,6 +741,17 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "PCM5102 datasheet filter lives on the DAC sheet:\nDAC_OUT -- 470R -- PRE_POT, 2.2nF from that node to GND.\nThat network assumes ~10 kOhm. MAX97220A Zin is ~10 kOhm.\n\nR18/R20 1k and R19/R21 10R are the old experimental\n40 dB pad. They are DNP. Wires short the 1k positions\nso the pot sees the filtered DAC_OUT directly.\nLeave the 10R pads empty (do not shunt PRE_POT to GND)."
+		(exclude_from_sim no)
+		(at 20.32 20.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8e514f71-44a6-4e4b-a45c-5174fbdd5eb5")
+	)
 	(junction
 		(at 97.79 38.1)
 		(diameter 0)
@@ -768,16 +779,6 @@
 			(type default)
 		)
 		(uuid "03061926-dca7-4295-ac6d-583a04e07401")
-	)
-	(wire
-		(pts
-			(xy 97.79 25.4) (xy 97.79 26.67)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "13673a1a-7caf-4fe0-8c0e-5222f305e676")
 	)
 	(wire
 		(pts
@@ -831,16 +832,6 @@
 	)
 	(wire
 		(pts
-			(xy 110.49 34.29) (xy 110.49 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "825b4ed4-3fb6-4803-9da1-19a7b6eb5f0f")
-	)
-	(wire
-		(pts
 			(xy 121.92 83.82) (xy 123.19 83.82)
 		)
 		(stroke
@@ -871,7 +862,7 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 34.29) (xy 97.79 38.1)
+			(xy 97.79 25.4) (xy 97.79 38.1)
 		)
 		(stroke
 			(width 0)
@@ -931,16 +922,6 @@
 	)
 	(wire
 		(pts
-			(xy 110.49 25.4) (xy 110.49 26.67)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c2286c54-c036-43f5-b30f-3d4c21d7dcdb")
-	)
-	(wire
-		(pts
 			(xy 110.49 49.53) (xy 110.49 52.07)
 		)
 		(stroke
@@ -948,26 +929,6 @@
 			(type default)
 		)
 		(uuid "ec10e2aa-04a9-4c8c-9bab-c99b3c2bf413")
-	)
-	(wire
-		(pts
-			(xy 113.03 25.4) (xy 110.49 25.4)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f6487c56-d7e9-4de9-9b8d-873cc5b83ddb")
-	)
-	(wire
-		(pts
-			(xy 97.79 25.4) (xy 97.79 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cc5f51fa-dda7-4290-af49-eade71298b53")
 	)
 	(wire
 		(pts
@@ -979,16 +940,15 @@
 		)
 		(uuid "f2021524-8943-4253-8193-1500a07b8d15")
 	)
-	(text "PCM5102 datasheet filter lives on the DAC sheet:\nDAC_OUT -- 470R -- PRE_POT, 2.2nF from that node to GND.\nThat network assumes ~10 kOhm. MAX97220A Zin is ~10 kOhm.\n\nR18/R20 1k and R19/R21 10R are the old experimental\n40 dB pad. They are DNP. Wires short the 1k positions\nso the pot sees the filtered DAC_OUT directly.\nLeave the 10R pads empty (do not shunt PRE_POT to GND)."
-		(exclude_from_sim no)
-		(at 20.32 20.32 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
+	(wire
+		(pts
+			(xy 113.03 25.4) (xy 110.49 25.4)
 		)
-		(uuid "8e514f71-44a6-4e4b-a45c-5174fbdd5eb5")
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f6487c56-d7e9-4de9-9b8d-873cc5b83ddb")
 	)
 	(label "PRE_POT_IN_L"
 		(at 86.36 82.55 180)
