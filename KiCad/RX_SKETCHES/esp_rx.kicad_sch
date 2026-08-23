@@ -1660,7 +1660,118 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "I2S matches breadboard / square_wave_test.c:\nBCK = IO33   LRCLK = IO32   DIN = IO25\nUART: TXD0/IO1 and RXD0/IO3\nEN RC + ESP_EN on pin 3, IO0 strap on pin 25.\n\nRotating the symbol only moves pin *positions*.\nPin numbers do not change — re-attach labels after rotate.\n\nANT1 = 2.4 GHz U.FL/IPEX pigtail (BOM only).\nMates to the 32U on-module U.FL. No GPIO, no PCB antenna."
+	(wire
+		(pts
+			(xy 128.27 43.18) (xy 132.08 43.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cd413b94-fbbb-4306-90df-b561915e0a12")
+	)
+	(wire
+		(pts
+			(xy 139.7 43.18) (xy 139.7 36.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c212576f-08c6-4f50-ad07-a8f5ba1834a9")
+	)
+	(wire
+		(pts
+			(xy 139.7 36.83) (xy 130.81 36.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c4d76a2d-268f-410f-95ec-470f0c3168cb")
+	)
+	(symbol
+		(lib_id "Device:R_US")
+		(at 135.89 43.18 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "f25cdbb0-42ff-43c6-82f2-d45c2352c162")
+		(property "Reference" "R30"
+			(at 138.42999999999998 41.91 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 138.42999999999998 44.45 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 135.89 43.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 135.89 43.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, US symbol"
+			(at 135.89 43.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "91e802e6-9754-4873-a3f1-517a4c7be8ca")
+		)
+		(pin "1"
+			(uuid "b9eff399-241f-4e51-8396-3af64c65f034")
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/12633c0c-fb68-4c25-af81-bead6c15ab98"
+					(reference "R30")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(text "I2S matches breadboard / square_wave_test.c:\nBCK = IO33   LRCLK = IO32   DIN = IO25\nUART: TXD0/IO1 and RXD0/IO3\nEN RC + ESP_EN on pin 3, IO0 strap on pin 25.\nR30 10k pulls IO0 to +3V3 for normal boot.\n\nRotating the symbol only moves pin *positions*.\nPin numbers do not change — re-attach labels after rotate.\n\nANT1 = 2.4 GHz U.FL/IPEX pigtail (BOM only).\nMates to the 32U on-module U.FL. No GPIO, no PCB antenna."
 		(exclude_from_sim no)
 		(at 24.13 27.94 0)
 		(effects
@@ -2136,7 +2247,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
 			(at 145.7452 58.42 0)
 			(hide yes)
 			(show_name no)
@@ -2454,7 +2565,7 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+3.3V")
+		(lib_id "power:+3V3")
 		(at 154.94 35.56 0)
 		(unit 1)
 		(body_style 1)
@@ -2720,7 +2831,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 134.366 37.846 90)
 			(hide yes)
 			(show_name no)
@@ -2800,7 +2911,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
 			(at 125.73 35.8648 0)
 			(hide yes)
 			(show_name no)
@@ -2880,7 +2991,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
 			(at 131.7752 58.42 0)
 			(hide yes)
 			(show_name no)

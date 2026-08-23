@@ -3157,6 +3157,230 @@
 			(embedded_fonts no)
 		)
 	)
+	(wire
+		(pts
+			(xy 125.73 86.36) (xy 128.27 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "12b81ff8-7362-4e29-9a44-af86e5665c46")
+	)
+	(wire
+		(pts
+			(xy 113.03 81.28) (xy 113.03 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a5b0d4a8-92d3-4016-bd3c-d7765deff026")
+	)
+	(wire
+		(pts
+			(xy 113.03 90.17) (xy 125.73 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d674c5ef-4d6d-421f-b7b6-3eb627c61814")
+	)
+	(wire
+		(pts
+			(xy 34.29 111.76) (xy 26.67 111.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bc23e682-ea11-476f-a34f-9abf9f4a09c2")
+	)
+	(symbol
+		(lib_id "Device:R_US")
+		(at 113.03 86.36 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "c6ee4b19-af21-4f02-aab0-9edca55b2d4a")
+		(property "Reference" "R29"
+			(at 115.57000000000001 85.09 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1k"
+			(at 115.57000000000001 87.63 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 113.03 86.36 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 113.03 86.36 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, US symbol"
+			(at 113.03 86.36 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "2c8ba7f2-f61d-4900-8401-e7c4f1a63a3b")
+		)
+		(pin "1"
+			(uuid "186de0be-ba3e-4420-bf4e-e0714425e56d")
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/6e12d95a-ec67-48a8-b98e-82576ae3682c"
+					(reference "R29")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 34.29 115.57 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "d26630be-d046-4ce2-a42d-5e83e0a87ee7")
+		(property "Reference" "C31"
+			(at 38.1 114.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "0.47u"
+			(at 38.1 116.83999999999999 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+			(at 34.29 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 34.29 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "6c638add-d609-47e2-afe6-25f8c1fc9ef4")
+		)
+		(pin "1"
+			(uuid "aa7aa805-44cb-4df4-8e6e-87bba60b7c0d")
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/6e12d95a-ec67-48a8-b98e-82576ae3682c"
+					(reference "C31")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(text "LM3940: Cin >= 0.47uF (C31). Cout C23 = 33uF\\nwith ESR in the datasheet band. Prefer tantalum.\\nA lone 0805 ceramic 33uF can be too-low ESR;\\nadd ~0.5 ohm series if C23 is ceramic."
+		(exclude_from_sim no)
+		(at 20.32 127.0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "49a90822-5879-44bc-891b-6c79295d4c57")
+	)
+	(text "CP2102C: VIO tied to VDD (+3V3).\\nR29 1k pulls ~{RST} to VIO.\\nR25/R26 are the VBUS divider (22.1k/47.5k)."
+		(exclude_from_sim no)
+		(at 100.0 100.0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ea9cfdc7-4565-42a0-9c75-8fb8109cffdb")
+	)
 	(text "USB-C"
 		(exclude_from_sim no)
 		(at 35.56 56.388 0)
@@ -4538,7 +4762,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
 			(at 105.1052 33.02 0)
 			(hide yes)
 			(show_name no)
@@ -4617,7 +4841,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 153.924 70.104 90)
 			(hide yes)
 			(show_name no)
@@ -4774,7 +4998,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 108.204 45.466 90)
 			(hide yes)
 			(show_name no)
@@ -4932,7 +5156,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 57.404 57.404 90)
 			(hide yes)
 			(show_name no)
@@ -5012,7 +5236,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 153.924 54.864 90)
 			(hide yes)
 			(show_name no)
@@ -5172,7 +5396,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
 			(at 115.2652 33.02 0)
 			(hide yes)
 			(show_name no)
@@ -5333,7 +5557,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 87.376 54.864 90)
 			(hide yes)
 			(show_name no)
@@ -6344,7 +6568,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 87.376 45.974 90)
 			(hide yes)
 			(show_name no)
@@ -6425,7 +6649,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
 			(at 136.8552 33.02 0)
 			(hide yes)
 			(show_name no)
@@ -6504,7 +6728,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 57.404 54.864 90)
 			(hide yes)
 			(show_name no)
@@ -6864,7 +7088,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
 			(at 72.0852 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -7101,7 +7325,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
 			(at 27.6352 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -7292,7 +7516,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
 			(at 147.0152 33.02 0)
 			(hide yes)
 			(show_name no)

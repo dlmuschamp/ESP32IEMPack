@@ -305,7 +305,7 @@
 		)
 		(uuid "fbab65a4-2692-4023-aeb8-91cb8f4c1606")
 	)
-	(text "WIP: breadboard -> KiCad. PCB is a footprint dump only.\nHand-build passives: 0805. ANT1 on esp_rx is the U.FL pigtail.\nNo display this revision. Re-import PCB after net fixes."
+	(text "WIP: breadboard -> KiCad. PCB is a footprint dump only.\nPassives: 0805 HandSolder pads. Update PCB from Schematic.\nANT1 U.FL pigtail. No display. ICs stay their real packages."
 		(exclude_from_sim no)
 		(at 17.78 110.49 0)
 		(effects

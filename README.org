@@ -124,13 +124,40 @@ you want resistor-programmed gain.
 
 *** Hand assembly
 
-Schematic footprint fields are *0805*. Use 0805 for every resistor and
-capacitor you will solder yourself, including 10 / 22 / 33 uF. 0603 is OK if
-you are already comfortable. Do not use 0402 or 0201. The =.kicad_pcb= still
-shows 0201 until you *Update PCB from Schematic*.
+Every schematic resistor and capacitor now uses the KiCad *0805 hand-solder*
+footprint (longer pads):
 
-ICs stay their real packages (WROOM module, TSSOP-20, TQFN-16, SOT-223,
-WQFN-24).
+- =Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder=
+- =Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder=
+
+Buy 0805 parts. ICs, the USB-C jack, the 3.5 mm jack, the pot, SOT-23
+transistors, and the WROOM module *cannot* become 0805 --- those packages are
+the part. TQFN / WQFN still need a hot plate, hot air, or a board house.
+
+The =.kicad_pcb= footprint *names* were renamed, but the copper pads are still
+the old 0201 geometry until you *Update PCB from Schematic* in KiCad.
+
+*** Datasheet audit (what was wrong, what we changed)
+
+Checked against the PCM5102 / PCM5102A, MAX97220A, LM3940, CP2102C, and
+ESP32-WROOM-32U hardware notes.
+
+| Issue | Spec | Fix on this branch |
+|-------+------+--------------------|
+| DAC 470R+2.2nF on =LDOO= / not on =OUTL=/=OUTR= | Filter belongs on pins 6/7. =LDOO= pin 18 needs 0.1 uF to GND | Rewired =R16=/=R17= to =OUTL=/=OUTR=. Added =C28= 0.1 uF on =LDOO= |
+| Flying cap 2.54 mm off =CAPP=/=CAPM= pin ends | 2.2 uF between pins 2 and 4 | Extra wires to the actual pin ends |
+| Headphone jack on =PVSS=/=SVSS= | Those are the -V charge-pump / BIAS rails. Audio is =OUTL=/=OUTR=. Sleeve is GND | Tip==OUTL=, Ring==OUTR=, Sleeve=GND. =C29= 1 uF =PVSS= to GND. =SVSS= tied to =PVSS= |
+| CP2102C =VIO= left off =VDD= | =VIO= = I/O rail, same 3.3 V as the ESP | Wire =VIO= to =VDD=. =R29= 1 k pulls =~{RST}= to =VIO= |
+| LM3940 missing 0.47 uF Cin | Datasheet: 0.47 uF on IN, 33 uF low-ESR on OUT | Added =C31= 0.47 uF. Keep =C23= 33 uF; if it is ceramic, ESR can be *too low* --- prefer tantalum or add ~0.5 ohm |
+| ESP =IO0= with no pull-up | Strap should sit high for normal boot | =R30= 10 k to +3V3 |
+
+Still true / do not "fix" into something else:
+
+- I2S GPIOs stay IO33 / IO32 / IO25 (breadboard + =square_wave_test.c=).
+- USB-C =Rd= 5.1 k on CC1/CC2 is correct for a UFP / power-bank sink.
+- CP2102C =R25= 22.1 k / =R26= 47.5 k is the *VBUS* divider, not a =VIO= divider.
+- Amp input 10 k resistors stay DNP on a hand-built proto.
+- LM3940 in SOT-223 will get hot at 5 V -> 3.3 V under ESP TX + amp load --- copper pour / thermal vias at layout time.
 
 ** Current status
 
@@ -139,6 +166,8 @@ WQFN-24).
 - [X] Repo + KiCad folder split (=RX_SKETCHES= / =TX_SKETCHES=)
 - [X] RX hierarchical schematic transferred from the breadboard (WIP)
 - [X] Hierarchical labels rewired; =ANT1= added on =esp_rx=
+- [X] Datasheet net fixes (DAC outs, amp jack, CP2102 =VIO=, LM3940 Cin)
+- [X] Passives set to 0805 HandSolder footprints
 - [ ] Buy / fit the U.FL pigtail; confirm ESP-NOW range
 - [ ] Finish the RX firmware path that consumes packets into I2S
 - [ ] Run ERC, then floorplan and route the RX PCB
@@ -178,7 +207,9 @@ the box.
 | You meant                         | Easy to hit instead      | What happens                              |
 |-----------------------------------+--------------------------+-------------------------------------------|
 | PCM5102 =BCK= / =DIN= / =LRCK=    | =DEMP= / =XSMT= / =FMT=  | DAC never gets PCM; clocks toggle config  |
+| PCM5102 =OUTL= / =OUTR=           | =LDOO= / =VNEG=          | Analog filter on the 1.8 V LDO pin        |
 | MAX97220 =~{SHDN}=                | =C1N= (charge-pump cap)  | Volume switch does not mute; VSS breaks   |
+| MAX97220 =OUTL= / =OUTR=          | =PVSS= / =SVSS= (BIAS)   | Jack sits on the charge-pump rail         |
 | ESP =TXD0= / =RXD0=               | =SENSOR_VN= / empty      | USB-C UART programming dies               |
 | I2S                               | I2C                      | Wrong bus, wrong pins, wrong mental model |
 
@@ -193,8 +224,9 @@ the DAC is the ESP's *DOUT*.
 *** 5. The footprint field is a part you have to buy and solder
 
 If the field says =R_0201_0603Metric=, you will get 0201s. Bulk 10 uF parts
-basically do not exist in 0201, and you will not hand-assemble them. Set 0805
-(or 0603) *before* you Update PCB from Schematic.
+basically do not exist in 0201, and you will not hand-assemble them. For a
+hand-built proto use the =*_HandSolder= 0805 footprint (longer iron pads), then
+*Update PCB from Schematic* so the copper matches.
 
 *** 6. DNP does not delete the net
 
