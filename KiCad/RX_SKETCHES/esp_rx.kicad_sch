@@ -1557,8 +1557,110 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:Antenna"
+			(pin_names
+				(offset 0.254)
+			)
+			(exclude_from_sim yes)
+			(in_bom yes)
+			(on_board no)
+			(in_pos_files no)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "ANT"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Antenna"
+				(at 2.54 1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "2.4 GHz U.FL pigtail antenna. Mates to the WROOM-32U on-module connector. Not a GPIO. No PCB footprint."
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "antenna RF U.FL IPEX 2.4GHz"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Antenna_0_1"
+				(polyline
+					(pts
+						(xy 0 -2.54) (xy 0 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 -2.54) (xy 0 2.54) (xy 2.54 -2.54) (xy -2.54 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
-	(text "I2S matches breadboard / square_wave_test.c:\nBCK = IO33   LRCLK = IO32   DIN = IO25\nUART: TXD0/IO1 and RXD0/IO3\nEN RC + ESP_EN on pin 3, IO0 strap on pin 25.\n\nRotating the symbol only moves pin *positions*.\nPin numbers do not change — re-attach labels after rotate.\n\nWROOM-32U: fit a U.FL pigtail + 2.4 GHz antenna.\nThe module has no PCB antenna."
+	(text "I2S matches breadboard / square_wave_test.c:\nBCK = IO33   LRCLK = IO32   DIN = IO25\nUART: TXD0/IO1 and RXD0/IO3\nEN RC + ESP_EN on pin 3, IO0 strap on pin 25.\n\nRotating the symbol only moves pin *positions*.\nPin numbers do not change — re-attach labels after rotate.\n\nANT1 = 2.4 GHz U.FL/IPEX pigtail (BOM only).\nMates to the 32U on-module U.FL. No GPIO, no PCB antenna."
 		(exclude_from_sim no)
 		(at 24.13 27.94 0)
 		(effects
@@ -2899,6 +3001,80 @@
 			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/12633c0c-fb68-4c25-af81-bead6c15ab98"
 					(reference "#PWR017")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:Antenna")
+		(at 36.83 88.9 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim yes)
+		(in_bom yes)
+		(on_board no)
+		(in_pos_files no)
+		(dnp no)
+		(uuid "7c4e9d12-8f3a-4b61-9e20-1d5c8a74b6e3")
+		(property "Reference" "ANT1"
+			(at 36.83 82.55 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "2.4GHz_U.FL_pigtail"
+			(at 41.91 88.9 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 36.83 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 36.83 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "2.4 GHz 50 ohm antenna on U.FL/IPEX pigtail. Mates to WROOM-32U module U.FL. Not a GPIO."
+			(at 36.83 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/12633c0c-fb68-4c25-af81-bead6c15ab98"
+					(reference "ANT1")
 					(unit 1)
 				)
 			)

@@ -10,7 +10,7 @@
 		(rev "1.0.0")
 		(company "damian m")
 		(comment 1 "Data: TX -> RX -> DAC -> AMP-> 3.5mm Jack.")
-		(comment 2 "Connect to a USB-C power bank. Will provide power to the entire RX circuit.")
+		(comment 2 "Connect to a 10,000 mAh USB-C power bank (identical type as the TX; this pack has its own).")
 		(comment 3 "CC1, CC2 have a pull down resistor to GND to signify it is an Upstream Facing Port (UFP)")
 		(comment 4 "Using a low dropout regulator to step from 5V to 3V3 for ESP, DAC, and Amp.")
 		(comment 5 "UFP: https://medium.com/@leung.benson/usb-type-c-s-configuration-channel-31e08047677d")

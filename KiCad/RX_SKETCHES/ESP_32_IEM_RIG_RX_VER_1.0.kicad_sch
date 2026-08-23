@@ -45,7 +45,7 @@
 		)
 		(uuid "9dec3db6-27c1-4c22-b0e3-8fc90ab8da05")
 	)
-	(text "Sets 5V and 3V3 using LDO. \nPowered by 10,000mAh 5V/2.0A power bank.\nUSB-C 16 pin. \nSupports USB-C updates via UART."
+	(text "Sets 5V and 3V3 using LDO.\nPowered by a 10,000 mAh 5 V / 2.0 A USB-C bank\n(identical bank type as the TX; each pack has its own).\nUSB-C 16 pin. Supports USB-C updates via UART."
 		(exclude_from_sim no)
 		(at 39.878 38.862 0)
 		(effects
@@ -305,7 +305,7 @@
 		)
 		(uuid "fbab65a4-2692-4023-aeb8-91cb8f4c1606")
 	)
-	(text "WIP: breadboard -> KiCad. PCB is a footprint dump only.\nHand-build passives: 0805. WROOM-32U needs a U.FL antenna.\nRe-import PCB after these schematic net fixes."
+	(text "WIP: breadboard -> KiCad. PCB is a footprint dump only.\nHand-build passives: 0805. ANT1 on esp_rx is the U.FL pigtail.\nNo display this revision. Re-import PCB after net fixes."
 		(exclude_from_sim no)
 		(at 17.78 110.49 0)
 		(effects
