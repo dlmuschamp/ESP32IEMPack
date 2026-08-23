@@ -167,7 +167,7 @@ Evidence: Bring-up order that wasted least time once known:
   6) Then timbre / amp / PCB
 
 Reasoning: Soft-LPF symptoms while the link is brownouting or ACK-starved
-are unfalsifiable. Isolation builds (main/testing/) exist to separate
+are unfalsifiable. Isolation builds (main/debugging/) exist to separate
 DAC / air / ADC.
 
 
@@ -176,10 +176,10 @@ DAC / air / ADC.
 ----------------------------------------------------------------------
 
 Claim: Shipping tx.c / rx.c stay functionally pure; isolation firmware
-is archived under main/testing/.
+is archived under main/debugging/.
 
 Evidence:
-- main/testing/: sound_profile_tones.h, rx_dac_profile_test.c,
+- main/debugging/: sound_profile_tones.h, rx_dac_profile_test.c,
   tx_tone_bypass.c, tx_buzz_debug.c, README.txt
 - IEM_NODE=RX_DAC_TEST | TX_TONE | TX_BUZZ_DEBUG still build via
   main/CMakeLists.txt

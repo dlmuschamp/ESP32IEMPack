@@ -43,7 +43,7 @@ map you wished you had on day one — including the mistakes.
 | TX power | The same kind of 10,000 mAh 5 V bank as the RX    | A different chemistry or one shared bank  |
 | Radio    | ESP32-WROOM-32U + =ANT1= 2.4 GHz U.FL pigtail     | On-module PCB antenna (32E / 32D)         |
 | Audio    | I2S to a PCM5102, then a headphone amp            | I2C (the DAC is I2S)                      |
-| Firmware | C + FreeRTOS + ESP-IDF                            | Arduino, a HAL, or a sniffer node         |
+| Firmware | C + FreeRTOS + ESP-IDF                            | Arduino or a HAL                          |
 | PCB      | Footprint dump / ratsnest only                    | Routed board ready to order               |
 
 TX and RX each get their *own* identical 10,000 mAh bank. Do not power
@@ -69,7 +69,7 @@ Frozen / reference branches:
 
 - ~working_audio_v1~ — first known streaming snapshot
 - ~working_audio_v2~ — best reconnect + steady audio snapshot so far
-- ~main~ — shipping TX/RX + archived isolation tests under ~main/testing/~
+- ~main~ — shipping TX/RX + archived isolation tests under ~main/debugging/~
 
 Long-form CER notes: [[file:docs/BENCH_REALIZATIONS.txt][docs/BENCH_REALIZATIONS.txt]].
 Isolation procedure: [[file:docs/SOUND_PROFILE_TESTS.txt][docs/SOUND_PROFILE_TESTS.txt]].
@@ -97,7 +97,7 @@ Isolation procedure: [[file:docs/SOUND_PROFILE_TESTS.txt][docs/SOUND_PROFILE_TES
 
 - *Evidence:* ~pdMS_TO_TICKS(8)~ == 0 at ~FREERTOS_HZ=100~; RX queue drops
   flooded; ~esp_timer~ 7.5 ms pace fixed most ticks (code in
-  ~main/testing/~).
+  ~main/debugging/~).
 - *Reasoning:* Shipping TX paces via blocking I2S reads; tone mode had
   to invent realtime pacing.
 
@@ -116,18 +116,13 @@ main/                  ESP-IDF C firmware (FreeRTOS)
   rig_shared.h/.c      Shared packet / state + Wi-Fi / ESP-NOW init
   tx.c                 Transmitter — done for this version
   rx.c                 Receiver entry
-  square_wave_test.c   Bench I2S tone for the DAC path
-  testing/             Sound-profile / peak-log diagnostics (not shipping)
+  debugging/           Isolation tests, archives, optional RX_DBG (not shipping)
 KiCad/RX_SKETCHES/     RX hierarchical schematic (WIP)
 KiCad/TX_SKETCHES/     TX placeholder
 KiCad/Custom_Part_Downloads/  SnapEDA symbols / footprints
 docs/                  Bench CER notes + isolation procedure
 firmware_out/          Stamped binaries (gitignored)
 #+END_SRC
-
-A packet sniffer / monitor node was an early idea. It is *not* part of
-this version (=IEM_NODE=MON= is a leftover hook). Do not treat
-=sniffer.c= as shipping firmware.
 
 * Hardware (bring-up + RX KiCad)
 
@@ -148,7 +143,7 @@ this version (=IEM_NODE=MON= is a leftover hook). Do not treat
 
 ** Firmware I2S map (do not "improve" these GPIOs)
 
-These match the working breadboard and =main/square_wave_test.c=:
+These match the working breadboard and =main/debugging/square_wave_test.c=:
 
 | Hierarchical label | ESP32 GPIO | Firmware name |
 |--------------------+------------+---------------|
@@ -356,7 +351,7 @@ IEM_NODE=TX idf.py -p /dev/ttyUSB0 flash
 IEM_NODE=RX idf.py reconfigure build
 IEM_NODE=RX idf.py -p /dev/ttyUSB0 flash
 
-# Archived isolation builds (main/testing/)
+# Archived isolation builds (main/debugging/)
 IEM_NODE=RX_DAC_TEST idf.py reconfigure build flash
 IEM_NODE=TX_TONE idf.py reconfigure build flash
 IEM_NODE=TX_BUZZ_DEBUG idf.py reconfigure build flash
@@ -371,9 +366,7 @@ Stamped binaries (gitignored): ~firmware_out/~.
 | ~main/tx.c~ | Shipping TX FSM: idle → pair → capture/stream |
 | ~main/rx.c~ | Shipping RX FSM: pair → playback; soft-join / repair ads |
 | ~main/rig_shared.h~ / ~.c~ | Packet layouts, Wi‑Fi / ESP-NOW init, PS_NONE |
-| ~main/rx_temp_debug.h~ | Optional RX_DBG logs (toggle with macro) |
-| ~main/testing/~ | Sound-profile / peak-log diagnostics (not shipping) |
-| ~main/square_wave_test.c~ | Early DAC sanity (not the shipping app) |
+| ~main/debugging/~ | Isolation builds, archives, optional RX_DBG (not shipping) |
 
 ** Protocol sketch
 

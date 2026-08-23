@@ -1,6 +1,6 @@
 SOUND PROFILE ISOLATION TESTS
 =============================
-Diagnostic sources live under main/testing/ (not shipping tx.c/rx.c).
+Diagnostic sources live under main/debugging/ (not shipping tx.c/rx.c).
 
 Why the old 440 Hz square was a weak LPF detector
 -------------------------------------------------
@@ -17,17 +17,17 @@ Why the old 440 Hz square was a weak LPF detector
 
 What these builds add
 ---------------------
-1) IEM_NODE=RX_DAC_TEST  → testing/rx_dac_profile_test.c
+1) IEM_NODE=RX_DAC_TEST  → debugging/rx_dac_profile_test.c
    Local PCM5102 only (same 48 kHz / msb_right path as shipping rx.c).
    Cycles: sine_440 → sine_8k → alt_440_8k → square_440 → chirp_200_12k
    (8 s each). No ESP-NOW. USB on RX; TX can stay off.
 
-2) IEM_NODE=TX_TONE  → testing/tx_tone_bypass.c
+2) IEM_NODE=TX_TONE  → debugging/tx_tone_bypass.c
    Same pairing / ESP-NOW as shipping TX, but ADC/I2S capture is skipped.
    Digitally generated tones are packed as int16 and sent (esp_timer pace).
    Flash normal IEM_NODE=RX on the receiver.
 
-3) IEM_NODE=TX_BUZZ_DEBUG  → testing/tx_buzz_debug.c
+3) IEM_NODE=TX_BUZZ_DEBUG  → debugging/tx_buzz_debug.c
    Shipping TX capture path + periodic ADC pre-gain peak logs.
 
 Decision table (listen, then pick the row that matches)
@@ -48,5 +48,5 @@ IEM_NODE=TX_TONE idf.py reconfigure build flash
 IEM_NODE=TX_BUZZ_DEBUG idf.py reconfigure build flash
 IEM_NODE=TX|RX idf.py reconfigure build flash   # shipping
 
-See docs/BENCH_REALIZATIONS.txt (CER notes) and main/testing/README.txt.
+See docs/BENCH_REALIZATIONS.txt (CER notes) and main/debugging/README.txt.
 EOF

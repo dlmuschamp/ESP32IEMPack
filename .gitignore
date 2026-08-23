@@ -1,4 +1,17 @@
+# IDE / editor
+.vs/
+.vscode/
+.projectile
+.cursor_session_token
+.cache/
+
+# Build artifacts (local only — regenerate with idf.py)
+build/
+main/build/
+build.debug.txt
+build_debug.txt
 *log
 *restore
-.cursor_session_token
+
+# Stamped flash binaries
 firmware_out/
