@@ -1,18 +1,38 @@
-# Enforce explicit selection of the build target
-if($ENV{IEM_NODE} MATCHES "RX")
-    message(STATUS "Build target is set to RECEIVER (rx.c)")
-    set(COMPONENT_SRCS "rx.c")
-elseif($ENV{IEM_NODE} MATCHES "TX")
-    message(STATUS "Build target is set to TRANSMITTER (tx.c)")
-    set(COMPONENT_SRCS "tx.c")
-elseif($ENV{IEM_NODE} MATCHES "MON")
-    message(STATUS "Build target is set to MONITOR (mon.c)")
-    set(COMPONENT_SRCS "mon.c")
+# Enforce explicit selection of the build target (exact names).
+set(IEM_COMPILE_DEFS "")
+set(IEM_NODE_SEL "$ENV{IEM_NODE}")
+
+if(IEM_NODE_SEL STREQUAL "RX_DAC_TEST")
+    message(STATUS "Build target: RX DAC PROFILE TEST (testing/rx_dac_profile_test.c)")
+    set(COMPONENT_SRCS "testing/rx_dac_profile_test.c" "rig_shared.c")
+elseif(IEM_NODE_SEL STREQUAL "TX_TONE")
+    message(STATUS "Build target: TX TONE BYPASS (testing/tx_tone_bypass.c)")
+    set(COMPONENT_SRCS "testing/tx_tone_bypass.c" "rig_shared.c")
+    list(APPEND IEM_COMPILE_DEFS TX_TONE_BYPASS_ADC=1)
+elseif(IEM_NODE_SEL STREQUAL "TX_BUZZ_DEBUG")
+    message(STATUS "Build target: TX BUZZ/PEAK DEBUG (testing/tx_buzz_debug.c)")
+    set(COMPONENT_SRCS "testing/tx_buzz_debug.c" "rig_shared.c")
+elseif(IEM_NODE_SEL STREQUAL "RX")
+    message(STATUS "Build target: RECEIVER (rx.c)")
+    set(COMPONENT_SRCS "rx.c" "rig_shared.c")
+elseif(IEM_NODE_SEL STREQUAL "TX")
+    message(STATUS "Build target: TRANSMITTER (tx.c)")
+    set(COMPONENT_SRCS "tx.c" "rig_shared.c")
+elseif(IEM_NODE_SEL STREQUAL "MON")
+    message(STATUS "Build target: MONITOR (mon.c)")
+    set(COMPONENT_SRCS "mon.c" "rig_shared.c")
 else()
-    # This halts the build immediately if no valid variable is provided
-    message(FATAL_ERROR "ABORTED: You must specify a valid target! (e.g., IEM_NODE=RX idf.py build)")
+    message(FATAL_ERROR
+        "ABORTED: Set IEM_NODE to TX, RX, TX_TONE, RX_DAC_TEST, TX_BUZZ_DEBUG, or MON "
+        "(e.g. IEM_NODE=RX idf.py build). Got '${IEM_NODE_SEL}'.")
 endif()
 
 idf_component_register(SRCS "${COMPONENT_SRCS}"
-                       INCLUDE_DIRS "."
-                       REQUIRES "driver" "esp_wifi" "nvs_flash" "esp_driver_i2s" "esp_adc" "esp_driver_ledc")
+                       INCLUDE_DIRS "." "testing"
+                       REQUIRES driver esp_wifi nvs_flash esp_driver_i2s esp_adc
+                                esp_driver_ledc freertos esp_driver_gpio
+                                esp_timer)
+
+if(IEM_COMPILE_DEFS)
+    target_compile_definitions(${COMPONENT_LIB} PRIVATE ${IEM_COMPILE_DEFS})
+endif()

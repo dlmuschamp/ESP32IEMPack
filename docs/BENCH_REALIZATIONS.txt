@@ -1,0 +1,190 @@
+ESP32 IEM Pack — Bench Realizations
+=====================================
+Author context: first embedded C project, first ESP32, first ESP-IDF /
+FreeRTOS, first serious datasheet reading, first KiCad board work.
+
+Format for each finding: Claim / Evidence / Reasoning (CER).
+Prefer this file + README.org over tribal memory from chat logs.
+
+Updated: 2026-08-21 (sound-profile isolation night + packing into main).
+
+
+----------------------------------------------------------------------
+1. POWER IS THE LINK
+----------------------------------------------------------------------
+
+Claim: Flaky pairing / “TX never sees RX” was mostly undervolt / current
+starve on the TX pack when Wi‑Fi + I2S wake together — not “RF is
+impossible.”
+
+Evidence:
+- TX on the small pack battery often stayed in “Waiting for RX peers.”
+- TX on laptop USB paired reliably.
+- Two ~10000 mAh power banks on BOTH packs → immediate pair, louder audio.
+- Opening idf.py monitor / pyserial on CP2102 toggles DTR/RTS and reboots
+  the board mid-stream (looks like a random audio cutout).
+
+Reasoning: ESP32 TX current spikes exceed a weak battery’s ability to
+hold rail voltage; USB host power is stiffer. Serial “dropouts” were
+often hard resets, not ESP-NOW logic. Power banks fix current but add
+little filtering → more crackle without local caps.
+
+
+----------------------------------------------------------------------
+2. WHAT “WORKING AUDIO” MEANS
+----------------------------------------------------------------------
+
+Claim: A stable link needs WIFI_PS_NONE, ESP-NOW v2 sized packets, correct
+PCM1808 slot/BCK setup, and soft-join when PAIR_SUCCESS is starved.
+
+Evidence:
+- Branches working_audio_v1 / working_audio_v2 froze known-good trees.
+- 720×int16 ≈ 7.5 ms @ 48 kHz (1440 B) streams under v2 max.
+- 16-bit I2S slots → silent PCM1808; 32-bit Philips + MCLK×256 works.
+- Soft-join on correctly sized audio while pairing recovered when ACKs
+  were starved by the audio flood.
+- PHY 12M + pace esp_now_send on send_cb reduced fail streaks vs 24M alone.
+
+Reasoning: Modem sleep drops ads while idle. Wrong BCK/frame violates
+the ADC slave contract. App-layer proof (live audio) beats a 1-byte ACK
+that any nearby ESP can spoof.
+
+
+----------------------------------------------------------------------
+3. PAIRING / RECONNECT PITFALLS
+----------------------------------------------------------------------
+
+Claim: Starting DAC playback on a lone 1-byte PAIR_SUCCESS is unsafe;
+repair ads while idle-in-playback are required after USB/DTR TX resets.
+
+Evidence:
+- Any nearby ESP sending 0x01 can flip RX into playback, start clocks,
+  and stop advertising → TX idles forever.
+- After TX reboot via serial, RX mute until power-cycle unless repair
+  ads resume (~400 ms silence threshold).
+- One USB cable = only one side’s logs; dual serial helps cutout races.
+
+Reasoning: Pairing must be bound to real audio_packet_t (or a stronger
+token). Soft-join + TX peer clear on send_cb fail/timeout closes the
+loop when air/power is marginal.
+
+
+----------------------------------------------------------------------
+4. I2S / DIGITAL AUDIO PATH (HF SURVIVES)
+----------------------------------------------------------------------
+
+Claim: Soft “low-pass” timbre is NOT caused by ESP-NOW packing, RX
+playback, or the PCM5102 digital path when the source is known-bright
+digital PCM.
+
+Evidence (2026-08-21 isolation — see also docs/SOUND_PROFILE_TESTS.txt):
+- IEM_NODE=RX_DAC_TEST: local sine_8k / chirp_200_12k sounded crisp
+  (same 48 kHz / msb_right path as shipping rx.c).
+- IEM_NODE=TX_TONE: digital tones over air into shipping RX also crisp.
+- Direct laptop→IEMs is bright; laptop→PCM1808→air→RX is dull.
+- Bit shift >>16 drops LSBs (resolution), not an audio-band LPF.
+
+Reasoning: If a digitally generated bright signal survives DAC-only and
+TX-digital→air→RX, the radio/DAC chain preserves HF. Dullness that
+appears only on the real ADC/analog input must be upstream of packing
+(jack, wiring, breadboard, level/SNR, coupling).
+
+
+----------------------------------------------------------------------
+5. TX_TONE CRACKLE WAS A PACE BUG (MOSTLY FIXED)
+----------------------------------------------------------------------
+
+Claim: Steady tick/crackle during TX_TONE was largely RX jitter-queue
+overflow from TX flooding packets faster than realtime.
+
+Evidence:
+- RX logs: queue drops tens–hundreds per 2 s, depth stuck near full (12).
+- CONFIG_FREERTOS_HZ=100 → pdMS_TO_TICKS(8) truncates to 0 ticks.
+- After esp_timer 7.5 ms wall-clock pace (tone_pace_packet), steady
+  ticks much better; alt_440_8k still slightly buzzy from hard 440↔8k
+  jumps (not an LPF). Shipping TX paces via blocking I2S reads.
+
+Reasoning: Without I2S blocking, a 0-tick delay sends as fast as Wi‑Fi
+allows → drop-oldest on RX → audible ticks. Realtime pace restores
+~133 pkt/s matching 7.5 ms packets.
+
+
+----------------------------------------------------------------------
+6. REAL ADC PATH: LEVEL, NOISE, BREADBOARD
+----------------------------------------------------------------------
+
+Claim: Real music soft-LPF + buzz is dominated by analog front-end /
+breadboard / jack path limitations, not missing firmware EQ.
+
+Evidence:
+- Chirp/tones too loud to wear IEMs; real music quiet enough → tiny
+  capture level near noise floor (pre-gain peaks ~2.5–3k/32767 at “loud”
+  laptop settings with TX_DIGITAL_GAIN=1).
+- Laptop volume map: <30% ≈ noise; ~35% faint music; ~80% least crackle
+  (better SNR when hotter); still dull vs direct IEMs.
+- TX_DIGITAL_GAIN×8 raised peaks (~19–24k/32767) but *worsened* crackle
+  (noise amplified + near clip) → reverted to gain 1.
+- 1 µF VIN coupling (TI app circuit) helped only marginally; A/B unclear.
+- Shorter 3.5 mm cable: buzz unchanged.
+- Pulling TRRS/TRS GND dropped vocals/bass (center) while side content
+  remained — expected when ground reference opens, not “RF magic.”
+- USB+same-laptop jack can form a ground loop; bank-powered TX avoids
+  that path. Buzz can still persist on banks → not only USB loop.
+
+Reasoning: Weak signal + breadboard inductance/shared grounds → poor
+SNR and harshness that ears read as “LPF + buzz.” Digital gain cannot
+fix missing analog SNR. PCB layout (short analog, proper coupling,
+local decoupling, AGND–DGND) is the intended next experiment — not more
+Dupont thrashing.
+
+
+----------------------------------------------------------------------
+7. TOOLING / FLASH DISCIPLINE
+----------------------------------------------------------------------
+
+Claim: IEM_NODE is configure-time; stale builds flash the wrong role.
+
+Evidence: Flashed TX image to RX (or vice versa) after switching roles
+without reconfigure/fullclean.
+
+Reasoning: CMake selects sources from $ENV{IEM_NODE}. Always
+reconfigure (or fullclean) when changing TX↔RX↔test targets.
+
+
+----------------------------------------------------------------------
+8. PROCESS LESSON
+----------------------------------------------------------------------
+
+Claim: Timbre chasing before power + pairing + known digital tones wastes
+nights.
+
+Evidence: Bring-up order that wasted least time once known:
+  1) DAC square / known PCM
+  2) ADC capture + pack format
+  3) ESP-NOW small → v2 audio size
+  4) Power so both packs TX Wi‑Fi without brownout
+  5) Pairing / reconnect
+  6) Then timbre / amp / PCB
+
+Reasoning: Soft-LPF symptoms while the link is brownouting or ACK-starved
+are unfalsifiable. Isolation builds (main/testing/) exist to separate
+DAC / air / ADC.
+
+
+----------------------------------------------------------------------
+9. WHERE DIAGNOSTIC CODE LIVES (2026-08-21)
+----------------------------------------------------------------------
+
+Claim: Shipping tx.c / rx.c stay functionally pure; isolation firmware
+is archived under main/testing/.
+
+Evidence:
+- main/testing/: sound_profile_tones.h, rx_dac_profile_test.c,
+  tx_tone_bypass.c, tx_buzz_debug.c, README.txt
+- IEM_NODE=RX_DAC_TEST | TX_TONE | TX_BUZZ_DEBUG still build via
+  main/CMakeLists.txt
+- IEM_NODE=TX | RX build shipping sources without tone/peak diagnostics
+
+Reasoning: Keep production images free of bench-only logs and tone
+generators while preserving the exact code used to prove HF survival.
+EOF

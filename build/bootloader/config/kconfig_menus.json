@@ -2306,7 +2306,7 @@
                 ],
                 "depends_on": null,
                 "help": "Select the way the application is built.\n\nBy default, the application is built as a binary file in a format compatible with\nthe ESP-IDF bootloader. In addition to this application, 2nd stage bootloader is\nalso built. Application and bootloader binaries can be written into flash and\nloaded/executed from there.\n\nAnother option, useful for only very small and limited applications, is to only link\nthe .elf file of the application, such that it can be loaded directly into RAM over\nJTAG or UART. Note that since IRAM and DRAM sizes are very limited, it is not possible\nto build any complex application this way. However for some kinds of testing and debugging,\nthis option may provide faster iterations, since the application does not need to be\nwritten into flash.\n\nNote: when APP_BUILD_TYPE_RAM is selected and loaded with JTAG, ESP-IDF does not contain\nall the startup code required to initialize the CPUs and ROM memory (data/bss).\nTherefore it is necessary to execute a bit of ROM code prior to executing the application.\nA gdbinit file may look as follows (for ESP32):\n\n    # Connect to a running instance of OpenOCD\n    target remote :3333\n    # Reset and halt the target\n    mon reset halt\n    # Run to a specific point in ROM code,\n    #  where most of initialization is complete.\n    thb *0x40007d54\n    c\n    # Load the application into RAM\n    load\n    # Run till app_main\n    tb app_main\n    c\n\nExecute this gdbinit file as follows:\n\n    xtensa-esp32-elf-gdb build/app-name.elf -x gdbinit\n\nExample gdbinit files for other targets can be found in tools/test_apps/system/gdb_loadable_elf/\n\nWhen loading the BIN with UART, the ROM will jump to ram and run the app after finishing the ROM\nstartup code, so there's no additional startup initialization required. You can use the\n`load-ram` in esptool to load the generated .bin file into ram and execute.\n\nExample:\n    esptool --chip {chip} -p {port} -b {baud} --no-stub load-ram {app.bin}\n\nRecommended sdkconfig.defaults for building loadable ELF files is as follows.\nCONFIG_APP_BUILD_TYPE_RAM is required, other options help reduce application\nmemory footprint.\n\n    CONFIG_APP_BUILD_TYPE_RAM=y\n    CONFIG_VFS_SUPPORT_TERMIOS=\n    CONFIG_LIBC_NEWLIB_NANO_FORMAT=y\n    CONFIG_ESP_SYSTEM_PANIC_PRINT_HALT=y\n    CONFIG_ESP_DEBUG_STUBS_ENABLE=\n    CONFIG_ESP_ERR_TO_NAME_LOOKUP=",
-                "id": "build-type-application-build-type-home-damian-win-esp-esp-idf-Kconfig-181",
+                "id": "build-type-application-build-type-home-luciano-esp-esp-idf-Kconfig-181",
                 "name": "APP_BUILD_TYPE",
                 "title": "Application build type",
                 "type": "choice"
@@ -2390,7 +2390,7 @@
                                 ],
                                 "depends_on": "APP_BUILD_MINIMIZE_BINARY_CHANGES && APP_BUILD_TYPE_APP_2NDBOOT",
                                 "help": "Selects the amount of padding (in kilobytes) to add after input\nsections of mutable libraries when \"Minimize binary changes\nbetween builds\" is enabled.",
-                                "id": "build-type-minimize-binary-changes-between-builds-minimize-binary-changes-between-builds-padding-size-home-damian-win-esp-esp-idf-Kconfig-318",
+                                "id": "build-type-minimize-binary-changes-between-builds-minimize-binary-changes-between-builds-padding-size-home-luciano-esp-esp-idf-Kconfig-318",
                                 "name": "APP_BUILD_MINIMIZE_BINARY_CHANGES_PADDING_SIZE",
                                 "title": "Padding size",
                                 "type": "choice"
@@ -2416,7 +2416,7 @@
                     }
                 ],
                 "depends_on": "APP_BUILD_TYPE_APP_2NDBOOT",
-                "id": "build-type-minimize-binary-changes-between-builds-home-damian-win-esp-esp-idf-Kconfig-278",
+                "id": "build-type-minimize-binary-changes-between-builds-home-luciano-esp-esp-idf-Kconfig-278",
                 "title": "Minimize binary changes between builds",
                 "type": "menu"
             },
@@ -2472,7 +2472,7 @@
             }
         ],
         "depends_on": null,
-        "id": "build-type-home-damian-win-esp-esp-idf-Kconfig-179",
+        "id": "build-type-home-luciano-esp-esp-idf-Kconfig-179",
         "title": "Build type",
         "type": "menu"
     },
@@ -2505,7 +2505,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "bootloader-config-bootloader-manager-home-damian-win-esp-esp-idf-components-bootloader-..-esp_bootloader_format-Kconfig.bootloader-1",
+                "id": "bootloader-config-bootloader-manager-home-luciano-esp-esp-idf-components-bootloader-..-esp_bootloader_format-Kconfig.bootloader-1",
                 "title": "Bootloader manager",
                 "type": "menu"
             },
@@ -2565,7 +2565,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "bootloader-config-application-rollback-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.app_rollback-1",
+                "id": "bootloader-config-application-rollback-home-luciano-esp-esp-idf-components-bootloader-Kconfig.app_rollback-1",
                 "title": "Application Rollback",
                 "type": "menu"
             },
@@ -2615,7 +2615,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "bootloader-config-recovery-bootloader-and-rollback-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.bootloader_rollback-1",
+                "id": "bootloader-config-recovery-bootloader-and-rollback-home-luciano-esp-esp-idf-components-bootloader-Kconfig.bootloader_rollback-1",
                 "title": "Recovery Bootloader and Rollback",
                 "type": "menu"
             },
@@ -2664,7 +2664,7 @@
                 ],
                 "depends_on": null,
                 "help": "This option sets compiler optimization level (gcc -O argument)\nfor the bootloader.\n\n- The default \"Size\" setting will add the -Os (-Oz with clang) flag to CFLAGS.\n- The \"Debug\" setting will add the -Og flag to CFLAGS.\n- The \"Performance\" setting will add the -O2 flag to CFLAGS.\n\nNote that custom optimization levels may be unsupported.",
-                "id": "bootloader-config-bootloader-optimization-level-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-15",
+                "id": "bootloader-config-bootloader-optimization-level-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-15",
                 "name": "BOOTLOADER_COMPILER_OPTIMIZATION",
                 "title": "Bootloader optimization Level",
                 "type": "choice"
@@ -2696,7 +2696,7 @@
                         ],
                         "depends_on": null,
                         "help": "Select the log version to be used by the ESP log component.\nThe app log version (CONFIG_LOG_VERSION) controls the version used in the bootloader,\npreventing the selection of different versions.\nFor description of V1 and V2 see CONFIG_LOG_VERSION.",
-                        "id": "bootloader-config-log-log-version-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.log-3",
+                        "id": "bootloader-config-log-log-version-home-luciano-esp-esp-idf-components-bootloader-Kconfig.log-3",
                         "name": "BOOTLOADER_LOG_VERSION",
                         "title": "Log version",
                         "type": "choice"
@@ -2776,7 +2776,7 @@
                         ],
                         "depends_on": null,
                         "help": "Specify how much output to see in bootloader logs.",
-                        "id": "bootloader-config-log-bootloader-log-verbosity-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.log-24",
+                        "id": "bootloader-config-log-bootloader-log-verbosity-home-luciano-esp-esp-idf-components-bootloader-Kconfig.log-24",
                         "name": "BOOTLOADER_LOG_LEVEL",
                         "title": "Bootloader log verbosity",
                         "type": "choice"
@@ -2838,7 +2838,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "Choose what sort of timestamp is displayed in the log output:\n\n- \"None\" - The log will only contain the actual log messages themselves\n  without any time-related information. Avoiding timestamps can help conserve\n  processing power and memory. It might useful when you\n  perform log analysis or debugging, sometimes it's more straightforward\n  to work with logs that lack timestamps, especially if the time of occurrence\n  is not critical for understanding the issues.\n  \"I log_test: info message\"\n\n- \"Milliseconds since boot\" is calculated from the RTOS tick count multiplied\n  by the tick period. This time will reset after a software reboot.\n  \"I (112500) log_test: info message\"",
-                                "id": "bootloader-config-log-format-timestamp-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.log.format-23",
+                                "id": "bootloader-config-log-format-timestamp-home-luciano-esp-esp-idf-components-bootloader-Kconfig.log.format-23",
                                 "name": "BOOTLOADER_LOG_TIMESTAMP_SOURCE",
                                 "title": "Timestamp",
                                 "type": "choice"
@@ -2855,7 +2855,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "bootloader-config-log-format-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.log.format-1",
+                        "id": "bootloader-config-log-format-home-luciano-esp-esp-idf-components-bootloader-Kconfig.log.format-1",
                         "title": "Format",
                         "type": "menu"
                     },
@@ -2906,20 +2906,20 @@
                                 ],
                                 "depends_on": null,
                                 "help": null,
-                                "id": "bootloader-config-log-settings-log-mode-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.log.settings-9",
+                                "id": "bootloader-config-log-settings-log-mode-home-luciano-esp-esp-idf-components-bootloader-Kconfig.log.settings-9",
                                 "name": "BOOTLOADER_LOG_MODE",
                                 "title": "Log Mode",
                                 "type": "choice"
                             }
                         ],
                         "depends_on": null,
-                        "id": "bootloader-config-log-settings-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.log.settings-1",
+                        "id": "bootloader-config-log-settings-home-luciano-esp-esp-idf-components-bootloader-Kconfig.log.settings-1",
                         "title": "Settings",
                         "type": "menu"
                     }
                 ],
                 "depends_on": null,
-                "id": "bootloader-config-log-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.log-1",
+                "id": "bootloader-config-log-home-luciano-esp-esp-idf-components-bootloader-Kconfig.log-1",
                 "title": "Log",
                 "type": "menu"
             },
@@ -3027,7 +3027,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "bootloader-config-serial-flash-configurations-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-48",
+                "id": "bootloader-config-serial-flash-configurations-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-48",
                 "title": "Serial Flash Configurations",
                 "type": "menu"
             },
@@ -3056,7 +3056,7 @@
                 ],
                 "depends_on": "SOC_CONFIGURABLE_VDDSDIO_SUPPORTED",
                 "help": "If this option is enabled, and VDDSDIO LDO is set to 1.8V (using eFuse\nor MTDI bootstrapping pin), bootloader will change LDO settings to\noutput 1.9V instead. This helps prevent flash chip from browning out\nduring flash programming operations.\n\nThis option has no effect if VDDSDIO is set to 3.3V, or if the internal\nVDDSDIO regulator is disabled via eFuse.",
-                "id": "bootloader-config-vddsdio-ldo-voltage-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-131",
+                "id": "bootloader-config-vddsdio-ldo-voltage-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-131",
                 "name": "BOOTLOADER_VDDSDIO_BOOST",
                 "title": "VDDSDIO LDO voltage",
                 "type": "choice"
@@ -3098,7 +3098,7 @@
                         ],
                         "depends_on": "BOOTLOADER_FACTORY_RESET",
                         "help": "Pin level for factory reset, can be triggered on low or high.",
-                        "id": "bootloader-config-gpio-triggers-factory-reset-factory-reset-gpio-level-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-184",
+                        "id": "bootloader-config-gpio-triggers-factory-reset-factory-reset-gpio-level-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-184",
                         "name": "BOOTLOADER_FACTORY_RESET_PIN_LEVEL",
                         "title": "Factory reset GPIO level",
                         "type": "choice"
@@ -3169,7 +3169,7 @@
                         ],
                         "depends_on": "BOOTLOADER_APP_TEST",
                         "help": "Pin level for app test, can be triggered on low or high.",
-                        "id": "bootloader-config-gpio-triggers-boot-from-test-app-partition-app-test-gpio-level-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-249",
+                        "id": "bootloader-config-gpio-triggers-boot-from-test-app-partition-app-test-gpio-level-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-249",
                         "name": "BOOTLOADER_APP_TEST_PIN_LEVEL",
                         "title": "App test GPIO level",
                         "type": "choice"
@@ -3320,7 +3320,7 @@
             }
         ],
         "depends_on": null,
-        "id": "bootloader-config-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-1",
+        "id": "bootloader-config-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-1",
         "title": "Bootloader config",
         "type": "menu"
     },
@@ -3481,7 +3481,7 @@
                 ],
                 "depends_on": "SECURE_BOOT || SECURE_SIGNED_APPS_NO_SECURE_BOOT",
                 "help": "Select the Secure App signing scheme. Depends on the Chip Revision.\nThere are two secure boot versions:\n\n1. Secure boot V1\n    - Legacy custom secure boot scheme. Supported in ESP32 SoC.\n\n2. Secure boot V2\n    - RSA based secure boot scheme.\n      Supported in ESP32-ECO3 (ESP32 Chip Revision 3 onwards), ESP32-S2, ESP32-C3, ESP32-S3 SoCs.\n\n    - ECDSA based secure boot scheme. Supported in ESP32-C2 SoC.",
-                "id": "security-features-app-signing-scheme-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-525",
+                "id": "security-features-app-signing-scheme-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-525",
                 "name": "SECURE_SIGNED_APPS_SCHEME",
                 "title": "App Signing Scheme",
                 "type": "choice"
@@ -3511,7 +3511,7 @@
                 ],
                 "depends_on": "SECURE_SIGNED_APPS_ECDSA_V2_SCHEME",
                 "help": "Select the ECDSA key size. Two key sizes are supported depending on the target:\n\n- 256 bit key using NISTP256 curve (Recommended)\n- 384 bit key using NISTP384 curve (Recommended)\n\nAt present, both key sizes are practically implausible to bruteforce.",
-                "id": "security-features-ecdsa-key-size-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-572",
+                "id": "security-features-ecdsa-key-size-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-572",
                 "name": "SECURE_BOOT_ECDSA_KEY_LEN_SIZE",
                 "title": "ECDSA key size",
                 "type": "choice"
@@ -3583,7 +3583,7 @@
                         ],
                         "depends_on": "SECURE_BOOT",
                         "help": "Select the Secure Boot Version. Depends on the Chip Revision.\nSecure Boot V2 is the new RSA / ECDSA based secure boot scheme.\n\n    - RSA based scheme is supported in ESP32 (Revision 3 onwards), ESP32-S2, ESP32-C3 (ECO3), ESP32-S3.\n    - ECDSA based scheme is supported in ESP32-C2 SoC.\n\nPlease note that, RSA or ECDSA secure boot is property of specific SoC based on its HW design, supported\ncrypto accelerators, die-size, cost and similar parameters. Please note that RSA scheme has requirement\nfor bigger key sizes but at the same time it is comparatively faster than ECDSA verification.\n\nSecure Boot V1 is the AES based (custom) secure boot scheme supported in ESP32 SoC.",
-                        "id": "security-features-enable-hardware-secure-boot-in-bootloader-read-docs-first--select-secure-boot-version-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-658",
+                        "id": "security-features-enable-hardware-secure-boot-in-bootloader-read-docs-first--select-secure-boot-version-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-658",
                         "name": "SECURE_BOOT_VERSION",
                         "title": "Select secure boot version",
                         "type": "choice"
@@ -3622,7 +3622,7 @@
                 ],
                 "depends_on": "SECURE_BOOT_V1_ENABLED",
                 "help": null,
-                "id": "security-features-secure-bootloader-mode-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-691",
+                "id": "security-features-secure-bootloader-mode-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-691",
                 "name": "SECURE_BOOTLOADER_MODE",
                 "title": "Secure bootloader mode",
                 "type": "choice"
@@ -3713,7 +3713,7 @@
                 ],
                 "depends_on": "SECURE_BOOTLOADER_REFLASHABLE",
                 "help": "In reflashable secure bootloader mode, a hardware key is derived from the signing key (with SHA-256) and\ncan be written to eFuse with espefuse.\n\nNormally this is a 256-bit key, but if 3/4 Coding Scheme is used on the device then the eFuse key is\ntruncated to 192 bits.\n\nThis configuration item doesn't change any firmware code, it only changes the size of key binary which is\ngenerated at build time.",
-                "id": "security-features-hardware-key-encoding-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-825",
+                "id": "security-features-hardware-key-encoding-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-825",
                 "name": "SECURE_BOOTLOADER_KEY_ENCODING",
                 "title": "Hardware Key Encoding",
                 "type": "choice"
@@ -3755,7 +3755,7 @@
                         ],
                         "depends_on": "SECURE_FLASH_ENC_ENABLED",
                         "help": "Specify the key source for the Flash Encryption Key",
-                        "id": "security-features-enable-flash-encryption-on-boot-read-docs-first--flash-encryption-key-source-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-873",
+                        "id": "security-features-enable-flash-encryption-on-boot-read-docs-first--flash-encryption-key-source-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-873",
                         "name": "SECURE_FLASH_ENCRYPTION_KEY_SOURCE",
                         "title": "Flash Encryption Key Source",
                         "type": "choice"
@@ -3795,7 +3795,7 @@
                         ],
                         "depends_on": "SOC_FLASH_ENCRYPTION_XTS_AES_OPTIONS && SECURE_FLASH_ENC_ENABLED",
                         "help": "Size of generated XTS-AES key.\n\n- AES-128 uses a 256-bit key (32 bytes) derived from 128 bits (16 bytes) burned in half Efuse key block.\n  Internally, it calculates SHA256(128 bits)\n- AES-128 uses a 256-bit key (32 bytes) which occupies one Efuse key block.\n- AES-256 uses a 512-bit key (64 bytes) which occupies two Efuse key blocks.\n\nThis setting is ignored if either type of key is already burned to Efuse before the first boot.\nIn this case, the pre-burned key is used and no new key is generated.",
-                        "id": "security-features-enable-flash-encryption-on-boot-read-docs-first--size-of-generated-xts-aes-key-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-893",
+                        "id": "security-features-enable-flash-encryption-on-boot-read-docs-first--size-of-generated-xts-aes-key-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-893",
                         "name": "SECURE_FLASH_ENCRYPTION_KEYSIZE",
                         "title": "Size of generated XTS-AES key",
                         "type": "choice"
@@ -3825,7 +3825,7 @@
                         ],
                         "depends_on": "SECURE_FLASH_ENC_ENABLED",
                         "help": "By default Development mode is enabled which allows ROM download mode to perform flash encryption\noperations (plaintext is sent to the device, and it encrypts it internally and writes ciphertext\nto flash.) This mode is not secure, it's possible for an attacker to write their own chosen plaintext\nto flash.\n\nRelease mode should always be selected for production or manufacturing. Once enabled it's no longer\npossible for the device in ROM Download Mode to use the flash encryption hardware.\n\nWhen EFUSE_VIRTUAL is enabled, SECURE_FLASH_ENCRYPTION_MODE_RELEASE is not available.\nFor CI tests we use IDF_CI_BUILD to bypass it (\"export IDF_CI_BUILD=1\").\nWe do not recommend bypassing it for other purposes.\n\nRefer to the Flash Encryption section of the ESP-IDF Programmer's Guide for details.",
-                        "id": "security-features-enable-flash-encryption-on-boot-read-docs-first--enable-usage-mode-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-926",
+                        "id": "security-features-enable-flash-encryption-on-boot-read-docs-first--enable-usage-mode-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-926",
                         "name": "SECURE_FLASH_ENCRYPTION_MODE",
                         "title": "Enable usage mode",
                         "type": "choice"
@@ -3973,7 +3973,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "security-features-potentially-insecure-options-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-960",
+                "id": "security-features-potentially-insecure-options-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-960",
                 "title": "Potentially insecure options",
                 "type": "menu"
             },
@@ -4034,7 +4034,7 @@
                         ],
                         "depends_on": "SECURE_FLASH_PSEUDO_ROUND_FUNC",
                         "help": "The strength of the pseudo rounds functions can be configured to low, medium and high,\neach denoting the values that would be stored in the efuses field.\nBy default the value to set to low.\n\nIt is recommended that the required strength of the pseudo rounds function should be set during the\nfirst boot itself. If your workflow needs to update the function's strength after the first boot,\nyou should enable CONFIG_SECURE_BOOT_SKIP_WRITE_PROTECTION_SCA to avoid write protecting this\nbit during the boot up for targets that support Secure Boot using ECDSA-P384.\n\nYou can configure the strength of the pseudo rounds functions according to your use cases,\nfor example, increasing the strength would provide higher security but would slow down the\nflash encryption/decryption operations.\nFor more info regarding the performance impact, please checkout the pseudo round function section of the\nsecurity guide documentation.",
-                        "id": "security-features-permanently-enable-xts-aes-s-pseudo-rounds-function-strength-of-the-pseudo-rounds-function-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-1196",
+                        "id": "security-features-permanently-enable-xts-aes-s-pseudo-rounds-function-strength-of-the-pseudo-rounds-function-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-1196",
                         "name": "SECURE_FLASH_PSEUDO_ROUND_FUNC_STRENGTH",
                         "title": "Strength of the pseudo rounds function",
                         "type": "choice"
@@ -4103,14 +4103,14 @@
                 ],
                 "depends_on": "(SECURE_BOOT_V2_ENABLED || SECURE_FLASH_ENC_ENABLED) && !(IDF_TARGET_ESP32 && ESP32_REV_MIN_FULL < 300)",
                 "help": null,
-                "id": "security-features-uart-rom-download-mode-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-1236",
+                "id": "security-features-uart-rom-download-mode-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-1236",
                 "name": "SECURE_UART_ROM_DL_MODE",
                 "title": "UART ROM download mode",
                 "type": "choice"
             }
         ],
         "depends_on": null,
-        "id": "security-features-home-damian-win-esp-esp-idf-components-bootloader-Kconfig.projbuild-445",
+        "id": "security-features-home-luciano-esp-esp-idf-components-bootloader-Kconfig.projbuild-445",
         "title": "Security features",
         "type": "menu"
     },
@@ -4182,7 +4182,7 @@
             }
         ],
         "depends_on": null,
-        "id": "application-manager-home-damian-win-esp-esp-idf-components-esp_app_format-Kconfig.projbuild-1",
+        "id": "application-manager-home-luciano-esp-esp-idf-components-esp_app_format-Kconfig.projbuild-1",
         "title": "Application manager",
         "type": "menu"
     },
@@ -4393,14 +4393,14 @@
                 ],
                 "depends_on": "!IDF_TARGET_ESP32",
                 "help": "Controls the Boot ROM log behavior.\nThe rom log behavior can only be changed for once,\nspecific eFuse bit(s) will be burned at app boot stage.",
-                "id": "boot-rom-behavior-permanently-change-boot-rom-output-home-damian-win-esp-esp-idf-components-esp_rom-Kconfig.projbuild-6",
+                "id": "boot-rom-behavior-permanently-change-boot-rom-output-home-luciano-esp-esp-idf-components-esp_rom-Kconfig.projbuild-6",
                 "name": "BOOT_ROM_LOG_SCHEME",
                 "title": "Permanently change Boot ROM output",
                 "type": "choice"
             }
         ],
         "depends_on": null,
-        "id": "boot-rom-behavior-home-damian-win-esp-esp-idf-components-esp_rom-Kconfig.projbuild-3",
+        "id": "boot-rom-behavior-home-luciano-esp-esp-idf-components-esp_rom-Kconfig.projbuild-3",
         "title": "Boot ROM Behavior",
         "type": "menu"
     },
@@ -4491,7 +4491,7 @@
                 ],
                 "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP && !IDF_TARGET_LINUX",
                 "help": "Mode the flash chip is flashed in, as well as the default mode for the\nbinary to run in.",
-                "id": "serial-flasher-config-flash-spi-mode-home-damian-win-esp-esp-idf-components-esptool_py-Kconfig.projbuild-39",
+                "id": "serial-flasher-config-flash-spi-mode-home-luciano-esp-esp-idf-components-esptool_py-Kconfig.projbuild-39",
                 "name": "ESPTOOLPY_FLASHMODE",
                 "title": "Flash SPI mode",
                 "type": "choice"
@@ -4521,7 +4521,7 @@
                 ],
                 "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP && !IDF_TARGET_LINUX",
                 "help": null,
-                "id": "serial-flasher-config-flash-sampling-mode-home-damian-win-esp-esp-idf-components-esptool_py-Kconfig.projbuild-64",
+                "id": "serial-flasher-config-flash-sampling-mode-home-luciano-esp-esp-idf-components-esptool_py-Kconfig.projbuild-64",
                 "name": "ESPTOOLPY_FLASH_SAMPLE_MODE",
                 "title": "Flash Sampling Mode",
                 "type": "choice"
@@ -4591,7 +4591,7 @@
                 ],
                 "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP && !IDF_TARGET_LINUX",
                 "help": null,
-                "id": "serial-flasher-config-flash-spi-speed-home-damian-win-esp-esp-idf-components-esptool_py-..-spi_flash-esp32-Kconfig.flash_freq-1",
+                "id": "serial-flasher-config-flash-spi-speed-home-luciano-esp-esp-idf-components-esptool_py-..-spi_flash-esp32-Kconfig.flash_freq-1",
                 "name": "ESPTOOLPY_FLASHFREQ",
                 "title": "Flash SPI speed",
                 "type": "choice"
@@ -4691,7 +4691,7 @@
                 ],
                 "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP && !IDF_TARGET_LINUX",
                 "help": "SPI flash size, in megabytes",
-                "id": "serial-flasher-config-flash-size-home-damian-win-esp-esp-idf-components-esptool_py-Kconfig.projbuild-123",
+                "id": "serial-flasher-config-flash-size-home-luciano-esp-esp-idf-components-esptool_py-Kconfig.projbuild-123",
                 "name": "ESPTOOLPY_FLASHSIZE",
                 "title": "Flash size",
                 "type": "choice"
@@ -4741,7 +4741,7 @@
                 ],
                 "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP && !IDF_TARGET_LINUX",
                 "help": "Configure whether esptool should reset the ESP32 before flashing.\n\nAutomatic resetting depends on the RTS & DTR signals being\nwired from the serial port to the ESP32. Most USB development\nboards do this internally.",
-                "id": "serial-flasher-config-before-flashing-home-damian-win-esp-esp-idf-components-esptool_py-Kconfig.projbuild-170",
+                "id": "serial-flasher-config-before-flashing-home-luciano-esp-esp-idf-components-esptool_py-Kconfig.projbuild-170",
                 "name": "ESPTOOLPY_BEFORE",
                 "title": "Before flashing",
                 "type": "choice"
@@ -4781,7 +4781,7 @@
                 ],
                 "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP && !IDF_TARGET_LINUX",
                 "help": "Configure whether esptool should reset the ESP32 after flashing.\n\nAutomatic resetting depends on the RTS & DTR signals being\nwired from the serial port to the ESP32. Most USB development\nboards do this internally.",
-                "id": "serial-flasher-config-after-flashing-home-damian-win-esp-esp-idf-components-esptool_py-Kconfig.projbuild-191",
+                "id": "serial-flasher-config-after-flashing-home-luciano-esp-esp-idf-components-esptool_py-Kconfig.projbuild-191",
                 "name": "ESPTOOLPY_AFTER",
                 "title": "After flashing",
                 "type": "choice"
@@ -4808,7 +4808,7 @@
             }
         ],
         "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP && !IDF_TARGET_LINUX",
-        "id": "serial-flasher-config-home-damian-win-esp-esp-idf-components-esptool_py-Kconfig.projbuild-1",
+        "id": "serial-flasher-config-home-luciano-esp-esp-idf-components-esptool_py-Kconfig.projbuild-1",
         "title": "Serial flasher config",
         "type": "menu"
     },
@@ -4919,7 +4919,7 @@
                 ],
                 "depends_on": null,
                 "help": "The partition table to flash to the ESP32. The partition table\ndetermines where apps, data and other resources are expected to\nbe found.\n\nThe predefined partition table CSV descriptions can be found\nin the components/partition_table directory. These are mostly intended\nfor example and development use, it's expect that for production use you\nwill copy one of these CSV files and create a custom partition CSV for\nyour application.",
-                "id": "partition-table-partition-table-home-damian-win-esp-esp-idf-components-partition_table-Kconfig.projbuild-3",
+                "id": "partition-table-partition-table-home-luciano-esp-esp-idf-components-partition_table-Kconfig.projbuild-3",
                 "name": "PARTITION_TABLE_TYPE",
                 "title": "Partition Table",
                 "type": "choice"
@@ -4966,7 +4966,7 @@
             }
         ],
         "depends_on": null,
-        "id": "partition-table-home-damian-win-esp-esp-idf-components-partition_table-Kconfig.projbuild-1",
+        "id": "partition-table-home-luciano-esp-esp-idf-components-partition_table-Kconfig.projbuild-1",
         "title": "Partition Table",
         "type": "menu"
     },
@@ -5017,7 +5017,7 @@
                 ],
                 "depends_on": null,
                 "help": "This option sets compiler optimization level (gcc -O argument) for the app.\n\n- The \"Debug\" setting will add the -Og flag to CFLAGS.\n- The \"Size\" setting will add the -Os flag to CFLAGS (-Oz with Clang).\n- The \"Performance\" setting will add the -O2 flag to CFLAGS.\n- The \"None\" setting will add the -O0 flag to CFLAGS.\n\nThe \"Size\" setting cause the compiled code to be smaller and faster, but\nmay lead to difficulties of correlating code addresses to source file\nlines when debugging.\n\nThe \"Performance\" setting causes the compiled code to be larger and faster,\nbut will be easier to correlated code addresses to source file lines.\n\n\"None\" with -O0 produces compiled code without optimization.\n\nNote that custom optimization levels may be unsupported.\n\nCompiler optimization for the IDF bootloader is set separately,\nsee the BOOTLOADER_COMPILER_OPTIMIZATION setting.",
-                "id": "compiler-options-optimization-level-home-damian-win-esp-esp-idf-Kconfig-407",
+                "id": "compiler-options-optimization-level-home-luciano-esp-esp-idf-Kconfig-407",
                 "name": "COMPILER_OPTIMIZATION",
                 "title": "Optimization Level",
                 "type": "choice"
@@ -5067,7 +5067,7 @@
                 ],
                 "depends_on": null,
                 "help": "Assertions can be:\n\n- Enabled. Failure will print verbose assertion details. This is the default.\n\n- Set to \"silent\" to save code size (failed assertions will abort() but user\n  needs to use the aborting address to find the line number with the failed assertion.)\n\n- Disabled entirely (not recommended for most configurations.) -DNDEBUG is added\n  to CPPFLAGS in this case.",
-                "id": "compiler-options-assertion-level-home-damian-win-esp-esp-idf-Kconfig-462",
+                "id": "compiler-options-assertion-level-home-luciano-esp-esp-idf-Kconfig-462",
                 "name": "COMPILER_OPTIMIZATION_ASSERTION_LEVEL",
                 "title": "Assertion level",
                 "type": "choice"
@@ -5107,7 +5107,7 @@
                 ],
                 "depends_on": null,
                 "help": "In the soft-fp part of libgcc, riscv version is written in C,\nand handles all edge cases in IEEE754, which makes it larger\nand performance is slow.\n\nRVfplib is an optimized RISC-V library for FP arithmetic on 32-bit\ninteger processors, for single and double-precision FP.\nRVfplib is \"fast\", but it has a few exceptions from IEEE 754 compliance.",
-                "id": "compiler-options-compiler-float-lib-source-home-damian-win-esp-esp-idf-Kconfig-509",
+                "id": "compiler-options-compiler-float-lib-source-home-luciano-esp-esp-idf-Kconfig-509",
                 "name": "COMPILER_FLOAT_LIB_FROM",
                 "title": "Compiler float lib source",
                 "type": "choice"
@@ -5210,7 +5210,7 @@
                 ],
                 "depends_on": "!IDF_TARGET_LINUX",
                 "help": "Controls initialization of trivial automatic variables in C++ code\n(-ftrivial-auto-var-init). The 'uninitialized' setting reduces overall\nbinary size compared to 'zero' or 'pattern'.",
-                "id": "compiler-options-c-trivial-automatic-variable-initialization-home-damian-win-esp-esp-idf-Kconfig-588",
+                "id": "compiler-options-c-trivial-automatic-variable-initialization-home-luciano-esp-esp-idf-Kconfig-588",
                 "name": "COMPILER_CXX_TRIVIAL_AUTO_VAR_INIT",
                 "title": "C++ trivial automatic variable initialization",
                 "type": "choice"
@@ -5260,7 +5260,7 @@
                 ],
                 "depends_on": null,
                 "help": "Stack smashing protection mode. Emit extra code to check for buffer overflows, such as stack\nsmashing attacks. This is done by adding a guard variable to functions with vulnerable objects.\nThe guards are initialized when a function is entered and then checked when the function exits.\nIf a guard check fails, program is halted. Protection has the following modes:\n\n- In NORMAL mode (GCC flag: -fstack-protector) only functions that call alloca, and functions with\n  buffers larger than 8 bytes are protected.\n\n- STRONG mode (GCC flag: -fstack-protector-strong) is like NORMAL, but includes additional functions\n  to be protected -- those that have local array definitions, or have references to local frame\n  addresses.\n\n- In OVERALL mode (GCC flag: -fstack-protector-all) all functions are protected.\n\nModes have the following impact on code performance and coverage:\n\n- performance: NORMAL > STRONG > OVERALL\n\n- coverage: NORMAL < STRONG < OVERALL\n\nThe performance impact includes increasing the amount of stack memory required for each task.",
-                "id": "compiler-options-stack-smashing-protection-mode-home-damian-win-esp-esp-idf-Kconfig-623",
+                "id": "compiler-options-stack-smashing-protection-mode-home-luciano-esp-esp-idf-Kconfig-623",
                 "name": "COMPILER_STACK_CHECK_MODE",
                 "title": "Stack smashing protection mode",
                 "type": "choice"
@@ -5410,7 +5410,7 @@
                 ],
                 "depends_on": null,
                 "help": "Select runtime library to be used by compiler.\n- GCC toolchain supports libgcc only.\n- Clang allows to choose between libgcc or libclang_rt.\n- For host builds (\"linux\" target), uses the default library.",
-                "id": "compiler-options-compiler-runtime-library-home-damian-win-esp-esp-idf-Kconfig-762",
+                "id": "compiler-options-compiler-runtime-library-home-luciano-esp-esp-idf-Kconfig-762",
                 "name": "COMPILER_RT_LIB",
                 "title": "Compiler runtime library",
                 "type": "choice"
@@ -5481,7 +5481,7 @@
                 ],
                 "depends_on": "!IDF_TARGET_LINUX",
                 "help": "If the linker finds orphan sections, it attempts to place orphan sections after sections of the same\nattribute such as code vs data, loadable vs non-loadable, etc.\nThat means that orphan sections could placed between sections defined in IDF linker scripts.\nThis could lead to corruption of the binary image. Configure the linker action here.",
-                "id": "compiler-options-orphan-sections-handling-home-damian-win-esp-esp-idf-Kconfig-831",
+                "id": "compiler-options-orphan-sections-handling-home-luciano-esp-esp-idf-Kconfig-831",
                 "name": "COMPILER_ORPHAN_SECTIONS",
                 "title": "Orphan sections handling",
                 "type": "choice"
@@ -5531,7 +5531,7 @@
                 ],
                 "depends_on": "IDF_TOOLCHAIN_GCC && !IDF_TARGET_LINUX",
                 "help": "Modify libstdc++ _GLIBCXX20_CONSTEXPR and _GLIBCXX23_CONSTEXPR definitions to provide size\noptimizations. The total size optimization depends on the application's structure.\nThere is no robust way to determine which option would be better in a particular case.\nPlease try all available options to find the best size optimization.",
-                "id": "compiler-options-define-_glibcxx_constexpr-home-damian-win-esp-esp-idf-Kconfig-864",
+                "id": "compiler-options-define-_glibcxx_constexpr-home-luciano-esp-esp-idf-Kconfig-864",
                 "name": "COMPILER_CXX_GLIBCXX_CONSTEXPR",
                 "title": "Define _GLIBCXX_CONSTEXPR",
                 "type": "choice"
@@ -5582,7 +5582,7 @@
                             }
                         ],
                         "depends_on": "COMPILER_KASAN",
-                        "id": "compiler-options-enable-kernel-address-sanitizer-kasan--kernel-address-sanitizer-kasan--home-damian-win-esp-esp-idf-Kconfig-915",
+                        "id": "compiler-options-enable-kernel-address-sanitizer-kasan--kernel-address-sanitizer-kasan--home-luciano-esp-esp-idf-Kconfig-915",
                         "title": "Kernel Address Sanitizer (KASAN)",
                         "type": "menu"
                     }
@@ -5597,7 +5597,7 @@
             }
         ],
         "depends_on": null,
-        "id": "compiler-options-home-damian-win-esp-esp-idf-Kconfig-405",
+        "id": "compiler-options-home-luciano-esp-esp-idf-Kconfig-405",
         "title": "Compiler options",
         "type": "menu"
     },
@@ -5702,7 +5702,7 @@
                         ],
                         "depends_on": "IDF_TARGET_ESP32",
                         "help": "Selector eFuse code scheme.",
-                        "id": "component-config-efuse-bit-manager-coding-scheme-compatibility-home-damian-win-esp-esp-idf-components-efuse-Kconfig-69",
+                        "id": "component-config-efuse-bit-manager-coding-scheme-compatibility-home-luciano-esp-esp-idf-components-efuse-Kconfig-69",
                         "name": "EFUSE_CODE_SCHEME_SELECTOR",
                         "title": "Coding Scheme Compatibility",
                         "type": "choice"
@@ -5719,7 +5719,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-efuse-bit-manager-home-damian-win-esp-esp-idf-components-efuse-Kconfig-1",
+                "id": "component-config-efuse-bit-manager-home-luciano-esp-esp-idf-components-efuse-Kconfig-1",
                 "title": "eFuse Bit Manager",
                 "type": "menu"
             },
@@ -5747,7 +5747,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-common-esp-related-home-damian-win-esp-esp-idf-components-esp_common-Kconfig-1",
+                "id": "component-config-common-esp-related-home-luciano-esp-esp-idf-components-esp_common-Kconfig-1",
                 "title": "Common ESP-related",
                 "type": "menu"
             },
@@ -5830,7 +5830,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "Required minimum chip revision. ESP-IDF will check for it and\nreject to boot if the chip revision fails the check.\nThis ensures the chip used will have some modifications (features, or bugfixes).\n\nThe complied binary will only support chips above this revision,\nthis will also help to reduce binary size.",
-                                "id": "component-config-hardware-settings-chip-revision-minimum-supported-esp32-revision-home-damian-win-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.hw_support-1",
+                                "id": "component-config-hardware-settings-chip-revision-minimum-supported-esp32-revision-home-luciano-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.hw_support-1",
                                 "name": "ESP32_REV_MIN",
                                 "title": "Minimum Supported ESP32 Revision",
                                 "type": "choice"
@@ -5917,7 +5917,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-hardware-settings-chip-revision-home-damian-win-esp-esp-idf-components-esp_hw_support-Kconfig-12",
+                        "id": "component-config-hardware-settings-chip-revision-home-luciano-esp-esp-idf-components-esp_hw_support-Kconfig-12",
                         "title": "Chip revision",
                         "type": "menu"
                     },
@@ -6038,7 +6038,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "Configure the number of universally administered (by IEEE) MAC addresses.\nDuring initialization, MAC addresses for each network interface are generated or derived from a\nsingle base MAC address.\nIf the number of universal MAC addresses is four, all four interfaces (WiFi station, WiFi softap,\nBluetooth and Ethernet) receive a universally administered MAC address. These are generated\nsequentially by adding 0, 1, 2 and 3 (respectively) to the final octet of the base MAC address.\nIf the number of universal MAC addresses is two, only two interfaces (WiFi station and Bluetooth)\nreceive a universally administered MAC address. These are generated sequentially by adding 0\nand 1 (respectively) to the base MAC address. The remaining two interfaces (WiFi softap and Ethernet)\nreceive local MAC addresses. These are derived from the universal WiFi station and Bluetooth MAC\naddresses, respectively.\nWhen using the default (Espressif-assigned) base MAC address, either setting can be used. When using\na custom universal MAC address range, the correct setting will depend on the allocation of MAC\naddresses in this range (either 2 or 4 per device.)",
-                                "id": "component-config-hardware-settings-mac-config-number-of-universally-administered-by-ieee-mac-address-home-damian-win-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.mac-1",
+                                "id": "component-config-hardware-settings-mac-config-number-of-universally-administered-by-ieee-mac-address-home-luciano-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.mac-1",
                                 "name": "ESP32_UNIVERSAL_MAC_ADDRESSES",
                                 "title": "Number of universally administered (by IEEE) MAC address",
                                 "type": "choice"
@@ -6075,7 +6075,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-hardware-settings-mac-config-home-damian-win-esp-esp-idf-components-esp_hw_support-Kconfig-26",
+                        "id": "component-config-hardware-settings-mac-config-home-luciano-esp-esp-idf-components-esp_hw_support-Kconfig-26",
                         "title": "MAC Config",
                         "type": "menu"
                     },
@@ -6247,7 +6247,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-hardware-settings-sleep-config-home-damian-win-esp-esp-idf-components-esp_hw_support-Kconfig-77",
+                        "id": "component-config-hardware-settings-sleep-config-home-luciano-esp-esp-idf-components-esp_hw_support-Kconfig-77",
                         "title": "Sleep Config",
                         "type": "menu"
                     },
@@ -6298,7 +6298,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "Choose which clock is used as RTC clock source.\n\n- \"Internal 150kHz oscillator\" option provides lowest deep sleep current\n    consumption, and does not require extra external components. However\n    frequency stability with respect to temperature is poor, so time may\n    drift in deep/light sleep modes.\n- \"External 32kHz crystal\" provides better frequency stability, at the\n    expense of slightly higher (1uA) deep sleep current consumption.\n- \"External 32kHz oscillator\" allows using 32kHz clock generated by an\n    external circuit. In this case, external clock signal must be connected\n    to 32K_XN pin.\n    Additionally, 1nF capacitor must be connected between 32K_XP pin and\n    ground. 32K_XP pin can not be used as a GPIO in this case.\n- \"Internal 8.5MHz oscillator divided by 256\" option results in higher\n    deep sleep current (by 5uA) but has better frequency stability than\n    the internal 150kHz oscillator. It does not require external components.",
-                                "id": "component-config-hardware-settings-rtc-clock-config-rtc-clock-source-home-damian-win-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.rtc-1",
+                                "id": "component-config-hardware-settings-rtc-clock-config-rtc-clock-source-home-luciano-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.rtc-1",
                                 "name": "RTC_CLK_SRC",
                                 "title": "RTC clock source",
                                 "type": "choice"
@@ -6338,7 +6338,7 @@
                                 ],
                                 "depends_on": "RTC_CLK_SRC_EXT_CRYS && ESP32_REV_MIN_FULL < 200",
                                 "help": "With some 32kHz crystal configurations, the X32N and X32P pins may not have enough\ndrive strength to keep the crystal oscillating. Choose the method to provide\nadditional current from touchpad 9 to the external 32kHz crystal. Note that\nthe deep sleep current is slightly high (4-5uA) and the touchpad and the\nwakeup sources of both touchpad and ULP are not available in method 1 and method 2.\n\nThis problem is fixed in ESP32 ECO 3, so this workaround is not needed. Setting the\nproject configuration to minimum revision ECO3 will disable this option, , allow\nall wakeup sources, and save some code size.\n\n- \"None\" option will not provide additional current to external crystal\n- \"Method 1\" option can't ensure 100% to solve the external 32k crystal start failed\n    issue, but the touchpad can work in this method.\n- \"Method 2\" option can solve the external 32k issue, but the touchpad can't work\n    in this method.",
-                                "id": "component-config-hardware-settings-rtc-clock-config-additional-current-for-external-32khz-crystal-home-damian-win-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.rtc-34",
+                                "id": "component-config-hardware-settings-rtc-clock-config-additional-current-for-external-32khz-crystal-home-luciano-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.rtc-34",
                                 "name": "RTC_EXT_CRYST_ADDIT_CURRENT_METHOD",
                                 "title": "Additional current for external 32kHz crystal",
                                 "type": "choice"
@@ -6388,7 +6388,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-hardware-settings-rtc-clock-config-home-damian-win-esp-esp-idf-components-esp_hw_support-Kconfig-302",
+                        "id": "component-config-hardware-settings-rtc-clock-config-home-luciano-esp-esp-idf-components-esp_hw_support-Kconfig-302",
                         "title": "RTC Clock Config",
                         "type": "menu"
                     },
@@ -6436,7 +6436,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-hardware-settings-peripheral-control-home-damian-win-esp-esp-idf-components-esp_hw_support-Kconfig-318",
+                        "id": "component-config-hardware-settings-peripheral-control-home-luciano-esp-esp-idf-components-esp_hw_support-Kconfig-318",
                         "title": "Peripheral Control",
                         "type": "menu"
                     },
@@ -6454,7 +6454,7 @@
                             }
                         ],
                         "depends_on": "SOC_ETM_SUPPORTED",
-                        "id": "component-config-hardware-settings-event-task-matrix-etm-configurations-home-damian-win-esp-esp-idf-components-esp_hw_support-.-etm-Kconfig.etm-1",
+                        "id": "component-config-hardware-settings-event-task-matrix-etm-configurations-home-luciano-esp-esp-idf-components-esp_hw_support-.-etm-Kconfig.etm-1",
                         "title": "Event Task Matrix (ETM) Configurations",
                         "type": "menu"
                     },
@@ -6505,7 +6505,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "This option selects the operating frequency of the XTAL (crystal) clock used to drive the ESP target.\nThe selected value MUST reflect the frequency of the given hardware.\n\nNote: On ESP32, the XTAL_FREQ_AUTO option allows the ESP target to automatically estimating XTAL clock's\noperating frequency. The ESP32 uses the internal 8MHZ as a reference when estimating. Due to the internal\noscillator's frequency being temperature dependent, usage of the XTAL_FREQ_AUTO is not recommended in\napplications that operate in high ambient temperatures or use high-temperature qualified chips and modules.",
-                                "id": "component-config-hardware-settings-main-xtal-config-main-xtal-frequency-home-damian-win-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.xtal-1",
+                                "id": "component-config-hardware-settings-main-xtal-config-main-xtal-frequency-home-luciano-esp-esp-idf-components-esp_hw_support-.-port-esp32-Kconfig.xtal-1",
                                 "name": "XTAL_FREQ",
                                 "title": "Main XTAL frequency",
                                 "type": "choice"
@@ -6522,7 +6522,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-hardware-settings-main-xtal-config-home-damian-win-esp-esp-idf-components-esp_hw_support-Kconfig-360",
+                        "id": "component-config-hardware-settings-main-xtal-config-home-luciano-esp-esp-idf-components-esp_hw_support-Kconfig-360",
                         "title": "Main XTAL Config",
                         "type": "menu"
                     },
@@ -6617,7 +6617,7 @@
                                                 ],
                                                 "depends_on": "ESP_BROWNOUT_DET",
                                                 "help": "The brownout detector will reset the chip when the supply voltage is approximately\nbelow this level. Note that there may be some variation of brownout voltage level\nbetween each ESP chip.\n\n#The voltage levels here are estimates, more work needs to be done to figure out the exact voltages\n#of the brownout threshold levels.",
-                                                "id": "component-config-hardware-settings-power-supplier-brownout-detector-hardware-brownout-detect-reset-brownout-voltage-level-home-damian-win-esp-esp-idf-components-esp_hw_support-.-power_supply-port-esp32-Kconfig.power-14",
+                                                "id": "component-config-hardware-settings-power-supplier-brownout-detector-hardware-brownout-detect-reset-brownout-voltage-level-home-luciano-esp-esp-idf-components-esp_hw_support-.-power_supply-port-esp32-Kconfig.power-14",
                                                 "name": "ESP_BROWNOUT_DET_LVL_SEL",
                                                 "title": "Brownout voltage level",
                                                 "type": "choice"
@@ -6653,13 +6653,13 @@
                                     }
                                 ],
                                 "depends_on": null,
-                                "id": "component-config-hardware-settings-power-supplier-brownout-detector-home-damian-win-esp-esp-idf-components-esp_hw_support-.-power_supply-port-esp32-Kconfig.power-3",
+                                "id": "component-config-hardware-settings-power-supplier-brownout-detector-home-luciano-esp-esp-idf-components-esp_hw_support-.-power_supply-port-esp32-Kconfig.power-3",
                                 "title": "Brownout Detector",
                                 "type": "menu"
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-hardware-settings-power-supplier-home-damian-win-esp-esp-idf-components-esp_hw_support-.-power_supply-port-esp32-Kconfig.power-1",
+                        "id": "component-config-hardware-settings-power-supplier-home-luciano-esp-esp-idf-components-esp_hw_support-.-power_supply-port-esp32-Kconfig.power-1",
                         "title": "Power Supplier",
                         "type": "menu"
                     },
@@ -6755,7 +6755,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-hardware-settings-home-damian-win-esp-esp-idf-components-esp_hw_support-Kconfig-1",
+                "id": "component-config-hardware-settings-home-luciano-esp-esp-idf-components-esp_hw_support-Kconfig-1",
                 "title": "Hardware Settings",
                 "type": "menu"
             },
@@ -6786,7 +6786,7 @@
                         ],
                         "depends_on": "!IDF_TARGET_LINUX",
                         "help": null,
-                        "id": "component-config-libc-libc-to-build-application-with-home-damian-win-esp-esp-idf-components-esp_libc-Kconfig-4",
+                        "id": "component-config-libc-libc-to-build-application-with-home-luciano-esp-esp-idf-components-esp_libc-Kconfig-4",
                         "name": "LIBC",
                         "title": "LibC to build application with",
                         "type": "choice"
@@ -6856,7 +6856,7 @@
                         ],
                         "depends_on": "VFS_SUPPORT_IO && !IDF_TARGET_LINUX",
                         "help": "This option allows configuring the desired line endings sent to console\nwhen a newline ('\\n', LF) appears on stdout.\nThree options are possible:\n\nCRLF: whenever LF is encountered, prepend it with CR\n\nLF: no modification is applied, stdout is sent as is\n\nCR: each occurrence of LF is replaced with CR\n\nThis option doesn't affect behavior of the UART driver (drivers/uart.h).",
-                        "id": "component-config-libc-line-ending-for-console-output-home-damian-win-esp-esp-idf-components-esp_libc-Kconfig-57",
+                        "id": "component-config-libc-line-ending-for-console-output-home-luciano-esp-esp-idf-components-esp_libc-Kconfig-57",
                         "name": "LIBC_STDOUT_LINE_ENDING",
                         "title": "Line ending for console output",
                         "type": "choice"
@@ -6896,7 +6896,7 @@
                         ],
                         "depends_on": "VFS_SUPPORT_IO && !IDF_TARGET_LINUX",
                         "help": "This option allows configuring which input sequence on console produces\na newline ('\\n', LF) on stdin.\nThree options are possible:\n\nCRLF: CRLF is converted to LF\n\nLF: no modification is applied, input is sent to stdin as is\n\nCR: each occurrence of CR is replaced with LF\n\nThis option doesn't affect behavior of the UART driver (drivers/uart.h).",
-                        "id": "component-config-libc-line-ending-for-console-input-home-damian-win-esp-esp-idf-components-esp_libc-Kconfig-82",
+                        "id": "component-config-libc-line-ending-for-console-input-home-luciano-esp-esp-idf-components-esp_libc-Kconfig-82",
                         "name": "LIBC_STDIN_LINE_ENDING",
                         "title": "Line ending for console input",
                         "type": "choice"
@@ -6956,7 +6956,7 @@
                         ],
                         "depends_on": "!IDF_TARGET_LINUX",
                         "help": "This setting defines which hardware timers are used to\nimplement 'gettimeofday' and 'time' functions in C library.\n\n- If both high-resolution (systimer for all targets except ESP32)\n    and RTC timers are used, timekeeping will continue in deep sleep.\n    Time will be reported at 1 microsecond resolution.\n    This is the default, and the recommended option.\n- If only high-resolution timer (systimer) is used, gettimeofday will\n    provide time at microsecond resolution.\n    Time will not be preserved when going into deep sleep mode.\n- If only RTC timer is used, timekeeping will continue in\n    deep sleep, but time will be measured at 6.(6) microsecond\n    resolution. Also the gettimeofday function itself may take\n    longer to run.\n- If no timers are used, gettimeofday and time functions\n    return -1 and set errno to ENOSYS; they are defined as weak,\n    so they could be overridden.\n    If you want to customize gettimeofday() and other time functions,\n    please choose this option and refer to the 'time.c' source file\n    for the exact prototypes of these functions.\n\n- When RTC is used for timekeeping, two RTC_STORE registers are\n    used to keep time in deep sleep mode.",
-                        "id": "component-config-libc-timers-used-for-gettimeofday-function-home-damian-win-esp-esp-idf-components-esp_libc-Kconfig-134",
+                        "id": "component-config-libc-timers-used-for-gettimeofday-function-home-luciano-esp-esp-idf-components-esp_libc-Kconfig-134",
                         "name": "LIBC_TIME_SYSCALL",
                         "title": "Timers used for gettimeofday function",
                         "type": "choice"
@@ -6986,7 +6986,7 @@
                     }
                 ],
                 "depends_on": "!IDF_TARGET_LINUX",
-                "id": "component-config-libc-home-damian-win-esp-esp-idf-components-esp_libc-Kconfig-1",
+                "id": "component-config-libc-home-luciano-esp-esp-idf-components-esp_libc-Kconfig-1",
                 "title": "LibC",
                 "type": "menu"
             },
@@ -7014,7 +7014,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-esp-rom-home-damian-win-esp-esp-idf-components-esp_rom-Kconfig-1",
+                "id": "component-config-esp-rom-home-luciano-esp-esp-idf-components-esp_rom-Kconfig-1",
                 "title": "ESP-ROM",
                 "type": "menu"
             },
@@ -7069,7 +7069,7 @@
                                         ],
                                         "depends_on": "ESP_CRYPTO_DPA_PROTECTION_AT_STARTUP && SOC_CRYPTO_DPA_PROTECTION_SUPPORTED",
                                         "help": "Configure the DPA protection security level",
-                                        "id": "component-config-esp-security-specific-crypto-dpa-protection-enable-crypto-dpa-protection-at-startup-dpa-protection-level-home-damian-win-esp-esp-idf-components-esp_security-Kconfig-33",
+                                        "id": "component-config-esp-security-specific-crypto-dpa-protection-enable-crypto-dpa-protection-at-startup-dpa-protection-level-home-luciano-esp-esp-idf-components-esp_security-Kconfig-33",
                                         "name": "ESP_CRYPTO_DPA_PROTECTION_LEVEL",
                                         "title": "DPA protection level",
                                         "type": "choice"
@@ -7095,7 +7095,7 @@
                             }
                         ],
                         "depends_on": "SOC_CRYPTO_DPA_PROTECTION_SUPPORTED",
-                        "id": "component-config-esp-security-specific-crypto-dpa-protection-home-damian-win-esp-esp-idf-components-esp_security-Kconfig-20",
+                        "id": "component-config-esp-security-specific-crypto-dpa-protection-home-luciano-esp-esp-idf-components-esp_security-Kconfig-20",
                         "title": "Crypto DPA Protection",
                         "type": "menu"
                     },
@@ -7121,7 +7121,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-esp-security-specific-home-damian-win-esp-esp-idf-components-esp_security-Kconfig-1",
+                "id": "component-config-esp-security-specific-home-luciano-esp-esp-idf-components-esp_security-Kconfig-1",
                 "title": "ESP Security Specific",
                 "type": "menu"
             },
@@ -7182,7 +7182,7 @@
                         ],
                         "depends_on": null,
                         "help": "Select where to send console output (through stdout and stderr).\n\n- Default is to use UART0 on pre-defined GPIOs.\n- If \"Custom\" is selected, UART0 or UART1 can be chosen,\n  and any pins can be selected.\n- If \"None\" is selected, there will be no console output on any UART, except\n  for initial output from ROM bootloader. This ROM output can be suppressed by\n  GPIO strapping or EFUSE, refer to chip datasheet for details.\n- On chips with USB OTG peripheral, \"USB CDC\" option redirects output to the\n  CDC port. This option uses the CDC driver in the chip ROM.\n  This option is incompatible with TinyUSB stack.\n- On chips with an USB serial/JTAG debug controller, selecting the option\n  for that redirects output to the CDC/ACM (serial port emulation) component\n  of that device.",
-                        "id": "component-config-esp-stdio-channel-for-console-output-home-damian-win-esp-esp-idf-components-esp_stdio-Kconfig-2",
+                        "id": "component-config-esp-stdio-channel-for-console-output-home-luciano-esp-esp-idf-components-esp_stdio-Kconfig-2",
                         "name": "ESP_CONSOLE_UART",
                         "title": "Channel for console output",
                         "type": "choice"
@@ -7212,7 +7212,7 @@
                         ],
                         "depends_on": "SOC_USB_SERIAL_JTAG_SUPPORTED",
                         "help": "This secondary option supports output through other specific port like USB_SERIAL_JTAG\nwhen UART0 port as a primary is selected but not connected. This secondary output currently only supports\nnon-blocking mode without using REPL. If you want to output in blocking mode with REPL or\ninput through this secondary port, please change the primary config to this port\nin `Channel for console output` menu.",
-                        "id": "component-config-esp-stdio-channel-for-console-secondary-output-home-damian-win-esp-esp-idf-components-esp_stdio-Kconfig-35",
+                        "id": "component-config-esp-stdio-channel-for-console-secondary-output-home-luciano-esp-esp-idf-components-esp_stdio-Kconfig-35",
                         "name": "ESP_CONSOLE_SECONDARY",
                         "title": "Channel for console secondary output",
                         "type": "choice"
@@ -7262,7 +7262,7 @@
                         ],
                         "depends_on": "ESP_CONSOLE_UART_CUSTOM",
                         "help": "This UART peripheral is used for console output from the ESP-IDF Bootloader and the app.\n\nIf the configuration is different in the Bootloader binary compared to the app binary, UART\nis reconfigured after the bootloader exits and the app starts.\n\nDue to an ESP32 ROM bug, UART2 is not supported for console output\nvia esp_rom_printf.",
-                        "id": "component-config-esp-stdio-uart-peripheral-to-use-for-console-output-0-1--home-damian-win-esp-esp-idf-components-esp_stdio-Kconfig-68",
+                        "id": "component-config-esp-stdio-uart-peripheral-to-use-for-console-output-0-1--home-luciano-esp-esp-idf-components-esp_stdio-Kconfig-68",
                         "name": "ESP_CONSOLE_UART_NUM",
                         "title": "UART peripheral to use for console output (0-1)",
                         "type": "choice"
@@ -7352,7 +7352,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-esp-stdio-home-damian-win-esp-esp-idf-components-esp_stdio-Kconfig-1",
+                "id": "component-config-esp-stdio-home-luciano-esp-esp-idf-components-esp_stdio-Kconfig-1",
                 "title": "ESP-STDIO",
                 "type": "menu"
             },
@@ -7403,7 +7403,7 @@
                         ],
                         "depends_on": null,
                         "help": "CPU frequency to be set on application startup.",
-                        "id": "component-config-esp-system-settings-cpu-frequency-home-damian-win-esp-esp-idf-components-esp_system-.-port-soc-esp32-Kconfig.cpu-1",
+                        "id": "component-config-esp-system-settings-cpu-frequency-home-luciano-esp-esp-idf-components-esp_system-.-port-soc-esp32-Kconfig.cpu-1",
                         "name": "ESP_DEFAULT_CPU_FREQ_MHZ",
                         "title": "CPU frequency",
                         "type": "choice"
@@ -7475,13 +7475,13 @@
                                     }
                                 ],
                                 "depends_on": null,
-                                "id": "component-config-esp-system-settings-memory-non-backward-compatible-options-home-damian-win-esp-esp-idf-components-esp_system-.-port-soc-esp32-Kconfig.memory-44",
+                                "id": "component-config-esp-system-settings-memory-non-backward-compatible-options-home-luciano-esp-esp-idf-components-esp_system-.-port-soc-esp32-Kconfig.memory-44",
                                 "title": "Non-backward compatible options",
                                 "type": "menu"
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-esp-system-settings-memory-home-damian-win-esp-esp-idf-components-esp_system-.-port-soc-esp32-Kconfig.memory-1",
+                        "id": "component-config-esp-system-settings-memory-home-luciano-esp-esp-idf-components-esp_system-.-port-soc-esp32-Kconfig.memory-1",
                         "title": "Memory",
                         "type": "menu"
                     },
@@ -7540,7 +7540,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-esp-system-settings-trace-memory-home-damian-win-esp-esp-idf-components-esp_system-.-port-soc-esp32-Kconfig.tracemem-1",
+                        "id": "component-config-esp-system-settings-trace-memory-home-luciano-esp-esp-idf-components-esp_system-.-port-soc-esp32-Kconfig.tracemem-1",
                         "title": "Trace memory",
                         "type": "menu"
                     },
@@ -7599,7 +7599,7 @@
                         ],
                         "depends_on": null,
                         "help": "If FreeRTOS detects unexpected behaviour or an unhandled exception, the panic handler is\ninvoked. Configure the panic handler's action here.",
-                        "id": "component-config-esp-system-settings-panic-handler-behaviour-home-damian-win-esp-esp-idf-components-esp_system-Kconfig-30",
+                        "id": "component-config-esp-system-settings-panic-handler-behaviour-home-luciano-esp-esp-idf-components-esp_system-Kconfig-30",
                         "name": "ESP_SYSTEM_PANIC",
                         "title": "Panic handler behaviour",
                         "type": "choice"
@@ -7712,7 +7712,7 @@
                         ],
                         "depends_on": "IDF_TARGET_ARCH_RISCV",
                         "help": "Configure how backtracing will be performed at runtime when a panic occurs.",
-                        "id": "component-config-esp-system-settings-backtracing-method-home-damian-win-esp-esp-idf-components-esp_system-Kconfig-127",
+                        "id": "component-config-esp-system-settings-backtracing-method-home-luciano-esp-esp-idf-components-esp_system-Kconfig-127",
                         "name": "ESP_BACKTRACING_METHOD",
                         "title": "Backtracing method",
                         "type": "choice"
@@ -7754,7 +7754,7 @@
                                 ],
                                 "depends_on": "ESP_SYSTEM_MEMPROT",
                                 "help": null,
-                                "id": "component-config-esp-system-settings-enable-memory-protection-memory-protection-configurations-home-damian-win-esp-esp-idf-components-esp_system-Kconfig-174",
+                                "id": "component-config-esp-system-settings-enable-memory-protection-memory-protection-configurations-home-luciano-esp-esp-idf-components-esp_system-Kconfig-174",
                                 "name": "ESP_SYSTEM_MEMPROT_MODE",
                                 "title": "Memory Protection configurations",
                                 "type": "choice"
@@ -7853,7 +7853,7 @@
                         ],
                         "depends_on": null,
                         "help": "Configure the \"main task\" core affinity. This is the used core of the task\nwhich calls app_main(). If app_main() returns then this task is deleted.",
-                        "id": "component-config-esp-system-settings-main-task-core-affinity-home-damian-win-esp-esp-idf-components-esp_system-Kconfig-241",
+                        "id": "component-config-esp-system-settings-main-task-core-affinity-home-luciano-esp-esp-idf-components-esp_system-Kconfig-241",
                         "name": "ESP_MAIN_TASK_AFFINITY",
                         "title": "Main task core affinity",
                         "type": "choice"
@@ -8083,7 +8083,7 @@
                         ],
                         "depends_on": null,
                         "help": "Interrupt level to use for Interrupt Watchdog, IPC_ISR and other system checks.",
-                        "id": "component-config-esp-system-settings-interrupt-level-to-use-for-interrupt-watchdog-and-other-system-checks-home-damian-win-esp-esp-idf-components-esp_system-Kconfig-436",
+                        "id": "component-config-esp-system-settings-interrupt-level-to-use-for-interrupt-watchdog-and-other-system-checks-home-luciano-esp-esp-idf-components-esp_system-Kconfig-436",
                         "name": "ESP_SYSTEM_CHECK_INT_LEVEL",
                         "title": "Interrupt level to use for Interrupt Watchdog and other system checks",
                         "type": "choice"
@@ -8140,7 +8140,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-esp-system-settings-home-damian-win-esp-esp-idf-components-esp_system-Kconfig-2",
+                "id": "component-config-esp-system-settings-home-luciano-esp-esp-idf-components-esp_system-Kconfig-2",
                 "title": "ESP System Settings",
                 "type": "menu"
             },
@@ -8191,7 +8191,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-ipc-inter-processor-call--home-damian-win-esp-esp-idf-components-esp_system-Kconfig-485",
+                "id": "component-config-ipc-inter-processor-call--home-luciano-esp-esp-idf-components-esp_system-Kconfig-485",
                 "title": "IPC (Inter-Processor Call)",
                 "type": "menu"
             },
@@ -8277,7 +8277,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "Enables FreeRTOS to check for stack overflows (see configCHECK_FOR_STACK_OVERFLOW documentation for\nmore details).\n\nNote: If users do not provide their own ``vApplicationStackOverflowHook()`` function, a default\nfunction will be provided by ESP-IDF.",
-                                "id": "component-config-freertos-kernel-configcheck_for_stack_overflow-home-damian-win-esp-esp-idf-components-freertos-Kconfig-51",
+                                "id": "component-config-freertos-kernel-configcheck_for_stack_overflow-home-luciano-esp-esp-idf-components-freertos-Kconfig-51",
                                 "name": "FREERTOS_CHECK_STACKOVERFLOW",
                                 "title": "configCHECK_FOR_STACK_OVERFLOW",
                                 "type": "choice"
@@ -8408,7 +8408,7 @@
                                         ],
                                         "depends_on": "FREERTOS_USE_TIMERS",
                                         "help": "Sets the timer task's core affinity\n(see configTIMER_SERVICE_TASK_CORE_AFFINITY documentation for more details).",
-                                        "id": "component-config-freertos-kernel-configuse_timers-configtimer_service_task_core_affinity-home-damian-win-esp-esp-idf-components-freertos-Kconfig-187",
+                                        "id": "component-config-freertos-kernel-configuse_timers-configtimer_service_task_core_affinity-home-luciano-esp-esp-idf-components-freertos-Kconfig-187",
                                         "name": "FREERTOS_TIMER_SERVICE_TASK_CORE_AFFINITY",
                                         "title": "configTIMER_SERVICE_TASK_CORE_AFFINITY",
                                         "type": "choice"
@@ -8565,7 +8565,7 @@
                                         ],
                                         "depends_on": "FREERTOS_GENERATE_RUN_TIME_STATS",
                                         "help": "Sets the data type used for the FreeRTOS run time stats. A larger data type can be used to reduce the\nfrequency of the counter overflowing.",
-                                        "id": "component-config-freertos-kernel-configgenerate_run_time_stats-configrun_time_counter_type-home-damian-win-esp-esp-idf-components-freertos-Kconfig-300",
+                                        "id": "component-config-freertos-kernel-configgenerate_run_time_stats-configrun_time_counter_type-home-luciano-esp-esp-idf-components-freertos-Kconfig-300",
                                         "name": "FREERTOS_RUN_TIME_COUNTER_TYPE",
                                         "title": "configRUN_TIME_COUNTER_TYPE",
                                         "type": "choice"
@@ -8612,7 +8612,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-freertos-kernel-home-damian-win-esp-esp-idf-components-freertos-Kconfig-3",
+                        "id": "component-config-freertos-kernel-home-luciano-esp-esp-idf-components-freertos-Kconfig-3",
                         "title": "Kernel",
                         "type": "menu"
                     },
@@ -8766,7 +8766,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "FreeRTOS needs a timer with an associated interrupt to use as the main tick source to increase\ncounters, run timers and do pre-emptive multitasking with. There are multiple timers available to do\nthis, with different interrupt priorities.",
-                                "id": "component-config-freertos-port-tick-timer-source-xtensa-only--home-damian-win-esp-esp-idf-components-freertos-Kconfig-472",
+                                "id": "component-config-freertos-port-tick-timer-source-xtensa-only--home-luciano-esp-esp-idf-components-freertos-Kconfig-472",
                                 "name": "FREERTOS_CORETIMER",
                                 "title": "Tick timer source (Xtensa Only)",
                                 "type": "choice"
@@ -8816,7 +8816,7 @@
                                 ],
                                 "depends_on": "FREERTOS_GENERATE_RUN_TIME_STATS",
                                 "help": "Choose the clock source for FreeRTOS run time stats. Options are CPU0's CPU Clock or the ESP Timer.\nBoth clock sources are 32 bits. The CPU Clock can run at a higher frequency hence provide a finer\nresolution but will overflow much quicker. Note that run time stats are only valid until the clock\nsource overflows.",
-                                "id": "component-config-freertos-port-choose-the-clock-source-for-run-time-stats-home-damian-win-esp-esp-idf-components-freertos-Kconfig-516",
+                                "id": "component-config-freertos-port-choose-the-clock-source-for-run-time-stats-home-luciano-esp-esp-idf-components-freertos-Kconfig-516",
                                 "name": "FREERTOS_RUN_TIME_STATS_CLK",
                                 "title": "Choose the clock source for run time stats",
                                 "type": "choice"
@@ -8863,7 +8863,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-freertos-port-home-damian-win-esp-esp-idf-components-freertos-Kconfig-363",
+                        "id": "component-config-freertos-port-home-luciano-esp-esp-idf-components-freertos-Kconfig-363",
                         "title": "Port",
                         "type": "menu"
                     },
@@ -8892,7 +8892,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-freertos-extra-home-damian-win-esp-esp-idf-components-freertos-Kconfig-590",
+                        "id": "component-config-freertos-extra-home-luciano-esp-esp-idf-components-freertos-Kconfig-590",
                         "title": "Extra",
                         "type": "menu"
                     },
@@ -8951,7 +8951,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-freertos-home-damian-win-esp-esp-idf-components-freertos-Kconfig-1",
+                "id": "component-config-freertos-home-luciano-esp-esp-idf-components-freertos-Kconfig-1",
                 "title": "FreeRTOS",
                 "type": "menu"
             },
@@ -9002,7 +9002,7 @@
                         ],
                         "depends_on": null,
                         "help": "Set the assert behavior / level for HAL component.\nHAL component assert level can be set separately,\nbut the level can't exceed the system assertion level.\ne.g. If the system assertion is disabled, then the HAL\nassertion can't be enabled either. If the system assertion\nis enable, then the HAL assertion can still be disabled\nby this Kconfig option.",
-                        "id": "component-config-hardware-abstraction-layer-hal-and-low-level-ll--default-hal-assertion-level-home-damian-win-esp-esp-idf-components-hal-Kconfig-2",
+                        "id": "component-config-hardware-abstraction-layer-hal-and-low-level-ll--default-hal-assertion-level-home-luciano-esp-esp-idf-components-hal-Kconfig-2",
                         "name": "HAL_DEFAULT_ASSERTION_LEVEL",
                         "title": "Default HAL assertion level",
                         "type": "choice"
@@ -9082,7 +9082,7 @@
                         ],
                         "depends_on": "!LOG_DEFAULT_LEVEL_NONE && !LOG_DEFAULT_LEVEL_ERROR && !LOG_DEFAULT_LEVEL_WARN && !LOG_DEFAULT_LEVEL_INFO && !LOG_DEFAULT_LEVEL_DEBUG && !LOG_DEFAULT_LEVEL_VERBOSE",
                         "help": "Specify how much output to see in HAL logs.",
-                        "id": "component-config-hardware-abstraction-layer-hal-and-low-level-ll--hal-layer-log-verbosity-home-damian-win-esp-esp-idf-components-hal-Kconfig-34",
+                        "id": "component-config-hardware-abstraction-layer-hal-and-low-level-ll--hal-layer-log-verbosity-home-luciano-esp-esp-idf-components-hal-Kconfig-34",
                         "name": "HAL_LOG_LEVEL",
                         "title": "HAL layer log verbosity",
                         "type": "choice"
@@ -9139,7 +9139,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-hardware-abstraction-layer-hal-and-low-level-ll--home-damian-win-esp-esp-idf-components-hal-Kconfig-1",
+                "id": "component-config-hardware-abstraction-layer-hal-and-low-level-ll--home-luciano-esp-esp-idf-components-hal-Kconfig-1",
                 "title": "Hardware Abstraction Layer (HAL) and Low Level (LL)",
                 "type": "menu"
             },
@@ -9170,7 +9170,7 @@
                         ],
                         "depends_on": null,
                         "help": "Select the log version to be used by the ESP log component.\n\n- \"V1\": This version integrates log formatting into the format string provided by the user.\n        Logs are processed and formatted during compile time, leading to a larger binary file.\n        Example: ESP_LOGI(\"boot\", \"chip revision: v%d.%d\", major, minor);\n        Output: I (56) boot: chip revision: v3.0\n        Note: Log strings are stored in Flash with added formatting characters.\n        Format string on flash: \"[0;32mI (%lu) %s: chip revision: v%d.%d [0m\"\n\n- \"V2\": This version centralizes log formatting within the esp_log() function.\n        User-supplied format strings are stored without added formatting, reducing binary size.\n        Example: ESP_LOGI(\"boot\", \"chip revision: v%d.%d\", major, minor);\n        Output: I (56) boot: chip revision: v3.0\n        Note: This version supports runtime configuration of formatting and is more flexible,\n        logging from constrained environments (ex.: ISR, Startup, Cache disabled).\n        It may consumes a bit more stack and affect performance.\n        Format string on flash: \"chip revision: v%d.%d\"\n\nUse V1 for minimal stack usage and simpler implementation.\nUse V2 for smaller binary sizes, more flexible log formatting, and advanced features like disabling\ncolors or timestamps.",
-                        "id": "component-config-log-log-version-home-damian-win-esp-esp-idf-components-log-Kconfig-3",
+                        "id": "component-config-log-log-version-home-luciano-esp-esp-idf-components-log-Kconfig-3",
                         "name": "LOG_VERSION",
                         "title": "Log version",
                         "type": "choice"
@@ -9252,7 +9252,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "Specify how much output to see in logs by default.\nYou can set lower verbosity level at runtime using\nesp_log_level_set() function if LOG_DYNAMIC_LEVEL_CONTROL\nis enabled.\n\nBy default, this setting limits which log statements\nare compiled into the program. For example, selecting\n\"Warning\" would mean that changing log level to \"Debug\"\nat runtime will not be possible. To allow increasing log\nlevel above the default at runtime, see the next option.",
-                                "id": "component-config-log-log-level-default-log-verbosity-home-damian-win-esp-esp-idf-components-log-.-Kconfig.level-3",
+                                "id": "component-config-log-log-level-default-log-verbosity-home-luciano-esp-esp-idf-components-log-.-Kconfig.level-3",
                                 "name": "LOG_DEFAULT_LEVEL",
                                 "title": "Default log verbosity",
                                 "type": "choice"
@@ -9332,7 +9332,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "This config option sets the highest log verbosity that it's possible to select\nat runtime by calling esp_log_level_set(). This level may be higher than\nthe default verbosity level which is set when the app starts up.\n\nThis can be used enable debugging output only at a critical point, for a particular\ntag, or to minimize startup time but then enable more logs once the firmware has\nloaded.\n\nNote that increasing the maximum available log level will increase the firmware\nbinary size.\n\nThis option only applies to logging from the app, the bootloader log level is\nfixed at compile time to the separate \"Bootloader log verbosity\" setting.",
-                                "id": "component-config-log-log-level-maximum-log-verbosity-home-damian-win-esp-esp-idf-components-log-.-Kconfig.level-41",
+                                "id": "component-config-log-log-level-maximum-log-verbosity-home-luciano-esp-esp-idf-components-log-.-Kconfig.level-41",
                                 "name": "LOG_MAXIMUM_LEVEL",
                                 "title": "Maximum log verbosity",
                                 "type": "choice"
@@ -9404,7 +9404,7 @@
                                         ],
                                         "depends_on": null,
                                         "help": "Choose the per-tag log level implementation for the log library. This functionality is used\nto enable/disable logs for a particular tag at run time. Applicable only for\napplication logs (i.e., not bootloader logs).",
-                                        "id": "component-config-log-log-level-level-settings-method-of-tag-level-checks-home-damian-win-esp-esp-idf-components-log-.-.-Kconfig.level_settings-30",
+                                        "id": "component-config-log-log-level-level-settings-method-of-tag-level-checks-home-luciano-esp-esp-idf-components-log-.-.-Kconfig.level_settings-30",
                                         "name": "LOG_TAG_LEVEL_IMPL",
                                         "title": "Method of tag level checks",
                                         "type": "choice"
@@ -9434,7 +9434,7 @@
                                         ],
                                         "depends_on": "LOG_TAG_LEVEL_IMPL_CACHE_AND_LINKED_LIST",
                                         "help": "The cache stores recently accessed log tags (address of tag) and their corresponding log levels,\nproviding faster lookups for frequently used tags. Cache size can be configured using the\nLOG_TAG_LEVEL_IMPL_CACHE_SIZE option. The cache approach compares the tag pointers, which is\nfaster than comparing the whole strings.",
-                                        "id": "component-config-log-log-level-level-settings-cache-implementation-home-damian-win-esp-esp-idf-components-log-.-.-Kconfig.level_settings-74",
+                                        "id": "component-config-log-log-level-level-settings-cache-implementation-home-luciano-esp-esp-idf-components-log-.-.-Kconfig.level_settings-74",
                                         "name": "LOG_TAG_LEVEL_CACHE_IMPL",
                                         "title": "Cache implementation",
                                         "type": "choice"
@@ -9451,13 +9451,13 @@
                                     }
                                 ],
                                 "depends_on": null,
-                                "id": "component-config-log-log-level-level-settings-home-damian-win-esp-esp-idf-components-log-.-.-Kconfig.level_settings-1",
+                                "id": "component-config-log-log-level-level-settings-home-luciano-esp-esp-idf-components-log-.-.-Kconfig.level_settings-1",
                                 "title": "Level Settings",
                                 "type": "menu"
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-log-log-level-home-damian-win-esp-esp-idf-components-log-.-Kconfig.level-1",
+                        "id": "component-config-log-log-level-home-luciano-esp-esp-idf-components-log-.-Kconfig.level-1",
                         "title": "Log Level",
                         "type": "menu"
                     },
@@ -9538,7 +9538,7 @@
                                 ],
                                 "depends_on": null,
                                 "help": "Choose what sort of timestamp is displayed in the log output:\n\n- \"None\" - The log will only contain the actual log messages themselves\n  without any time-related information. Avoiding timestamps can help conserve\n  processing power and memory. It might useful when you\n  perform log analysis or debugging, sometimes it's more straightforward\n  to work with logs that lack timestamps, especially if the time of occurrence\n  is not critical for understanding the issues.\n\n- \"Milliseconds since boot\" is calculated from the RTOS tick count multiplied\n  by the tick period. This time will reset after a software reboot.\n  e.g. (90000)\n\n- \"System time (HH:MM:SS.sss)\" is taken from POSIX time functions which use the chip's\n  RTC and high resolution timers to maintain an accurate time. The system time is\n  initialized to 0 on startup, it can be set with an SNTP sync, or with\n  POSIX time functions. This time will not reset after a software reboot.\n  e.g. (00:01:30.000)\n\n- \"System time (YY-MM-DD HH:MM:SS.sss)\" it is the same as the above,\n  but also prints the date as well.\n\n- \"Unix time in milliseconds\" is the same as the two above,\n  but in Unix time format and in milliseconds.\n  e.g. (1718795571035).\n\n- NOTE: Currently this will not get used in logging from binary blobs\n  (i.e WiFi & Bluetooth libraries), these will always print\n  milliseconds since boot.",
-                                "id": "component-config-log-format-timestamp-home-damian-win-esp-esp-idf-components-log-.-Kconfig.format-26",
+                                "id": "component-config-log-format-timestamp-home-luciano-esp-esp-idf-components-log-.-Kconfig.format-26",
                                 "name": "LOG_TIMESTAMP_SOURCE",
                                 "title": "Timestamp",
                                 "type": "choice"
@@ -9555,7 +9555,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-log-format-home-damian-win-esp-esp-idf-components-log-.-Kconfig.format-1",
+                        "id": "component-config-log-format-home-luciano-esp-esp-idf-components-log-.-Kconfig.format-1",
                         "title": "Format",
                         "type": "menu"
                     },
@@ -9606,14 +9606,14 @@
                                 ],
                                 "depends_on": null,
                                 "help": null,
-                                "id": "component-config-log-settings-log-mode-home-damian-win-esp-esp-idf-components-log-.-Kconfig.settings-9",
+                                "id": "component-config-log-settings-log-mode-home-luciano-esp-esp-idf-components-log-.-Kconfig.settings-9",
                                 "name": "LOG_MODE",
                                 "title": "Log Mode",
                                 "type": "choice"
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-log-settings-home-damian-win-esp-esp-idf-components-log-.-Kconfig.settings-1",
+                        "id": "component-config-log-settings-home-luciano-esp-esp-idf-components-log-.-Kconfig.settings-1",
                         "title": "Settings",
                         "type": "menu"
                     },
@@ -9639,7 +9639,7 @@
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-log-home-damian-win-esp-esp-idf-components-log-Kconfig-1",
+                "id": "component-config-log-home-luciano-esp-esp-idf-components-log-Kconfig-1",
                 "title": "Log",
                 "type": "menu"
             },
@@ -9679,13 +9679,13 @@
                             }
                         ],
                         "depends_on": null,
-                        "id": "component-config-soc-settings-mmu-config-home-damian-win-esp-esp-idf-components-soc-Kconfig-5",
+                        "id": "component-config-soc-settings-mmu-config-home-luciano-esp-esp-idf-components-soc-Kconfig-5",
                         "title": "MMU Config",
                         "type": "menu"
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-soc-settings-home-damian-win-esp-esp-idf-components-soc-Kconfig-1",
+                "id": "component-config-soc-settings-home-luciano-esp-esp-idf-components-soc-Kconfig-1",
                 "title": "SoC Settings",
                 "type": "menu"
             },
@@ -9715,7 +9715,7 @@
                             }
                         ],
                         "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP",
-                        "id": "component-config-main-flash-configuration-spi-flash-behavior-when-brownout-home-damian-win-esp-esp-idf-components-spi_flash-Kconfig-4",
+                        "id": "component-config-main-flash-configuration-spi-flash-behavior-when-brownout-home-luciano-esp-esp-idf-components-spi_flash-Kconfig-4",
                         "title": "SPI Flash behavior when brownout",
                         "type": "menu"
                     },
@@ -9766,7 +9766,7 @@
                                 ],
                                 "depends_on": "SOC_SPI_MEM_FLASH_SUPPORT_HPM && !ESPTOOLPY_OCT_FLASH && !APP_BUILD_TYPE_PURE_RAM_APP",
                                 "help": "Whether the High Performance Mode of Flash is enabled. As an optional feature, user needs to manually\nenable this option as a confirmation. To be back-compatible with earlier IDF version, this option is\nautomatically enabled with warning when Flash running > 80Mhz.",
-                                "id": "component-config-main-flash-configuration-optional-and-experimental-features-read-docs-first--high-performance-mode-read-docs-first-80mhz--home-damian-win-esp-esp-idf-components-spi_flash-Kconfig-36",
+                                "id": "component-config-main-flash-configuration-optional-and-experimental-features-read-docs-first--high-performance-mode-read-docs-first-80mhz--home-luciano-esp-esp-idf-components-spi_flash-Kconfig-36",
                                 "name": "SPI_FLASH_HPM",
                                 "title": "High Performance Mode (READ DOCS FIRST, > 80MHz)",
                                 "type": "choice"
@@ -9806,7 +9806,7 @@
                                 ],
                                 "depends_on": "SPI_FLASH_HPM_ON && !APP_BUILD_TYPE_PURE_RAM_APP",
                                 "help": "This feature needs your bootloader to be compiled DC-aware (BOOTLOADER_FLASH_DC_AWARE=y). Otherwise the\nchip will not be able to boot after a reset.",
-                                "id": "component-config-main-flash-configuration-optional-and-experimental-features-read-docs-first--support-hpm-using-dc-read-docs-first--home-damian-win-esp-esp-idf-components-spi_flash-Kconfig-64",
+                                "id": "component-config-main-flash-configuration-optional-and-experimental-features-read-docs-first--support-hpm-using-dc-read-docs-first--home-luciano-esp-esp-idf-components-spi_flash-Kconfig-64",
                                 "name": "SPI_FLASH_HPM_DC",
                                 "title": "Support HPM using DC (READ DOCS FIRST)",
                                 "type": "choice"
@@ -9916,13 +9916,13 @@
                             }
                         ],
                         "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP",
-                        "id": "component-config-main-flash-configuration-optional-and-experimental-features-read-docs-first--home-damian-win-esp-esp-idf-components-spi_flash-Kconfig-26",
+                        "id": "component-config-main-flash-configuration-optional-and-experimental-features-read-docs-first--home-luciano-esp-esp-idf-components-spi_flash-Kconfig-26",
                         "title": "Optional and Experimental Features (READ DOCS FIRST)",
                         "type": "menu"
                     }
                 ],
                 "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP",
-                "id": "component-config-main-flash-configuration-home-damian-win-esp-esp-idf-components-spi_flash-Kconfig-1",
+                "id": "component-config-main-flash-configuration-home-luciano-esp-esp-idf-components-spi_flash-Kconfig-1",
                 "title": "Main Flash configuration",
                 "type": "menu"
             },
@@ -10014,7 +10014,7 @@
                         ],
                         "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP",
                         "help": "SPI flash APIs can optionally abort or return a failure code\nif erasing or writing addresses that fall at the beginning\nof flash (covering the bootloader and partition table) or that\noverlap the app partition that contains the running app.\n\nIt is not recommended to ever write to these regions from an IDF app,\nand this check prevents logic errors or corrupted firmware memory from\ndamaging these regions.\n\nNote that this feature *does not* check calls to the esp_rom_xxx SPI flash\nROM functions. These functions should not be called directly from IDF\napplications.",
-                        "id": "component-config-spi-flash-driver-writing-to-dangerous-flash-regions-home-damian-win-esp-esp-idf-components-spi_flash-Kconfig-263",
+                        "id": "component-config-spi-flash-driver-writing-to-dangerous-flash-regions-home-luciano-esp-esp-idf-components-spi_flash-Kconfig-263",
                         "name": "SPI_FLASH_DANGEROUS_WRITE",
                         "title": "Writing to dangerous flash regions",
                         "type": "choice"
@@ -10237,7 +10237,7 @@
                             }
                         ],
                         "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP",
-                        "id": "component-config-spi-flash-driver-auto-detect-flash-chips-home-damian-win-esp-esp-idf-components-spi_flash-Kconfig-374",
+                        "id": "component-config-spi-flash-driver-auto-detect-flash-chips-home-luciano-esp-esp-idf-components-spi_flash-Kconfig-374",
                         "title": "Auto-detect flash chips",
                         "type": "menu"
                     },
@@ -10263,27 +10263,27 @@
                     }
                 ],
                 "depends_on": "!APP_BUILD_TYPE_PURE_RAM_APP",
-                "id": "component-config-spi-flash-driver-home-damian-win-esp-esp-idf-components-spi_flash-Kconfig-193",
+                "id": "component-config-spi-flash-driver-home-luciano-esp-esp-idf-components-spi_flash-Kconfig-193",
                 "title": "SPI Flash driver",
                 "type": "menu"
             },
             {
                 "children": [],
                 "depends_on": "\"${IDF_BUILD_V2}\"",
-                "id": "component-config-configuration-for-components-not-included-in-the-build-home-damian-win-esp-esp-idf-Kconfig-981",
+                "id": "component-config-configuration-for-components-not-included-in-the-build-home-luciano-esp-esp-idf-Kconfig-981",
                 "title": "Configuration for components not included in the build",
                 "type": "menu"
             }
         ],
         "depends_on": null,
-        "id": "component-config-home-damian-win-esp-esp-idf-Kconfig-971",
+        "id": "component-config-home-luciano-esp-esp-idf-Kconfig-971",
         "title": "Component config",
         "type": "menu"
     },
     {
         "children": [],
         "depends_on": "\"${IDF_BUILD_V2}\"",
-        "id": "project-configuration-for-components-not-included-in-the-build-home-damian-win-esp-esp-idf-Kconfig-988",
+        "id": "project-configuration-for-components-not-included-in-the-build-home-luciano-esp-esp-idf-Kconfig-988",
         "title": "Project configuration for components not included in the build",
         "type": "menu"
     },

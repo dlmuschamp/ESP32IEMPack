@@ -1,2 +1,4 @@
 *log
 *restore
+.cursor_session_token
+firmware_out/

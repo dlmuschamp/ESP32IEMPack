@@ -1,4 +1,4 @@
-# Install script for directory: /home/damian-win/esp/esp-idf
+# Install script for directory: /home/luciano/esp/esp-idf
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,212 +34,212 @@ endif()
 
 # Set path to fallback-tool for dependency-resolution.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/home/damian-win/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-objdump")
+  set(CMAKE_OBJDUMP "/home/luciano/.espressif/tools/xtensa-esp-elf/esp-16.1.0_20260609/xtensa-esp-elf/bin/xtensa-esp32-elf-objdump")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/xtensa/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/xtensa/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_libc/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_libc/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/soc/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/soc/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/hal/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/hal/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_gpio/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_gpio/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_usb/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_usb/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_regi2c/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_regi2c/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_pmu/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_pmu/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_uart/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_uart/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_debug_assist/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_debug_assist/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_dma/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_dma/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_gpspi/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_gpspi/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_clock/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_clock/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_mspi/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_mspi/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_blockdev/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_blockdev/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/spi_flash/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/spi_flash/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_bootloader_format/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_bootloader_format/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_app_format/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_app_format/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/partition_table/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/partition_table/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esptool_py/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esptool_py/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/micro-ecc/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/micro-ecc/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_timg/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_timg/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_wdt/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_wdt/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_i2s/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_i2s/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_ana_conv/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_ana_conv/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_rtc_timer/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_rtc_timer/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_security/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_security/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_security/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_security/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/bootloader_support/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/bootloader_support/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/efuse/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/efuse/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_systimer/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hal_systimer/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_system/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_system/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hw_support/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_hw_support/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_common/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_common/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_rom/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_rom/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/log/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/log/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/bootloader/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/bootloader/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/esp_stdio/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/esp_stdio/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/freertos/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/freertos/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/main/cmake_install.cmake")
+  include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/main/cmake_install.cmake")
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/home/damian-win/projects/ESP32IEMPack/build/bootloader/esp-idf/install_local_manifest.txt"
+  file(WRITE "/home/luciano/Projects/ESP32IEMPack/build/bootloader/esp-idf/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

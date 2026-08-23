@@ -1,231 +1,272 @@
-* ESP32 Wireless IEM Pack
+#+TITLE: ESP32 Wireless IEM Pack
+#+AUTHOR: Damian Luciano Muschamp
+#+OPTIONS: toc:3 num:nil
 
-A first-pass wireless in-ear monitor (IEM) system: one ESP32 transmitter pack
-and one ESP32 receiver pack. The RX path is ~ESP-NOW -> ESP32 -> I2S ->
-PCM5102 DAC -> volume pot -> MAX97220A headphone amp -> 3.5 mm jack~.
+* What this is
 
-This repo is a work in progress. The breadboard version plays audio. The KiCad
-project in =KiCad/RX_SKETCHES/= is that breadboard transferred onto hierarchical
-sheets --- not a finished layout. There is *no display on this version*.
+A two-pack wireless in-ear monitor (IEM) prototype:
 
-** First project
+- *TX pack* — ESP32-WROOM + PCM1808 ADC captures line/stereo PCM and
+  streams it over *ESP-NOW v2*.
+- *RX pack* — ESP32-WROOM + PCM5102 DAC plays the stream into a headphone
+  amp / IEMs.
 
-This is Damian Luciano Muschamp's first self-guided embedded systems project,
-and the first time using C, ESP32s, reading datasheets / spec sheets, and
-KiCad. The notes and "common mistakes" section below are written with that in
-mind.
+This repo is the firmware (ESP-IDF, C, FreeRTOS) plus KiCad hardware
+work. It is *not* a finished product UI — it is a bring-up of the audio
+link.
 
-** Firmware
+* Honest origin story (why this README exists)
 
-All application code is *C*. It runs on *FreeRTOS* under *ESP-IDF*, using the
-related Espressif libraries (ESP-NOW / Wi-Fi, I2S, ADC, LEDC, NVS). There is
-*no Arduino* in this project. There is *no hardware abstraction layer* --- the
-firmware calls ESP-IDF APIs directly.
+This is Luciano's first serious pass at:
 
-- =main/tx.c= :: Transmitter. Done for this version (ESP-NOW, ADC pot, LED,
-  audio packet path).
-- =main/rx.c= :: Receiver entry. Still the thin side of the pair; build with
-  =IEM_NODE=RX= when you flash it.
-- =main/square_wave_test.c= :: Bench I2S tone used to prove the DAC path.
-- =main/rig_shared.h= :: Shared packet and state types for TX and RX.
+- Embedded C (not Arduino-sketch style as the end goal)
+- ESP32 + *ESP-IDF*
+- *FreeRTOS* tasks, queues, dual-core pinning
+- Reading TI / Espressif *datasheets* and driver docs for real decisions
+- *KiCad* for schematics / board work for the first time
+- Wireless audio (ESP-NOW, PHY rates, power-save footguns)
+- I2S codecs (PCM1808 ADC, PCM5102 DAC)
 
-A packet sniffer / monitor node was an early idea. It is *not* part of this
-version. It could come back later as a future extension (=IEM_NODE=MON= is a
-leftover hook in =main/CMakeLists.txt=). Do not treat =sniffer.c= as shipping
-firmware.
+A lot of nights were spent learning vocabulary (BCK, LRCK, MCLK, slots,
+Philips vs MSB, ESP-NOW v1 vs v2) while the hardware was still on a
+breadboard with questionable power. This document is meant to be the
+map you wished you had on day one — including the mistakes.
 
-Build a node after exporting the target:
+* Current status (late Aug 2026)
 
-#+BEGIN_SRC bash
-IEM_NODE=TX idf.py build
-# IEM_NODE=RX when flashing the receiver
-#+END_SRC
+| Item | Status |
+|------+--------|
+| TX capture (PCM1808, 32-bit I2S slots, MCLK×256) | Working |
+| ESP-NOW v2 audio packets (720×int16 ≈ 7.5 ms @ 48 kHz) | Working |
+| RX playback (PCM5102) | Working |
+| Pairing + soft-join when ACK is starved | Working |
+| Steady audio on adequate power (e.g. two USB power banks) | Working |
+| Digital path HF (DAC-only + TX tone over air) | Proven crisp |
+| Real jack→ADC timbre (“soft LPF”) + breadboard buzz | Open (analog / layout) |
+| Clean power / low crackle on breadboard | Open (hardware) |
+| TFT UI / polished product firmware | Not the focus yet |
 
-=main/CMakeLists.txt= refuses to build if =IEM_NODE= is missing. That is
-intentional so you do not flash the wrong image.
+Frozen / reference branches:
 
-** What this version is (and is not)
+- ~working_audio_v1~ — first known streaming snapshot
+- ~working_audio_v2~ — best reconnect + steady audio snapshot so far
+- ~main~ — shipping TX/RX + archived isolation tests under ~main/testing/~
 
-| Topic    | This version                                      | Not this version                          |
-|----------+---------------------------------------------------+-------------------------------------------|
-| Display  | None                                              | A screen or later UI                      |
-| RX power | USB-C from a 10,000 mAh 5 V bank -> LM3940 3.3 V  | TP4056 + 2000 mAh LiPo / 3xAA             |
-| TX power | The same kind of 10,000 mAh 5 V bank as the RX    | A different chemistry or one shared bank  |
-| Radio    | ESP32-WROOM-32U + external 2.4 GHz U.FL pigtail   | On-module PCB antenna (32E / 32D)         |
-| Audio    | I2S to a PCM5102, then a headphone amp            | I2C (the DAC is I2S)                      |
-| Firmware | C + FreeRTOS + ESP-IDF                            | Arduino, a HAL, or a sniffer node         |
-| PCB      | Footprint dump / ratsnest only                    | Routed board ready to order               |
+Long-form CER notes: [[file:docs/BENCH_REALIZATIONS.txt][docs/BENCH_REALIZATIONS.txt]].
+Isolation procedure: [[file:docs/SOUND_PROFILE_TESTS.txt][docs/SOUND_PROFILE_TESTS.txt]].
 
-TX and RX each get their *own* identical 10,000 mAh bank. Do not power both
-packs from one bank if you want them to roam independently.
+* Findings (2026-08-21 sound-profile night) — CER summary
 
-** Repo map
+** Claim: Soft-LPF on *digital* audio is ruled out
 
-#+BEGIN_SRC
-main/                  ESP-IDF C firmware (FreeRTOS)
-  rig_shared.h         Shared packet / state types (TX and RX)
-  tx.c                 Transmitter --- done for this version
-  rx.c                 Receiver entry
-  square_wave_test.c   Bench I2S tone for the DAC path
-KiCad/RX_SKETCHES/     RX hierarchical schematic (WIP)
-KiCad/TX_SKETCHES/     TX placeholder
-KiCad/Custom_Part_Downloads/  SnapEDA symbols / footprints
-#+END_SRC
+- *Evidence:* ~RX_DAC_TEST~ sine_8k / chirp crisp; ~TX_TONE~ over air into
+  shipping RX also crisp; direct laptop→IEMs bright.
+- *Reasoning:* Known-bright PCM survives packing + ESP-NOW + PCM5102.
+  Dullness that appears only with the real PCM1808 / jack path is not
+  “ESP-NOW filtering highs.”
 
-** Hardware (RX 1.0.0 KiCad)
+** Claim: Real-music dullness + buzz is analog / breadboard / level
 
-Hierarchical sheets, in signal order:
+- *Evidence:* Real music much quieter than digital tones; laptop <30% ≈
+  noise; gain×8 louder but more crackle; 1 µF VIN caps marginal; shorter
+  3.5 mm cable did not kill buzz; open GND dropped center (vocals/bass).
+- *Reasoning:* Weak ADC level sits near the noise floor; Dupont / shared
+  ground / breakout limits look like LPF+buzz. PCB layout is the next
+  falsification — not more firmware EQ.
 
-1. =pwr_mgmt= --- USB-C (CC pulldowns), CP2102C UART bridge, LM3940 5 V -> 3.3 V
-2. =esp_rx= --- ESP32-WROOM-32U
-3. =dac= --- PCM5102
-4. =vol_ctrl= --- dual-gang log pot + 0% switch
-5. =amp= --- MAX97220A to the 3.5 mm jack
+** Claim: TX_TONE steady ticks were mostly a FreeRTOS pace bug
 
-*** Firmware I2S map (do not "improve" these GPIOs)
+- *Evidence:* ~pdMS_TO_TICKS(8)~ == 0 at ~FREERTOS_HZ=100~; RX queue drops
+  flooded; ~esp_timer~ 7.5 ms pace fixed most ticks (code in
+  ~main/testing/~).
+- *Reasoning:* Shipping TX paces via blocking I2S reads; tone mode had
+  to invent realtime pacing.
 
-These match the working breadboard and =main/square_wave_test.c=:
+** Claim: Buzz may be a breadboard limitation (plus possible USB ground loop)
 
-| Hierarchical label | ESP32 GPIO | Firmware name                                      |
-|--------------------+------------+----------------------------------------------------|
-| =BCK=              | IO33       | =BCK_PIN=                                          |
-| =LRCLK=            | IO32       | =LRCK_PIN=                                         |
-| =DIN=              | IO25       | =DOUT_PIN= (ESP data *out* to the DAC data *in*)   |
+- *Evidence:* Persists with shorter cable; can improve when TX is on a
+  power bank vs same-laptop USB+jack; digital path without ADC is clean.
+- *Reasoning:* Ground loops and long analog jumpers are expected on a
+  bench; a short-trace PCB with datasheet coupling/decoupling is the
+  proper A/B.
 
-UART programming: =TXD= = TXD0/IO1, =RXD= = RXD0/IO3. Auto-program straps:
-=ESP_EN= = EN, =ESP_IO0= = IO0.
+* Hardware (bring-up)
 
-*** Antenna (required)
+** Roles
 
-The *32U* module has a U.FL connector and *no PCB antenna*. Wi-Fi / ESP-NOW
-will be dead without a *2.4 GHz antenna on a U.FL / IPEX pigtail* mated to the
-module. Do not leave this off the BOM. The schematic symbol for that pigtail
-(=ANT1=) lives on the follow-up fixes branch so you can merge this folder-sync
-PR first.
+| Pack | MCU | Audio IC | Role |
+|------+-----+----------+------|
+| TX | ESP32-WROOM-32U (ext antenna) | PCM1808 | I2S master RX ← ADC |
+| RX | ESP32-WROOM-32U (planned 32U + U.FL) | PCM5102 | I2S master TX → DAC |
 
-If you would rather have an on-board antenna later, that is a different module
-(WROOM-32E / 32D), not a missing copper pour on the 32U.
+** I2S notes that matter
 
-*** Analog (PCM5102 datasheet vs experiments)
+- PCM1808 in slave mode wants *64 BCK/frame* → configure *32-bit stereo*
+  Philips slots. 16-bit slots (32 BCK/frame) → silent ADC.
+- MCLK ×256 is a valid PCM1808 ratio and matched our working builds.
+  A casual jump to 24-bit data + MCLK×384 broke a known-good path —
+  only revisit with a rollback bin ready.
+- PCM5102: FMT low = I2S; DEMP low/NC = de-emphasis off.
+- PCM1808 VIN: AC-couple with ~1 µF (TI app circuit; internal ~60 kΩ
+  sets ~2.7 Hz HPF). Do *not* add an external 60 kΩ for that formula.
 
-The PCM5102 datasheet analog network for a ~10 kOhm load is:
+** Power (the lesson that unlocked pairing)
 
-=OUTL/OUTR -> 470 ohm series -> PRE_POT=, with *2.2 nF from that node to GND*.
+Marginal power on the TX pack looks exactly like "RF is broken":
 
-The MAX97220A input impedance is also about *10 kOhm*, so that filter is the
-right starting point. The 1 kOhm / 10 ohm pad on the volume sheet was an
-experiment, not the datasheet circuit.
+- TX on weak battery → often never receives pairing ads.
+- TX on laptop USB → pairs; opening ~idf.py monitor~ / pyserial can
+  still *reboot* the board via CP2102 DTR/RTS → audio drops.
+- Two decent USB power banks on *both* packs → instant pair, louder
+  audio (more supply noise / crackle without caps).
 
-MAX97220A voltage gain is *fixed +3.5 dB*. The 10 kOhm resistors around the amp
-are the single-ended input network, not an IC "gain pin." Leave them
-unpopulated on a hand-built proto so you can try values. Populate them (start
-10 kOhm) only if you order a fully assembled board. Use a MAX97220*D* if you
-want resistor-programmed gain.
+For listening tests, prefer dedicated supplies. Use USB for flash and
+short log peeks. Add bulk electrolytics + 0.1 µF at codec rails before
+chasing "digital crackle."
 
-*** Hand assembly
+KiCad schematics / PCB work live under ~KiCad/~.
 
-Use *0805* for every resistor and capacitor you will solder yourself, including
-10 / 22 / 33 uF. 0603 is OK if you are already comfortable. Do not use 0402 or
-0201. KiCad's default =C_0201_0603Metric= / =R_0201_0603Metric= names look like
-"0603" but they are imperial *0201*.
+* KiCad mapping notes (read before pouring copper)
 
-ICs stay their real packages (WROOM module, TSSOP-20, TQFN-16, SOT-223,
-WQFN-24).
+Pack architecture (mechanical first): plastic shell ~Altoids *size* (not
+metal tin). *ESP32-WROOM-32U* + external 2.4 GHz 50 Ω U.FL antenna —
+*no DIY impedance matching* (module already brings 50 Ω to U.FL).
+Antenna and volume pot on *opposite corners of the top face*; USB-C /
+coiled battery power enter at the *bottom* (battery off-pack); 3.5 mm
+IEM jack on a *side face*. Keep pot traces away from the antenna keepout.
 
-** Current status
+** RX DAC / line toward pot (PCM5102)
 
-- [X] Breadboard RX path plays (ESP32 I2S -> PCM5102 -> amp -> IEMs)
-- [X] =tx.c= transmitter firmware for this version
-- [X] Repo + KiCad folder split (=RX_SKETCHES= / =TX_SKETCHES=)
-- [X] RX hierarchical schematic transferred from the breadboard (WIP)
-- [ ] Fit the U.FL antenna; confirm ESP-NOW range
-- [ ] Finish the RX firmware path that consumes packets into I2S
-- [ ] Run ERC, then floorplan and route the RX PCB
-- [ ] TX schematic (same 10,000 mAh USB-C bank idea)
+- Open the *TI PCM5102 datasheet* and follow the *OUTL / OUTR* example
+  aimed at a *LINE IN* into a *~10 kΩ* load — *page 27* (series R +
+  shunt C network; same idea on both channels).
+- Treat that filtered line node as *PRE_POT_IN_L / PRE_POT_IN_R* (not
+  “headphone drive”).
+- Feed PRE_POT into a *10 kΩ log dual-gang* pot; call the wipers
+  *POST_POT_L / POST_POT_R* and drive the headphone amp from POST_POT.
+- You may *ignore / delete* the older paper voltage-divider between
+  ~dac_out_l/r~ and ~prepotL/R~ if page-27 LINEOUT already is PRE_POT_IN.
+  Revisit only if levels still disagree after a clean PCB listen.
 
-No display work on this revision. No sniffer / monitor node on this revision.
+** Amp gain resistors (leave for later)
 
-** Common KiCad / first-board mistakes
+- On the paper desk schematic, resistors labeled *GROUP A* share one
+  value; *GROUP B* share another; *A is not necessarily equal to B*.
+- Leave GROUP A / GROUP B *unpopulated (DNP)* or hand-solder after
+  listening — these set amp gain after you find ideal ratios. Do not
+  freeze them in the first JLCPCB/PCBWay assembly BOM.
 
-First KiCad project, first C project, first ESP-IDF board, first time reading
-IC spec sheets, first multi-IC audio schematic. The list below is the stuff
-that already bit this schematic. Check it every time you move a part or add a
-hierarchical label.
+** TX ADC (PCM1808)
 
-*** 1. Rotating a symbol does not remap pin numbers
+- Series *~1 µF* into VINL / VINR; AGND–DGND under the package; VREF /
+  VCC / VDD local 0.1 µF (+ bulk where the datasheet shows).
+- Match breakout reality: many modules already have rail caps; VIN
+  coupling is what was often missing on the breadboard.
 
-Pin 3 is still =EN= after a 270 degree rotate. KiCad only rotates the *drawing*
-and the *sheet coordinates* of the pins around the symbol origin. Hierarchical
-labels and wires that stay put will attach to whichever pin rotated into that
-spot.
+** Assembly / passives package size
 
-After any rotate: click each pin, read the name, then move the label onto
-*that* pin. Do not assume "left side is still EN."
+- Default resistors and most ceramic caps to *0805* if you (or a first
+  proto) will *hand-solder*. Still compact for an Altoids-sized pack;
+  much easier than 0603/0402 with a normal iron + flux.
+- *0603* is doable by hand with practice; *0402* is a pain — avoid for
+  hand assembly.
+- If a later JLCPCB/PCBWay full SMT run is the plan, 0603 (or denser)
+  is fine for factory assembly; keep 0805 for DNP/hand-tweaked parts
+  (e.g. GROUP A / GROUP B gain resistors) so you can change them on
+  the bench.
+- Modules that stay hard either way: ESP32-WROOM, USB-C receptacle,
+  fine-pitch codecs — budget hot air / stencil or pay for PCBA on
+  those, not “just upsize the passives.”
 
-*** 2. Hierarchical labels connect through wires, not vibes
+** Shipping firmware hygiene
 
-A label sitting near a pin is not connected. ERC and the ratsnest follow
-*wires and pin ends*. After a rotate, a label can look "on" the chip and still
-sit on empty space or on the wrong pin (=ESP_IO0= on =EN=, =BCK= on =DEMP=,
-=SHDN_SIGNAL= on =C1N=).
+- Production images: ~IEM_NODE=TX|RX~ only (~main/tx.c~, ~main/rx.c~).
+- Isolation / peak-log / tone tools live under ~main/testing/~ — do *not*
+  merge those diagnostics back into shipping sources for fab bring-up
+  bins. Rebuild tests only when debugging.
 
-Triple-check every hierarchical label against the *pin name*, not the side of
-the box.
+* Firmware overview
 
-*** 3. Same-ish names are different pins
+** Build / flash (ESP-IDF)
 
-| You meant                         | Easy to hit instead      | What happens                              |
-|-----------------------------------+--------------------------+-------------------------------------------|
-| PCM5102 =BCK= / =DIN= / =LRCK=    | =DEMP= / =XSMT= / =FMT=  | DAC never gets PCM; clocks toggle config  |
-| MAX97220 =~{SHDN}=                | =C1N= (charge-pump cap)  | Volume switch does not mute; VSS breaks   |
-| ESP =TXD0= / =RXD0=               | =SENSOR_VN= / empty      | USB-C UART programming dies               |
-| I2S                               | I2C                      | Wrong bus, wrong pins, wrong mental model |
+~IEM_NODE~ is *configure-time*. Wrong node + stale build = wrong image
+on the wrong pack.
 
-Read the pin *name* in the status bar before you drop the label.
+#+begin_src bash
+source ~/esp/esp-idf/export.sh   # or your IDF install
 
-*** 4. Firmware GPIO numbers are the contract
+# Shipping transmitter / receiver
+IEM_NODE=TX idf.py reconfigure build
+IEM_NODE=TX idf.py -p /dev/ttyUSB0 flash
 
-=#define BCK_PIN 33= is IO33 on the module, period. Do not "clean up" the
-schematic onto IO18/19/23 unless you change the C defines too. Label =DIN= on
-the DAC is the ESP's *DOUT*.
+IEM_NODE=RX idf.py reconfigure build
+IEM_NODE=RX idf.py -p /dev/ttyUSB0 flash
 
-*** 5. The footprint field is a part you have to buy and solder
+# Archived isolation builds (main/testing/)
+IEM_NODE=RX_DAC_TEST idf.py reconfigure build flash
+IEM_NODE=TX_TONE idf.py reconfigure build flash
+IEM_NODE=TX_BUZZ_DEBUG idf.py reconfigure build flash
+#+end_src
 
-If the field says =R_0201_0603Metric=, you will get 0201s. Bulk 10 uF parts
-basically do not exist in 0201, and you will not hand-assemble them. Set 0805
-(or 0603) *before* you Update PCB from Schematic.
+Stamped binaries (gitignored): ~firmware_out/~.
 
-*** 6. DNP does not delete the net
+** Main sources
 
-KiCad "Do not populate" still leaves the schematic wires. If you DNP a *series*
-resistor, the path goes open unless you add a solder-bridge / short. If you DNP
-a *shunt*, leaving the pads empty is correct (no short to GND).
+| File | Purpose |
+|------+---------|
+| ~main/tx.c~ | Shipping TX FSM: idle → pair → capture/stream |
+| ~main/rx.c~ | Shipping RX FSM: pair → playback; soft-join / repair ads |
+| ~main/rig_shared.h~ / ~.c~ | Packet layouts, Wi‑Fi / ESP-NOW init, PS_NONE |
+| ~main/rx_temp_debug.h~ | Optional RX_DBG logs (toggle with macro) |
+| ~main/testing/~ | Sound-profile / peak-log diagnostics (not shipping) |
+| ~main/square_wave_test.c~ | Early DAC sanity (not the shipping app) |
 
-*** 7. 32U vs 32E, A vs D, datasheet vs doodle
+** Protocol sketch
 
-- *32U* = U.FL only. *32E/32D* = PCB antenna. Pick one and BOM the matching RF
-  parts.
-- *MAX97220A* is not *MAX97220D*. The letter is the gain mode.
-- Prefer the datasheet application circuit (470 ohm + 2.2 nF here) over a pad
-  you tried on the bench, unless you measured why the pad is better.
+1. RX advertises a short ~IEM_RX_…~ alias (broadcast, and unicast to last
+   TX when known).
+2. TX queues the request, ~esp_now_add_peer~, ACKs ~PAIR_SUCCESS~, then
+   streams ~audio_packet_t~.
+3. If ACKs are starved by audio, RX *soft-joins* on a correctly sized
+   audio packet (app-layer proof of delivery).
+4. TX may clear a dead peer on MAC send-fail / timeout so it can idle
+   and accept a new advert.
+5. Prefer not starting DAC playback on a lone 1-byte ~0x01~ ACK (any
+   nearby ESP can spoof that and leave RX mute-and-not-advertising).
 
-*** 8. The =.kicad_pcb= is not a board until it has Edge.Cuts and tracks
+** FreeRTOS / dual core (what you bump into first)
 
-A pile of footprints with a ratsnest is a placeholder. After schematic net or
-footprint changes, *Update PCB from Schematic*. Do not send that file to a fab.
+- Wi‑Fi / ESP-NOW callbacks run in the Wi‑Fi task — keep them short
+  (queue work; do not ~esp_now_add_peer~ / heavy I2S in the callback).
+- Audio capture (TX) and playback (RX) are pinned to core 1 with a
+  dedicated stack size (~AUDIO_TASK_STACK~).
+- Pointer pools + FreeRTOS queues bound latency (drop-oldest under
+  load) instead of unbounded buffering.
 
-*** 9. Power and analog will buzz on a breadboard
+* Learning path (recommended order)
 
-Long jumpers, no ground plane, and an ESP32 radio next to a DAC is a buzz/hiss
-machine. That does not automatically mean the circuit is wrong. A PCB with
-short I2S, local decoupling, and a solid GND will almost certainly be quieter.
-It is not guaranteed to be silent on the first spin.
+1. Blink / UART logging on ESP-IDF (prove the toolchain).
+2. Square wave → PCM5102 (prove DAC + I2S pins).
+3. PCM1808 capture → log peaks (prove ADC clocks / bit packing).
+4. Tiny ESP-NOW ping, then grow to v2 payload size.
+5. *Fix power* so both packs can transmit Wi‑Fi without brownout.
+6. Pairing FSM + reconnect.
+7. Digital tone isolation (DAC-only, then TX tone over air).
+8. Only then: PCB layout / amp / timbre on a real board.
 
-*** 10. Keep the project notes honest
+Reading datasheets is not optional on this project — the PCM1808 BCK
+rule alone is a multi-hour footgun if you skip §serial audio interface.
 
-If the schematic is USB-C + LDO and no display, =README.org= must not still say
-LiPo + TFT, Arduino, or a HAL that is not in the tree.
+* Known open issues
 
-** Author
+- Real jack→ADC dull / LPF-like timbre (analog / breadboard; digital
+  path proven OK).
+- Breadboard crackle / supply noise (caps, grounds, short I2S).
+- Reconnect still imperfect under bad power or USB serial reboots.
+- Product UI / display path deferred.
+- KiCad PCB outlines still stubby — schematic/layout next.
+
+* Author
 
 Damian Luciano Muschamp
+EOF

@@ -1,9 +1,9 @@
-set(CMAKE_HOST_SYSTEM "Linux-6.18.33.2-microsoft-standard-WSL2")
+set(CMAKE_HOST_SYSTEM "Linux-7.1.8-arch1-3")
 set(CMAKE_HOST_SYSTEM_NAME "Linux")
-set(CMAKE_HOST_SYSTEM_VERSION "6.18.33.2-microsoft-standard-WSL2")
+set(CMAKE_HOST_SYSTEM_VERSION "7.1.8-arch1-3")
 set(CMAKE_HOST_SYSTEM_PROCESSOR "x86_64")
 
-include("/home/damian-win/projects/ESP32IEMPack/build/bootloader/toolchain/toolchain-esp32.cmake")
+include("/home/luciano/Projects/ESP32IEMPack/build/bootloader/toolchain/toolchain-esp32.cmake")
 
 set(CMAKE_SYSTEM "Generic")
 set(CMAKE_SYSTEM_NAME "Generic")
