@@ -10,7 +10,7 @@
 		(rev "1.0.0")
 		(company "damian m")
 		(comment 1 "Data: TX -> RX -> DAC -> AMP-> 3.5mm Jack.")
-		(comment 2 "AMP_IN_L/R follows a voltage divdier to lower volume to safer levels before hitting AMP.")
+		(comment 2 "DAC_OUT uses the PCM5102 470R + 2.2nF filter (on the DAC sheet), then the dual-gang pot. Experimental 1k/10R pad is DNP.")
 		(comment 3 "Volume Knob with integrated off switch to kill amp from playing any audio. ")
 		(comment 4 "POST_POT_IN_R/L becomes the input to the amp.")
 	)
@@ -959,6 +959,37 @@
 		)
 		(uuid "f6487c56-d7e9-4de9-9b8d-873cc5b83ddb")
 	)
+	(wire
+		(pts
+			(xy 97.79 25.4) (xy 97.79 38.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cc5f51fa-dda7-4290-af49-eade71298b53")
+	)
+	(wire
+		(pts
+			(xy 110.49 25.4) (xy 110.49 38.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f2021524-8943-4253-8193-1500a07b8d15")
+	)
+	(text "PCM5102 datasheet filter lives on the DAC sheet:\nDAC_OUT -- 470R -- PRE_POT, 2.2nF from that node to GND.\nThat network assumes ~10 kOhm. MAX97220A Zin is ~10 kOhm.\n\nR18/R20 1k and R19/R21 10R are the old experimental\n40 dB pad. They are DNP. Wires short the 1k positions\nso the pot sees the filtered DAC_OUT directly.\nLeave the 10R pads empty (do not shunt PRE_POT to GND)."
+		(exclude_from_sim no)
+		(at 20.32 20.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8e514f71-44a6-4e4b-a45c-5174fbdd5eb5")
+	)
 	(label "PRE_POT_IN_L"
 		(at 86.36 82.55 180)
 		(effects
@@ -1063,7 +1094,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "06cd479e-6555-4a58-b956-e5550e6c3ab7")
 		(property "Reference" "R18"
@@ -1088,7 +1119,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 98.806 30.734 90)
 			(hide yes)
 			(show_name no)
@@ -1170,7 +1201,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 122.936 87.884 90)
 			(hide yes)
 			(show_name no)
@@ -1305,7 +1336,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "43297fb0-55f8-4c09-b33c-2a28754b09b2")
 		(property "Reference" "R21"
@@ -1330,7 +1361,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 111.506 45.974 90)
 			(hide yes)
 			(show_name no)
@@ -1781,7 +1812,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "b926a39d-f717-420c-a361-e47d18b0433c")
 		(property "Reference" "R19"
@@ -1806,7 +1837,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 98.806 45.974 90)
 			(hide yes)
 			(show_name no)
@@ -2019,7 +2050,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "dd421812-6fe2-48ef-b49e-6e61d8be499c")
 		(property "Reference" "R20"
@@ -2044,7 +2075,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 111.506 30.734 90)
 			(hide yes)
 			(show_name no)

@@ -25,7 +25,7 @@
 		)
 		(uuid "42a9e0ec-7893-4cba-ab5a-6de77e0210b0")
 	)
-	(text "Recieves audio data from ESP TX then processes \nand sends it to the rest of the audio pipeline."
+	(text "Receives audio data from ESP TX then processes \nand sends it to the rest of the audio pipeline."
 		(exclude_from_sim no)
 		(at 96.266 39.37 0)
 		(effects
@@ -55,7 +55,7 @@
 		)
 		(uuid "e1b4084b-9d81-4171-befe-072019be5c9d")
 	)
-	(text "Set to the I2C format. \nBy default configured to maximize audio quality.\nSoftware-level mute switch.\nHigh Quality or Low Latency switch."
+	(text "Set to the I2S format. \nBy default configured to maximize audio quality.\nSoftware-level mute switch.\nHigh Quality or Low Latency switch."
 		(exclude_from_sim no)
 		(at 159.766 38.354 0)
 		(effects
@@ -304,6 +304,17 @@
 			(type default)
 		)
 		(uuid "fbab65a4-2692-4023-aeb8-91cb8f4c1606")
+	)
+	(text "WIP: breadboard -> KiCad. PCB is a footprint dump only.\nHand-build passives: 0805. WROOM-32U needs a U.FL antenna.\nRe-import PCB after these schematic net fixes."
+		(exclude_from_sim no)
+		(at 17.78 110.49 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bf47873e-f752-472d-a402-804634affdb0")
 	)
 	(sheet
 		(at 67.31 21.59)
