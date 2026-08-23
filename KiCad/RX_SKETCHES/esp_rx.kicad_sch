@@ -1558,6 +1558,17 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "I2S matches breadboard / square_wave_test.c:\nBCK = IO33   LRCLK = IO32   DIN = IO25\nUART: TXD0/IO1 and RXD0/IO3\nEN RC + ESP_EN on pin 3, IO0 strap on pin 25.\n\nRotating the symbol only moves pin *positions*.\nPin numbers do not change — re-attach labels after rotate.\n\nWROOM-32U: fit a U.FL pigtail + 2.4 GHz antenna.\nThe module has no PCB antenna."
+		(exclude_from_sim no)
+		(at 24.13 27.94 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8fb03a1d-8ae2-478c-bacc-6db53061a1f4")
+	)
 	(junction
 		(at 137.16 58.42)
 		(diameter 0)
@@ -1609,7 +1620,7 @@
 		(uuid "4011d7cb-ec66-4dd2-a09e-4e7d5195a149")
 	)
 	(no_connect
-		(at 118.11 43.18)
+		(at 118.11 73.66)
 		(uuid "438c5b9b-6456-4c98-a32e-eb04b918e924")
 	)
 	(no_connect
@@ -1673,7 +1684,7 @@
 		(uuid "c9176e6f-fa32-4da8-a36e-7def70e8fe4a")
 	)
 	(no_connect
-		(at 82.55 43.18)
+		(at 82.55 73.66)
 		(uuid "d5e5190f-923a-40a7-806f-4dc100c4e504")
 	)
 	(no_connect
@@ -1694,7 +1705,7 @@
 	)
 	(wire
 		(pts
-			(xy 118.11 73.66) (xy 118.11 76.2)
+			(xy 123.19 43.18) (xy 123.19 40.64)
 		)
 		(stroke
 			(width 0)
@@ -1744,7 +1755,7 @@
 	)
 	(wire
 		(pts
-			(xy 72.39 73.66) (xy 72.39 76.2)
+			(xy 72.39 43.18) (xy 72.39 40.64)
 		)
 		(stroke
 			(width 0)
@@ -1754,7 +1765,7 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 73.66) (xy 123.19 76.2)
+			(xy 118.11 43.18) (xy 118.11 40.64)
 		)
 		(stroke
 			(width 0)
@@ -1794,7 +1805,7 @@
 	)
 	(wire
 		(pts
-			(xy 74.93 76.2) (xy 74.93 73.66)
+			(xy 74.93 43.18) (xy 74.93 40.64)
 		)
 		(stroke
 			(width 0)
@@ -1854,7 +1865,7 @@
 	)
 	(wire
 		(pts
-			(xy 82.55 73.66) (xy 82.55 76.2)
+			(xy 82.55 43.18) (xy 82.55 40.64)
 		)
 		(stroke
 			(width 0)
@@ -1864,13 +1875,33 @@
 	)
 	(wire
 		(pts
-			(xy 125.73 43.18) (xy 125.73 41.91)
+			(xy 125.73 73.66) (xy 132.08 73.66)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "e049b0e9-5796-4b6c-9bd1-2e1c7383dc37")
+	)
+	(wire
+		(pts
+			(xy 132.08 73.66) (xy 132.08 41.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a7c4e1d0-6b2f-4f1a-9c8e-2d5e0b1a4f33")
+	)
+	(wire
+		(pts
+			(xy 132.08 41.91) (xy 128.27 41.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b8d5f2e1-7c30-402b-8d9f-3e6f1c2b5a44")
 	)
 	(wire
 		(pts
@@ -1884,7 +1915,7 @@
 	)
 	(wire
 		(pts
-			(xy 125.73 73.66) (xy 125.73 76.2)
+			(xy 125.73 43.18) (xy 128.27 43.18)
 		)
 		(stroke
 			(width 0)
@@ -1894,7 +1925,7 @@
 	)
 	(hierarchical_label "RXD"
 		(shape output)
-		(at 123.19 76.2 270)
+		(at 118.11 40.64 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1905,7 +1936,7 @@
 	)
 	(hierarchical_label "ESP_IO0"
 		(shape input)
-		(at 125.73 76.2 270)
+		(at 128.27 43.18 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1916,7 +1947,7 @@
 	)
 	(hierarchical_label "LRCLK"
 		(shape output)
-		(at 74.93 76.2 270)
+		(at 74.93 40.64 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1927,7 +1958,7 @@
 	)
 	(hierarchical_label "BCK"
 		(shape output)
-		(at 72.39 76.2 270)
+		(at 72.39 40.64 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1949,7 +1980,7 @@
 	)
 	(hierarchical_label "DIN"
 		(shape output)
-		(at 82.55 76.2 270)
+		(at 82.55 40.64 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1960,7 +1991,7 @@
 	)
 	(hierarchical_label "TXD"
 		(shape input)
-		(at 118.11 76.2 270)
+		(at 123.19 40.64 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2003,7 +2034,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 145.7452 58.42 0)
 			(hide yes)
 			(show_name no)
@@ -2587,7 +2618,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 134.366 37.846 90)
 			(hide yes)
 			(show_name no)
@@ -2667,7 +2698,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 125.73 35.8648 0)
 			(hide yes)
 			(show_name no)
@@ -2747,7 +2778,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 131.7752 58.42 0)
 			(hide yes)
 			(show_name no)

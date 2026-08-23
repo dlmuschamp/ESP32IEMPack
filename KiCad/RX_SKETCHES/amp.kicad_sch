@@ -1800,7 +1800,7 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 67.31) (xy 88.9 69.85)
+			(xy 88.9 59.69) (xy 88.9 62.23)
 		)
 		(stroke
 			(width 0)
@@ -1970,7 +1970,7 @@
 	)
 	(wire
 		(pts
-			(xy 96.52 67.31) (xy 88.9 67.31)
+			(xy 96.52 62.23) (xy 88.9 62.23)
 		)
 		(stroke
 			(width 0)
@@ -2208,6 +2208,17 @@
 		)
 		(uuid "f16b00a5-46d8-4f88-b253-265b425791ed")
 	)
+	(text "SHDN_SIGNAL -> pin 16 ~{SHDN} (active low).\nC7 1uF is the C1P-C1N flying cap, not on SHDN.\n\nR1-R6, R9, R10 are DNP on hand-built protos\nso gain / input attenuation can be socketed.\nPopulate them (start 10k) on a fully assembled board.\nMAX97220A gain is fixed +3.5 dB; these Rs are the\nsingle-ended input network, not an IC gain pin.\nUse MAX97220D if you want resistor-programmed gain.\n\nZin of the A version is ~10 kOhm, which matches\nthe PCM5102 470R + 2.2nF output filter."
+		(exclude_from_sim no)
+		(at 20.32 20.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c6b7007c-c68a-482a-834a-acfaa159c202")
+	)
 	(label "AMP_OUT_R"
 		(at 134.62 54.61 0)
 		(effects
@@ -2252,7 +2263,7 @@
 	)
 	(hierarchical_label "SHDN_SIGNAL"
 		(shape input)
-		(at 96.52 62.23 180)
+		(at 96.52 67.31 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2292,7 +2303,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 50.8 58.7248 0)
 			(hide yes)
 			(show_name no)
@@ -2528,7 +2539,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 120.65 20.6248 0)
 			(hide yes)
 			(show_name no)
@@ -2663,7 +2674,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "284ef725-0794-46b2-bddf-c180bf921d01")
 		(property "Reference" "R5"
@@ -2686,7 +2697,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 61.214 58.674 90)
 			(hide yes)
 			(show_name no)
@@ -2826,7 +2837,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "342b2a84-c495-437a-a719-3c946ae48a9e")
 		(property "Reference" "R3"
@@ -2851,7 +2862,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 69.596 66.294 90)
 			(hide yes)
 			(show_name no)
@@ -2986,7 +2997,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "47a78a5e-b6a3-4cba-a909-f45d1c375568")
 		(property "Reference" "R4"
@@ -3009,7 +3020,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 61.214 45.974 90)
 			(hide yes)
 			(show_name no)
@@ -3300,7 +3311,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "6c9d4359-5bc9-4f1f-ba11-cd77f057a598")
 		(property "Reference" "R2"
@@ -3323,7 +3334,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 61.214 98.044 90)
 			(hide yes)
 			(show_name no)
@@ -3402,7 +3413,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 151.13 79.0448 0)
 			(hide yes)
 			(show_name no)
@@ -3705,7 +3716,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 151.13 20.6248 0)
 			(hide yes)
 			(show_name no)
@@ -3785,7 +3796,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 50.8 46.0248 0)
 			(hide yes)
 			(show_name no)
@@ -3865,7 +3876,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 50.8 85.3948 0)
 			(hide yes)
 			(show_name no)
@@ -3922,7 +3933,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "978a1433-2665-473b-b8ff-f01290c49fe7")
 		(property "Reference" "R1"
@@ -3945,7 +3956,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 101.854 32.004 90)
 			(hide yes)
 			(show_name no)
@@ -4180,7 +4191,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 50.8 98.0948 0)
 			(hide yes)
 			(show_name no)
@@ -4308,7 +4319,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 92.71 69.85 270)
+		(at 92.71 59.69 270)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4318,7 +4329,7 @@
 		(dnp no)
 		(uuid "ca73d8a9-6dd9-4a44-8877-46dff87b55b1")
 		(property "Reference" "C7"
-			(at 92.71 74.422 90)
+			(at 92.71 64.262 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4328,7 +4339,7 @@
 			)
 		)
 		(property "Value" "1u"
-			(at 92.71 76.708 90)
+			(at 92.71 66.548 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4337,7 +4348,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 88.9 70.8152 0)
 			(hide yes)
 			(show_name no)
@@ -4417,7 +4428,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 151.13 66.3448 0)
 			(hide yes)
 			(show_name no)
@@ -4474,7 +4485,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "d52411b9-43cf-48d0-882e-418ede88d8b6")
 		(property "Reference" "R6"
@@ -4497,7 +4508,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 61.214 85.344 90)
 			(hide yes)
 			(show_name no)
@@ -4554,7 +4565,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "d9442b9b-89a6-4090-8107-a0b794d076f7")
 		(property "Reference" "R9"
@@ -4579,7 +4590,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 69.596 78.994 90)
 			(hide yes)
 			(show_name no)
@@ -4792,7 +4803,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "ea9a8bcb-7931-400d-9375-1bc9cb48b478")
 		(property "Reference" "R10"
@@ -4815,7 +4826,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 106.934 100.584 90)
 			(hide yes)
 			(show_name no)
