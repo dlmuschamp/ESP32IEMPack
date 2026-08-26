@@ -1,0 +1,180 @@
+RX/TX PCB build — price & assembly considerations
+================================================
+Saved: 2026-08-25
+Context: Need working RX + TX before campus (leave ~2026-09-14). Budget hope ~$200 total.
+Ballpark only — confirm with live JLCPCB / PCBWay quotes after Gerbers + BOM exist.
+
+--------------------------------------------------------------------
+1. GOAL
+--------------------------------------------------------------------
+- Both RX and TX boards ready to order and (ideally) tested before Sept 14.
+- Prefer assembled boards over DIY for this deadline (QFN/TQFN EPAD parts:
+  CP2102C, MAX97220A are hard with iron-only).
+- Hot plate / full reflow kit: defer to winter break; not worth buying if
+  it stays home unused during the school year.
+- Optional later: portable iron for campus (small, useful for jacks/rewire).
+
+--------------------------------------------------------------------
+2. DIY vs ASSEMBLED (why assembled for this deadline)
+--------------------------------------------------------------------
+~20 days until campus. RX PCB + TX schematic/PCB + fab/ship + bring-up
+already fills the calendar. DIY adds a hot plate (~$25–60), paste/tweezers
+(~$25–45), and 1–2 days soldering with risk of dead EPAD boards.
+
+Assembled wins when: deadline matters, gear would sit unused, only need a
+few good boards. DIY wins later when home for break and iterating.
+
+Altoids-ish form factor (~95x60x21 mm tin sizing, not an actual tin):
+aim ~85x55 mm board max; edge-mount USB-C + 3.5 mm / TRRS; pot shaft
+through lid on RX.
+
+--------------------------------------------------------------------
+3. PASSIVES / HAND SOLDER (if ever DIY)
+--------------------------------------------------------------------
+- Use 0805 HandSolder footprints for all R/C (not 0201/0603 for first build).
+- Iron-friendly: 0805, SOT-23, SOT-223 (LM3940), WROOM module, TSSOP (PCM5102).
+- Needs reflow/hot plate: CP2102C (QFN+EP), MAX97220A (TQFN+EP).
+- Schematic still had mixed 0201 vs 0805 footprints — standardize to 0805
+  HandSolder before layout freeze.
+
+--------------------------------------------------------------------
+4. WHAT "TURNKEY" MEANS
+--------------------------------------------------------------------
+Turnkey = fab house makes PCB + buys parts + stencil + SMT assembly + ships
+finished boards.
+
+Consigned = you buy parts and send them to the factory.
+
+Want: turnkey (JLCPCB Economic PCBA).
+
+--------------------------------------------------------------------
+5. MOQ — YOU ARE NOT STUCK AT 5+5 ASSEMBLED
+--------------------------------------------------------------------
+JLCPCB:
+  - Bare PCB promo often shows qty 5 and "fab from $2".
+  - Economic PCBA order volume: 2–50 pcs (official capabilities page).
+  - "Start from just 2 boards" on their assembly page.
+  - Qty 2 is under SMT Assembly / Economic PCBA — toggle SMT ON in the
+    quote flow. Fab-only UI may still default to 5.
+
+PCBWay:
+  - Assembly MOQ can be as low as 1 (setup still applies).
+  - Usually more expensive for this prototype use case than JLCPCB.
+
+Practical plan: 2 RX + 2 TX assembled (enough for bring-up + spare each).
+Bump to 5 of a design only if the quote delta is small and you want spares.
+
+--------------------------------------------------------------------
+6. JLCPCB vs PCBWAY
+--------------------------------------------------------------------
+JLCPCB: best when BOM is LCSC in-stock; ~$8 setup + cheap joints; Extended
+        part fees ~$3/type for non-Basic ICs.
+PCBWay: higher setup floor; better if you need DigiKey/Mouser sourcing.
+
+For ~$200 budget: use JLCPCB. PCBWay only if critical ICs missing from LCSC.
+
+--------------------------------------------------------------------
+7. COUPONS / "FREE ASSEMBLY" (does not mean free boards)
+--------------------------------------------------------------------
+Promo language ("free assembly for 1–6 layer, save $8 setup", monthly ~$25
+in SMT coupons: $6 / $9 / $10) typically waives or discounts the SETUP fee.
+
+You still pay:
+  - Components (largest cost)
+  - Stencil (~$1.50)
+  - Extended-part / feeder fees
+  - Shipping
+
+Expect coupons to save ~$15–25 across two designs in one month — helpful,
+not transformative.
+
+Note: some $10 PCBA coupons require EasyEDA-exported files. KiCad Gerbers
+usually use the generic $6/$9 SMT coupons — check Account → Coupons at
+checkout.
+
+--------------------------------------------------------------------
+8. BALLPARK COSTS (USD, mid 2026, confirm with quote)
+--------------------------------------------------------------------
+Assumptions: 2-layer (or simple 4-layer), single-sided SMT, ~65 placements
+on RX, TX lighter (reuse pwr/ESP; PCM1808 + TRRS; no amp/pot/MAX97220),
+turnkey, US shipping, optional pot left for hand-solder.
+
+Plan A — 5 RX + 5 TX assembled
+  Mid: ~$280–380  |  High: ~$400+
+  Per board if split: roughly $30–40 range all-in
+
+Plan B — 2 RX + 2 TX assembled  (TARGET for ~$200)
+  Mid: ~$160–230  |  With setup coupons: closer to ~$150–210
+  Parts dominate; TX cheaper than RX (~60–70% of RX parts)
+
+Plan C — 5 RX + 2 TX
+  Mid: ~$200–270
+
+DIY first time (5 bare each + parts + budget hot plate gear)
+  Often ~$200–320 out of pocket before yield risk; worse under deadline.
+
+Rough JLCPCB line items for ONE design @ qty 2:
+  Fab:            $5–15
+  Setup:          $0–8 (coupon may zero)
+  Stencil:        ~$1.50
+  Extended fees:  $20–40 (ESP, UART bridge, audio ICs, connectors…)
+  Components:     $25–50 (RX higher)
+  Shipping:       share across designs if one shipment ~$25–40 total
+
+Wildcards that raise price:
+  - MAX97220A / PCM1808 / CP2102C not in LCSC stock
+  - Through-hole pot assembled by factory
+  - Double-sided SMT
+  - Express shipping
+
+--------------------------------------------------------------------
+9. HOW TO STAY NEAR $200
+--------------------------------------------------------------------
+1. Qty 2 each (not 5+5) unless quote says otherwise.
+2. All passives = JLCPCB "Basic" 0805.
+3. Check LCSC stock BEFORE layout freeze: ESP32-WROOM-32U, CP2102C,
+   MAX97220A, PCM5102, PCM1808, LM3940, USB-C, jacks.
+4. Leave RX pot unpopulated (hand-solder one TH part later) if it saves
+   hand-assembly fees.
+5. Single combined shipment; no reflow gear purchase before campus.
+6. Quote qty 2 and qty 5 once BOM exists; pick the cheaper path to
+   "enough working boards".
+
+--------------------------------------------------------------------
+10. SCHEDULE SNAPSHOT (aggressive)
+--------------------------------------------------------------------
+Now → ~Sept 1:   RX PCB layout (0805, Altoids outline, DRC)
+~Sept 1–5:       TX schematic + PCB (import pwr_mgmt + esp sheets;
+                 map PCM1808 + TRRS)
+~Sept 5:         ORDER turnkey Economic PCBA (express)
+~Sept 5–12:      Wait for ship
+~Sept 12–13:     Bring-up both
+Sept 14:         Leave for campus with working units (+ spares)
+
+Hard gate: Gerbers paid ~Sept 5 or Sept 14 testing is unlikely.
+
+Work style noted: ~3-hour bouts after other work; TX faster once RX
+patterns exist.
+
+--------------------------------------------------------------------
+11. RECOMMENDED DECISION (as of 2026-08-25)
+--------------------------------------------------------------------
+- Vendor: JLCPCB turnkey Economic PCBA (not PCBWay unless stock fails).
+- Qty: 2 RX + 2 TX assembled.
+- Budget expectation: ~$150–220 all-in with coupons if LCSC stocks ICs.
+- Do not buy hot plate for this spin; optional portable iron later.
+- Confirm MOQ and price in the live cart with SMT Assembly enabled.
+
+--------------------------------------------------------------------
+12. NEXT ACTIONS BEFORE ORDERING
+--------------------------------------------------------------------
+- [ ] Standardize all RX passives to 0805 HandSolder footprints
+- [ ] Finish RX PCB layout + DRC
+- [ ] TX schematic (pwr + esp reuse) + PCM1808 + TRRS + PCB
+- [ ] Build BOM; match LCSC Basic/Extended; check stock
+- [ ] Upload Gerbers + BOM + CPL; quote 2 vs 5; apply SMT coupons
+- [ ] Order by ~Sept 5 with shipping that arrives before Sept 14
+
+See also:
+  docs/capacitor_bom.org     — ceramic vs polarized by location
+  docs/hardware_revisions.org — schematic change rationale
