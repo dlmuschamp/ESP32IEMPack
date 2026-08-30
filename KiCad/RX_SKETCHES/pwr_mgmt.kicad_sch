@@ -3264,6 +3264,12 @@
 		(uuid "27e88581-fced-4cd3-ad65-dc434751fcb4")
 	)
 	(junction
+		(at 55.88 25.4)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2f8e2fcb-a912-4aa2-8516-0b6216fb87a6")
+	)
+	(junction
 		(at 86.36 49.53)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3328,12 +3334,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "80bc28c5-f721-4fdb-a7ea-cd09afefc4f3")
-	)
-	(junction
-		(at 81.28 22.86)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "8922c78b-2911-49d9-a682-599f19461b0a")
 	)
 	(junction
 		(at 30.48 128.27)
@@ -3519,13 +3519,13 @@
 	)
 	(wire
 		(pts
-			(xy 125.73 86.36) (xy 128.27 86.36)
+			(xy 55.88 17.78) (xy 55.88 25.4)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "12b81ff8-7362-4e29-9a44-af86e5665c46")
+		(uuid "14e558b6-2020-420a-9364-c39f271485ff")
 	)
 	(wire
 		(pts
@@ -3579,7 +3579,7 @@
 	)
 	(wire
 		(pts
-			(xy 77.47 22.86) (xy 81.28 22.86)
+			(xy 77.47 22.86) (xy 86.36 22.86)
 		)
 		(stroke
 			(width 0)
@@ -3739,6 +3739,16 @@
 	)
 	(wire
 		(pts
+			(xy 55.88 25.4) (xy 59.69 25.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3b5a4253-47f1-4f76-aa87-a90618db0d21")
+	)
+	(wire
+		(pts
 			(xy 140.97 34.29) (xy 146.05 34.29)
 		)
 		(stroke
@@ -3766,16 +3776,6 @@
 			(type default)
 		)
 		(uuid "415ab7e7-2816-4994-aef1-df5624bea625")
-	)
-	(wire
-		(pts
-			(xy 81.28 22.86) (xy 81.28 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4d25b5b0-83dd-42a1-8a63-e445c01d38f9")
 	)
 	(wire
 		(pts
@@ -4019,16 +4019,6 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 22.86) (xy 86.36 22.86)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "85ecc10c-300a-4759-81db-4011c5b8f0e6")
-	)
-	(wire
-		(pts
 			(xy 24.13 128.27) (xy 30.48 128.27)
 		)
 		(stroke
@@ -4056,6 +4046,16 @@
 			(type default)
 		)
 		(uuid "8a82a426-dffb-4a4a-8f6b-ec35f0862adb")
+	)
+	(wire
+		(pts
+			(xy 81.28 73.66) (xy 81.28 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "917cc87d-37ba-4116-92a9-e555f6f80665")
 	)
 	(wire
 		(pts
@@ -4179,16 +4179,6 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 81.28) (xy 113.03 82.55)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a5b0d4a8-92d3-4016-bd3c-d7765deff026")
-	)
-	(wire
-		(pts
 			(xy 157.48 71.12) (xy 160.02 71.12)
 		)
 		(stroke
@@ -4299,7 +4289,7 @@
 	)
 	(wire
 		(pts
-			(xy 50.8 25.4) (xy 59.69 25.4)
+			(xy 50.8 25.4) (xy 55.88 25.4)
 		)
 		(stroke
 			(width 0)
@@ -4376,6 +4366,16 @@
 			(type default)
 		)
 		(uuid "e1650ec5-cdb1-4c61-a2be-cda598392a63")
+	)
+	(wire
+		(pts
+			(xy 80.01 73.66) (xy 81.28 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e7858996-4488-437d-b0a4-f68f315f46f0")
 	)
 	(wire
 		(pts
@@ -4486,6 +4486,26 @@
 			(type default)
 		)
 		(uuid "fc37b16d-9c62-493f-83ce-68d2626b6766")
+	)
+	(label "VBUS_RAW"
+		(at 80.01 73.66 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "0f8a220e-f682-4888-b780-03e42af97a08")
+	)
+	(label "VBUS_RAW"
+		(at 55.88 17.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c015be50-355e-43bc-bb73-dccf62d78d10")
 	)
 	(hierarchical_label "TXD"
 		(shape output)
@@ -4642,7 +4662,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 105.1052 33.02 0)
 			(hide yes)
 			(show_name no)
@@ -5038,7 +5058,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 25.0952 123.19 0)
 			(hide yes)
 			(show_name no)
@@ -5357,7 +5377,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 115.2652 33.02 0)
 			(hide yes)
 			(show_name no)
@@ -6026,7 +6046,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_SMD:Nidec_Copal_CAS-120A"
+		(property "Footprint" "Button_Switch_SMD:SW_SPDT_Shouhan_MSK12C02"
 			(at 64.77 35.56 0)
 			(hide yes)
 			(show_name no)
@@ -6610,7 +6630,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 136.8552 33.02 0)
 			(hide yes)
 			(show_name no)
@@ -7049,7 +7069,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 75.8952 123.19 0)
 			(hide yes)
 			(show_name no)
@@ -7286,7 +7306,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 31.4452 123.19 0)
 			(hide yes)
 			(show_name no)
@@ -7477,7 +7497,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 147.0152 33.02 0)
 			(hide yes)
 			(show_name no)

@@ -1,2 +1,20 @@
 *log
 *restore
+
+# KiCad local/editor state and caches
+*.kicad_prl
+*-backups/
+fp-info-cache
+.history/
+
+# ESP-IDF build output
+/build/
+/firmware_out/
+
+# Generated exports of README.org
+README.html
+README.tex
+README.typ
+
+# Local session state
+.cursor_session_token

@@ -75,8 +75,9 @@ Refs:
 | Change | Reason / evidence |
 |--------+-------------------|
 | Restored topology from =main= / pre-fix amp (jack on =OUTL=/=OUTR=, pseudo-diff input from =POST_POT_IN_*=) | Experimental "mixed" sheet had label/shift issues; old connectivity was the intended MAX97220A path. |
-| Mark =R1=--=R6=, =R9=, =R10= as *DNP* (Do Not Populate) for hand-built protos | Lets you choose gain / attenuation later. =MAX97220A= has *fixed* +3.5 dB; these Rs are the single-ended input network, not an IC gain pin. Use =MAX97220D= if you want resistor-programmed gain. Populate (start 10k) on a fully assembled board. |
+| Mark =R1=--=R6=, =R9=, =R10= as *DNP* (Do Not Populate) for hand-built protos | =MAX97220A= (A/B/E) sets gain externally: =AV = -RF/RIN= (datasheet Fig 5; RF 4.7k--100k). These Rs *are* the gain network for the A part (pseudo-diff / single-ended app circuit). =C=/=D= are fixed +6 dB --- wrong if you want bench-tuned max loudness. Populate matched ~10k to start on a fully assembled board. |
 | Keep =SHDN_SIGNAL= from dual-gang pot for true 0% volume | Active-low shutdown; better than DAC soft-mute alone for "off". |
+| Keep =R22= 100k from =SHDN_SIGNAL= to GND | Not a pot-datasheet value. MAX97220 =~{SHDN}= must be *driven* high to run / low to shut down (VIH 1.4 V, VIL 0.4 V, ~1 uA leakage) --- it must not float. Pot switch (PTN09) is mechanical only: =COM= <- +3V3, =N.O.= -> =SHDN=. At full CCW the switch opens; 100k pulls =~{SHDN}= low so the amp stays off. When you turn up, =N.O.= closes and hard-ties =SHDN= to 3V3 (~33 uA through 100k). 10k--1M also works; 100k is a weak default. |
 
 ** Process / tooling notes
 
@@ -85,8 +86,41 @@ Refs:
 | Experimental KiCad branch may stub =main/rx.c= | That branch is schematic-focused; firmware source of truth is =origin/main=. Restore with =git checkout main -- main/....= if needed. |
 | Prefer screenshots in =~/Pictures= + this log over committing huge PDFs | Datasheets can be fetched; *your* wiring is what must be reviewed. Optional local =docs/spec_sheets/= is fine if gitignored. |
 
+* 2026-08-30 --- gain network, coupling caps, ESD clamp
+
+** Amp (=amp=)
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| =R1=/=R3=/=R9=/=R10= -> *4.7k*, =R2=/=R4=/=R5=/=R6= -> *47k*, all *populated* (no longer DNP) | =AV = -RF/RIN= = -20 dB. Fixes three things at once: tames the DAC's 2.1 Vrms into sensitive IEMs, gives the 10k pot a 4.7x loading ratio instead of 1:1, and moves the coupling corner off the audible band. An unpopulated =RF= is *not* a safe default --- it leaves the amp open loop. |
+| =C1=--=C4= 0.47uF -> *1uF* (all four, X7R min.) | Corner 7.2 Hz -> 3.4 Hz, -0.53 dB -> -0.12 dB at 20 Hz. Also halves the signal developed across the ceramic at 20 Hz (34% -> 17%), reducing Class-II dielectric distortion where it actually occurs. =C2=/=C3= are the matching =IN+= legs and must track =C1=/=C4= or LF CMRR degrades. Same 0805 footprint --- value-only change. |
+| Stop at 1uF, do not fit 2.2uF | 1.54 Hz corner buys only +0.09 dB and passes more subsonic rumble / DC drift. Convention is a 3--5 Hz coupling corner. |
+| =C28= 1uF added on +3V3/GND | Amp sheet omitted pin 13; part existed on the PCB with no schematic counterpart (parity error). |
+
+** Power management (=pwr_mgmt=)
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| =D1= pin 2 moved from =+5V= to the connector-side rail, now named =VBUS_RAW= | =SP0503BAHT= is a 4-line TVS (common anode, three cathodes). The =D+=/=D-= cathodes were already correct; the third was clamping the rail *after* =SW4=, so with the switch OFF the exposed =J6= VBUS pin had no clamp --- unprotected exactly when the board is most likely to be handled and unplugged. Does not affect the OFF state: a TVS is open below its standoff voltage, and =SW4= still breaks the rail to =U4=/=U5=. |
+| Pulldowns =R31=/=R32= 100k on =FLT_SEL= / =XSMT_SEL=; =DEMP= and =FMT= strapped to GND | PCM5102 mode pins must not float with the switches open. |
+| =SW3= (soft mute): =XSMT_SEL= moved from pin 3 to pin 1, NC flag moved pin 3 | All three switches are SPDT with *pin 2 (B) as the common*; the unwired throw is the rest position. =SW3= is placed rot 90, so pin 1 is NORTH and pin 3 is SOUTH. Wanted SOUTH = mute, so SOUTH must be the *open* throw (pulled low by =R32= = muted). Was backwards. |
+
+Design convention now consistent across all three switches: *the open throw is
+the safe default* --- =SW4= open = powered off, =SW2= open = normal-latency FIR
+("quality") filter, =SW3= open = muted. Enabling anything requires deliberately
+sliding onto the +V throw.
+| 4x =Mechanical:MountingHole= (=REF1=--=REF4=) added to root sheet | Were PCB-only; showed as =extra_footprint= schematic-parity errors. |
+
+*** Follow-up required in KiCad
+
+The =D1= change is a *netlist* change, so the PCB is now out of date. Run *Update
+PCB from Schematic*, then rip up and reroute the single trace from =D1= pad 2 ---
+it is still on the =+5V= copper. The cap value changes need no layout work.
+
 * Open / next
 
+- Reroute =D1= pad 2 to =VBUS_RAW= on the PCB (see above), then re-run DRC with
+  =--schematic-parity --severity-all=.
 - Finish =vol_ctrl= cleanup (confirm DNP pad + =DAC_OUT= -> pot).
 - Amp visual ERC / label pass after restore.
 - Then TX schematic (mirror shared power / ESP / antenna; PCM1808 instead of PCM5102).

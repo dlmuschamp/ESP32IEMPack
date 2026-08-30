@@ -1411,6 +1411,16 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "Right Output"
+		(exclude_from_sim no)
+		(at 138.684 53.848 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "0cd63e9e-bde4-48b1-917a-dedb10570d14")
+	)
 	(text "IEM Amp"
 		(exclude_from_sim no)
 		(at 115.316 62.738 0)
@@ -1421,12 +1431,113 @@
 		)
 		(uuid "109012d5-58ca-40e1-9815-604a733393d0")
 	)
-	(text "SHDN_SIGNAL LOW acts as setting the volume to a \"true 0%\" \nby shutting off the IEM amp.\n\nThis is in contrast to the DAC Soft mute which acts as a \nmute toggle without \nchanging the volume. \n\nAmp follows the pseudo-differential input configuration \nbecause the DAC output is a single-ended input.\n\nR1-R6, R9, R10 are DNP (Do Not Populate) on hand-built\nprotos so gain / input attenuation can be chosen later.\nPopulate (start 10k) on a fully assembled board.\nMAX97220A gain is fixed +3.5 dB; use MAX97220D for\nresistor-programmed gain. See docs/hardware_revisions.org.\n"
+	(text "R_in"
 		(exclude_from_sim no)
-		(at 19.558 118.872 0)
+		(at 60.706 37.338 0)
 		(effects
 			(font
 				(size 1.27 1.27)
+			)
+		)
+		(uuid "16ceb837-b995-4b6d-8eaf-355fe51b52af")
+	)
+	(text "R_in"
+		(exclude_from_sim no)
+		(at 60.706 51.816 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "2614eeac-9c97-41c9-ad66-6d46360c0da1")
+	)
+	(text "R_in"
+		(exclude_from_sim no)
+		(at 56.388 95.504 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "26e56be4-a5a6-4f4b-b82f-2fdd496e304d")
+	)
+	(text "R_in"
+		(exclude_from_sim no)
+		(at 57.15 83.058 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "358a4509-e78f-4782-8033-0c9b9a67bf53")
+	)
+	(text "R_F\n"
+		(exclude_from_sim no)
+		(at 77.47 66.294 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "428d3b90-c60d-432f-9385-f494556edfec")
+	)
+	(text "R_F\n"
+		(exclude_from_sim no)
+		(at 101.6 28.575 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "7db4e848-1e77-40b8-a850-ee5e89b2036d")
+	)
+	(text "VOLUME / GAIN BUDGET      (full derivation in README.org)\nR_F = R1,R3,R9,R10 = 4.7k      R_IN = R2,R4,R5,R6 = 47k\n\n  VR1 divider   10k/(470+10k)     =  -0.40 dB\n  Amp gain      4.7k / 47k        = -20.00 dB\n  TOTAL                           = -20.40 dB  (x0.0955)\n\nPCM5102A full scale is 2.1 Vrms, so at max volume\n  Vout = 2.1 x 0.0955 = 0.201 Vrms at J1\n\nPeak SPL = IEM dB/Vrms + 20*log10(Vout), and to convert\na dB/mW spec:  dB/Vrms = dB/mW + 10*log10(1000/Z)\n  KZ ZS10 Pro X 112 dB/mW @29R = 127.4 dB/V -> 113.4 dB\n  Moondrop Aria 122 dB/Vrms @32R            -> 108.0 dB\n\nMore output: R_F -> 10k = -13.8 dB (120 dB SPL on the KZ)."
+		(exclude_from_sim no)
+		(at 18.542 118.618 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8e55f1e8-532d-41f4-98b5-fd832922a8a0")
+	)
+	(text "R_F\n"
+		(exclude_from_sim no)
+		(at 77.47 79.502 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "8ed1b119-6796-4fff-9316-9693956fa686")
+	)
+	(text "Left Output"
+		(exclude_from_sim no)
+		(at 137.922 48.26 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "cfa283a3-ee8a-40c5-ae9b-64849a46c03a")
+	)
+	(text "R_F\n"
+		(exclude_from_sim no)
+		(at 106.426 96.52 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "f040dca3-f7b5-4ec3-bf83-2361facd9599")
+	)
+	(text "SHDN_SIGNAL LOW acts as setting the volume to a \"true 0%\" \nby shutting off the IEM amp.\n\nThis is in contrast to the DAC Soft mute which acts as a \nmute toggle without changing the volume. \n\nAmp follows the pseudo-differential input configuration \nbecause the DAC output is a single-ended input.\n\nR_F (R1,R3,R9,R10) and R_IN (R2,R4,R5,R6) set the gain.\nEach group must stay matched or the pseudo-differential\nbalance (CMRR) is lost.  Derivation at right."
+		(exclude_from_sim no)
+		(at 15.748 25.908 0)
+		(effects
+			(font
+				(size 1.016 1.016)
 			)
 			(justify left)
 		)
@@ -1461,12 +1572,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "5873f350-5504-455e-ba7c-9835c67be126")
-	)
-	(junction
-		(at 134.62 49.53)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "605afa24-4ae2-427d-be72-61026d78bf28")
 	)
 	(junction
 		(at 78.74 99.06)
@@ -1509,12 +1614,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f57d5fd0-6edd-464e-a6c5-954622c8627b")
-	)
-	(junction
-		(at 134.62 52.07)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f94eaa46-a5e2-4ffd-a5b6-9e7bff547d45")
 	)
 	(junction
 		(at 133.35 21.59)
@@ -1610,7 +1709,7 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 49.53) (xy 147.32 49.53)
+			(xy 132.08 49.53) (xy 147.32 49.53)
 		)
 		(stroke
 			(width 0)
@@ -1730,7 +1829,7 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 52.07) (xy 165.1 52.07)
+			(xy 132.08 52.07) (xy 165.1 52.07)
 		)
 		(stroke
 			(width 0)
@@ -1800,6 +1899,16 @@
 	)
 	(wire
 		(pts
+			(xy 163.83 29.21) (xy 163.83 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "72a3dd51-e42d-4a5f-aacf-377c33c9c95f")
+	)
+	(wire
+		(pts
 			(xy 88.9 67.31) (xy 88.9 69.85)
 		)
 		(stroke
@@ -1830,16 +1939,6 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 49.53) (xy 132.08 49.53)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7867c34e-18e4-4811-88ab-2ff4cb6bf4cc")
-	)
-	(wire
-		(pts
 			(xy 161.29 57.15) (xy 161.29 91.44)
 		)
 		(stroke
@@ -1857,6 +1956,16 @@
 			(type default)
 		)
 		(uuid "7c271690-92fa-47c0-a6f3-7e03b213c06f")
+	)
+	(wire
+		(pts
+			(xy 163.83 17.78) (xy 163.83 21.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "89370fb2-4016-403e-ad2c-46a161c6386f")
 	)
 	(wire
 		(pts
@@ -1950,16 +2059,6 @@
 	)
 	(wire
 		(pts
-			(xy 132.08 52.07) (xy 134.62 52.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a7bba924-1308-4cef-8a0d-f956f5869a2e")
-	)
-	(wire
-		(pts
 			(xy 64.77 99.06) (xy 78.74 99.06)
 		)
 		(stroke
@@ -2017,16 +2116,6 @@
 			(type default)
 		)
 		(uuid "baca5588-a3d6-4e97-b3ef-c5bdf0ae0b54")
-	)
-	(wire
-		(pts
-			(xy 134.62 52.07) (xy 134.62 54.61)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bb88d5f7-6c21-40a2-a880-a320a354dda5")
 	)
 	(wire
 		(pts
@@ -2190,16 +2279,6 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 48.26) (xy 134.62 49.53)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ee4d90fd-ac08-4b94-bd51-907d11351928")
-	)
-	(wire
-		(pts
 			(xy 132.08 80.01) (xy 139.7 80.01)
 		)
 		(stroke
@@ -2207,26 +2286,6 @@
 			(type default)
 		)
 		(uuid "f16b00a5-46d8-4f88-b253-265b425791ed")
-	)
-	(label "AMP_OUT_R"
-		(at 134.62 54.61 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "90808cac-ed76-449e-b6e8-a8cdd71963e7")
-	)
-	(label "AMP_OUT_L"
-		(at 134.62 48.26 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a646e37a-3f23-4956-a5ae-c92634b08598")
 	)
 	(hierarchical_label "POST_POT_IN_R"
 		(shape input)
@@ -2282,7 +2341,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47u"
+		(property "Value" "1u"
 			(at 46.99 54.61 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2292,7 +2351,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 50.8 58.7248 0)
 			(hide yes)
 			(show_name no)
@@ -2528,7 +2587,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 120.65 20.6248 0)
 			(hide yes)
 			(show_name no)
@@ -2663,7 +2722,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "284ef725-0794-46b2-bddf-c180bf921d01")
 		(property "Reference" "R5"
@@ -2676,7 +2735,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "47k"
 			(at 60.96 55.88 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2686,7 +2745,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 61.214 58.674 90)
 			(hide yes)
 			(show_name no)
@@ -2826,7 +2885,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "342b2a84-c495-437a-a719-3c946ae48a9e")
 		(property "Reference" "R3"
@@ -2840,7 +2899,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "4.7k"
 			(at 71.12 67.3099 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2851,7 +2910,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 69.596 66.294 90)
 			(hide yes)
 			(show_name no)
@@ -2986,7 +3045,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "47a78a5e-b6a3-4cba-a909-f45d1c375568")
 		(property "Reference" "R4"
@@ -2999,7 +3058,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "47k"
 			(at 60.96 43.18 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3009,7 +3068,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 61.214 45.974 90)
 			(hide yes)
 			(show_name no)
@@ -3300,7 +3359,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6c9d4359-5bc9-4f1f-ba11-cd77f057a598")
 		(property "Reference" "R2"
@@ -3313,7 +3372,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "47k"
 			(at 60.96 95.25 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3323,7 +3382,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 61.214 98.044 90)
 			(hide yes)
 			(show_name no)
@@ -3402,7 +3461,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 151.13 79.0448 0)
 			(hide yes)
 			(show_name no)
@@ -3705,7 +3764,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 151.13 20.6248 0)
 			(hide yes)
 			(show_name no)
@@ -3775,7 +3834,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47u"
+		(property "Value" "1u"
 			(at 46.99 41.91 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3785,7 +3844,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 50.8 46.0248 0)
 			(hide yes)
 			(show_name no)
@@ -3855,7 +3914,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47u"
+		(property "Value" "1u"
 			(at 46.99 81.28 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3865,7 +3924,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 50.8 85.3948 0)
 			(hide yes)
 			(show_name no)
@@ -3922,7 +3981,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "978a1433-2665-473b-b8ff-f01290c49fe7")
 		(property "Reference" "R1"
@@ -3935,7 +3994,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "4.7k"
 			(at 101.6 29.21 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3945,7 +4004,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 101.854 32.004 90)
 			(hide yes)
 			(show_name no)
@@ -4170,7 +4229,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47u"
+		(property "Value" "1u"
 			(at 46.99 93.98 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4180,7 +4239,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 50.8 98.0948 0)
 			(hide yes)
 			(show_name no)
@@ -4337,7 +4396,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 88.9 70.8152 0)
 			(hide yes)
 			(show_name no)
@@ -4417,7 +4476,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 151.13 66.3448 0)
 			(hide yes)
 			(show_name no)
@@ -4466,6 +4525,88 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 163.83 25.4 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d0dcf79f-208a-4bf5-87a6-6e009b78c80c")
+		(property "Reference" "C28"
+			(at 167.64 24.1299 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1u"
+			(at 167.64 26.6699 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 163.83 25.4 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 163.83 25.4 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 163.83 25.4 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "e21319cc-1608-4d8c-b06f-502e0c48b324")
+		)
+		(pin "2"
+			(uuid "e011fd2f-19ff-4df4-9fc3-54a0c4f21417")
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189"
+					(reference "C28")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R_US")
 		(at 60.96 86.36 90)
 		(unit 1)
@@ -4474,7 +4615,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d52411b9-43cf-48d0-882e-418ede88d8b6")
 		(property "Reference" "R6"
@@ -4487,7 +4628,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "47k"
 			(at 60.96 82.55 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4497,7 +4638,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 61.214 85.344 90)
 			(hide yes)
 			(show_name no)
@@ -4554,7 +4695,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d9442b9b-89a6-4090-8107-a0b794d076f7")
 		(property "Reference" "R9"
@@ -4568,7 +4709,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "4.7k"
 			(at 71.12 80.0099 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4579,7 +4720,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 69.596 78.994 90)
 			(hide yes)
 			(show_name no)
@@ -4622,6 +4763,86 @@
 			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189"
 					(reference "R9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 163.83 33.02 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "dc018850-c330-473a-9f18-c0510a04d33e")
+		(property "Reference" "#PWR061"
+			(at 163.83 39.37 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "GND"
+			(at 162.306 37.084 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 163.83 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 163.83 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 163.83 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "f3a8958f-1afa-4800-9813-16454dc36bd9")
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189"
+					(reference "#PWR061")
 					(unit 1)
 				)
 			)
@@ -4792,7 +5013,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ea9a8bcb-7931-400d-9375-1bc9cb48b478")
 		(property "Reference" "R10"
@@ -4805,7 +5026,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "4.7k"
 			(at 106.68 97.79 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4815,7 +5036,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 106.934 100.584 90)
 			(hide yes)
 			(show_name no)
@@ -4858,6 +5079,86 @@
 			(project "ESP_32_IEM_RIG_RX_VER_1.0"
 				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189"
 					(reference "R10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 163.83 17.78 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f5d13d95-dbd4-40db-8b2e-d07cd303a8af")
+		(property "Reference" "#PWR060"
+			(at 163.83 24.13 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 162.306 21.844 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 163.83 17.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 163.83 17.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 163.83 17.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "60c7c244-b14d-4d5e-a30a-e0a01c2630cb")
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_RX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda/e73e1f85-85b5-4291-97fa-1640b66c2189"
+					(reference "#PWR060")
 					(unit 1)
 				)
 			)
@@ -4948,8 +5249,7 @@
 	)
 	(group ""
 		(uuid "a73be980-e668-4100-a32f-f142771d32e5")
-		(members "2120767c-2153-4783-a70c-c15f423ae8c1" "28695ed0-56ec-4441-934b-77c95fc2329f"
-			"562b66a1-1a79-4202-87d8-ef4c16029291" "6a39e855-68e9-4f64-aa17-3668ae1d45cd"
+		(members "28695ed0-56ec-4441-934b-77c95fc2329f" "6a39e855-68e9-4f64-aa17-3668ae1d45cd"
 			"781d90bd-932c-475f-b64f-854215d80af2" "a37d6f2e-6f31-4f8a-9de0-330ce7b1afb3"
 			"ba992d96-d27b-48e3-a327-00bfa68c689a"
 		)

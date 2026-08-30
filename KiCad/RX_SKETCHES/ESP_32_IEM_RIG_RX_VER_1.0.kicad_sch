@@ -5,7 +5,7 @@
 	(uuid "98787dcf-424f-4647-bb79-9127f0f74bda")
 	(paper "A5")
 	(title_block
-		(title "ESP32 Wireless IEM Rig Reciever")
+		(title "ESP32U- WROOM Wireless IEM Rig Reciever")
 		(date "2026-08-04")
 		(rev "1.0.0")
 		(company "damian m")
@@ -35,7 +35,7 @@
 		)
 		(uuid "41341440-8c93-4242-b91e-a06447196251")
 	)
-	(text "Voltage Dividers for both Left and Right channels\nto bring volume to safer pre-amp levels. \nVolume controlled by logarithmic dual gang pot.\nVol Pot completely turns off AMP at 0%.\n"
+	(text "Volume controlled by logarithmic dual gang pot.\nVol Pot completely turns off AMP at 0%.\nMAX Volume set by the amp gain (by adjusting R_F). \nSee Max97220A spec sheet for R_F layout."
 		(exclude_from_sim no)
 		(at 50.546 93.218 0)
 		(effects
@@ -45,7 +45,7 @@
 		)
 		(uuid "42a9e0ec-7893-4cba-ab5a-6de77e0210b0")
 	)
-	(text "TODO: RESTORE FROM MAIN BRANCH"
+	(text "DONE"
 		(exclude_from_sim no)
 		(at 160.02 50.546 0)
 		(effects
@@ -55,7 +55,7 @@
 		)
 		(uuid "50cbc441-90ac-46ea-936b-6bd64bfebc6e")
 	)
-	(text "TODO: FIX"
+	(text "DONE"
 		(exclude_from_sim no)
 		(at 145.288 91.44 0)
 		(effects
@@ -65,7 +65,7 @@
 		)
 		(uuid "63b63572-a054-4a7c-9476-51488571b9e5")
 	)
-	(text "TODO: FIX"
+	(text "DONE"
 		(exclude_from_sim no)
 		(at 45.974 126.746 0)
 		(effects
@@ -95,9 +95,9 @@
 		)
 		(uuid "9dec3db6-27c1-4c22-b0e3-8fc90ab8da05")
 	)
-	(text "WIP: breadboard -> KiCad. PCB is a footprint dump only.\nPassives: 0805 HandSolder pads. Update PCB from Schematic.\nANT1 U.FL pigtail. No display. ICs stay their real packages."
+	(text "Passives: 0805 HandSolder pads. Update PCB from Schematic.\nANT1 U.FL pigtail. No display. ICs stay their real packages."
 		(exclude_from_sim no)
-		(at 17.78 110.49 0)
+		(at 18.796 110.49 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -106,12 +106,12 @@
 		)
 		(uuid "bf47873e-f752-472d-a402-804634affdb0")
 	)
-	(text "Sets 5V and 3V3 using LDO.\nPowered by a 10,000 mAh 5 V / 2.0 A USB-C bank\n(identical bank type as the TX; each pack has its own).\nUSB-C 16 pin. Supports USB-C updates via UART."
+	(text "Sets 5V and 3V3 using LDO.\nPowered by a 10,000 mAh 5V/2.0A USB-C bank\n(identical bank type as the TX; each pack has its own).\nUSB-C 16 pin. \nSupports USB-C updates via UART."
 		(exclude_from_sim no)
 		(at 39.878 38.862 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 1.016 1.016)
 			)
 		)
 		(uuid "e1b4084b-9d81-4171-befe-072019be5c9d")
