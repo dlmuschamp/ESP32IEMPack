@@ -5527,7 +5527,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "47.5k"
+		(property "Value" "47k"
 			(at 88.9 55.8799 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6538,7 +6538,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "22.1k"
+		(property "Value" "22k"
 			(at 88.9 46.9899 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7069,9 +7069,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-3528-12_Kemet-T_HandSolder"
 			(at 75.8952 123.19 0)
-			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

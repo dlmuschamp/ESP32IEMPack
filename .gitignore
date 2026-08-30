@@ -6,6 +6,8 @@
 *-backups/
 fp-info-cache
 .history/
+~*.lck
+*.kicad_sch_old
 
 # ESP-IDF build output
 /build/

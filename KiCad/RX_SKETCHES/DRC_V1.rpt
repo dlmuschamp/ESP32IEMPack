@@ -1,0 +1,49 @@
+** Drc report for ESP_32_IEM_RIG_RX_VER_1.0.kicad_pcb **
+** Created on 2026-08-30T11:02:18 **
+** Report includes: Errors, Warnings **
+
+** Found 0 DRC violations **
+
+** Found 0 unconnected pads **
+
+** Found 8 Footprint errors **
+[duplicate_footprints]: Duplicate footprints
+    Local override; warning
+    @(135.2500 mm, 42.5000 mm): Footprint REF**
+    @(104.0000 mm, 97.7500 mm): Footprint REF**
+[duplicate_footprints]: Duplicate footprints
+    Local override; warning
+    @(140.7500 mm, 96.2500 mm): Footprint REF**
+    @(104.0000 mm, 97.7500 mm): Footprint REF**
+[duplicate_footprints]: Duplicate footprints
+    Local override; warning
+    @(110.7500 mm, 124.0000 mm): Footprint REF**
+    @(104.0000 mm, 97.7500 mm): Footprint REF**
+[duplicate_footprints]: Duplicate footprints
+    Local override; warning
+    @(137.2875 mm, 47.7500 mm): Footprint C9
+    @(130.0000 mm, 50.0000 mm): Footprint C9
+[extra_footprint]: Extra footprint
+    Local override; warning
+    @(104.0000 mm, 97.7500 mm): Footprint REF**
+[extra_footprint]: Extra footprint
+    Local override; warning
+    @(135.2500 mm, 42.5000 mm): Footprint REF**
+[extra_footprint]: Extra footprint
+    Local override; warning
+    @(140.7500 mm, 96.2500 mm): Footprint REF**
+[extra_footprint]: Extra footprint
+    Local override; warning
+    @(110.7500 mm, 124.0000 mm): Footprint REF**
+
+** Ignored checks **
+    - Footprint has no courtyard defined
+    - Track endpoint not centered on via
+    - Tuning profile track geometries
+    - Footprint doesn't match symbol's footprint filters
+    - Silkscreen clearance
+    - Silkscreen clipped by solder mask
+    - Silkscreen clipped by board edge
+    - Footprint component type doesn't match footprint pads
+
+** End of Report **
