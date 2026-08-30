@@ -1,420 +1,460 @@
-#+TITLE: ESP32 Wireless IEM Pack
-#+AUTHOR: Damian Luciano Muschamp
-#+OPTIONS: toc:3 num:nil
+* ESP32 Wireless IEM Pack
 
-* What this is
+A first-pass wireless in-ear monitor (IEM) system: one ESP32 transmitter pack
+and one ESP32 receiver pack (with support for up to 7 receiver packs). The RX path
+is ~ESP-NOW -> ESP32 -> I2S -> PCM5102 DAC -> volume pot -> MAX97220A headphone amp -> 3.5 mm jack~.
 
-A two-pack wireless in-ear monitor (IEM) prototype:
+This repo is a work in progress. The breadboard version plays audio. The KiCad
+project in =KiCad/RX_SKETCHES/= is that breadboard transferred onto hierarchical
+sheets --- not a finished layout. There is *no display on this version*.
 
-- *TX pack* — ESP32-WROOM + PCM1808 ADC captures line/stereo PCM and
-  streams it over *ESP-NOW v2*.
-- *RX pack* — ESP32-WROOM + PCM5102 DAC plays the stream into a
-  headphone amp / IEMs (~ESP-NOW → ESP32 → I2S → PCM5102 → volume pot
-  → MAX97220A → 3.5 mm jack~).
+** First project
 
-This repo is the firmware (ESP-IDF, C, FreeRTOS) plus KiCad hardware
-work. The breadboard plays audio. The KiCad project in
-=KiCad/RX_SKETCHES/= is that breadboard transferred onto hierarchical
-sheets — not a finished layout. There is *no display on this version*.
+This is my first self-guided embedded systems project,
+and the first time using C, ESP32s, reading datasheets / spec sheets, and
+KiCad. The notes and "common mistakes" section below document what I struggled
+with and how I managed it.
 
-* Honest origin story (why this README exists)
+Capacitor *types* to buy (ceramic vs polarized) by schematic location:
+=docs/capacitor_bom.org=. PCM5102 on the RX is *PLL mode* (=SCK= to GND) with
+I2S data from the ESP --- see that file.
 
-This is Luciano's first serious / self-guided pass at:
+** Firmware
 
-- Embedded C (not Arduino-sketch style as the end goal)
-- ESP32 + *ESP-IDF* (no Arduino, no HAL — firmware calls IDF APIs)
-- *FreeRTOS* tasks, queues, dual-core pinning
-- Reading TI / Espressif *datasheets* and driver docs for real decisions
-- *KiCad* for schematics / board work for the first time
-- Wireless audio (ESP-NOW, PHY rates, power-save footguns)
-- I2S codecs (PCM1808 ADC, PCM5102 DAC)
+All application code is *C*. It runs on *FreeRTOS* under *ESP-IDF*, using the
+related Espressif libraries (ESP-NOW / Wi-Fi, I2S, ADC, LEDC, NVS). There is
+*no Arduino* in this projec and *no hardware abstraction layer* --- the
+firmware calls ESP-IDF APIs directly.
 
-A lot of nights were spent learning vocabulary (BCK, LRCK, MCLK, slots,
-Philips vs MSB, ESP-NOW v1 vs v2) while the hardware was still on a
-breadboard with questionable power. This document is meant to be the
-map you wished you had on day one — including the mistakes.
+- =main/tx.c= :: Transmitter. Done for this version (ESP-NOW, ADC pot,
+  audio packet path).
+- =main/rx.c= :: Receiver entry.  Also mainly done. Use =IEM_NODE=RX= when
+  you flash it.
+- =main/square_wave_test.c= :: Bench I2S tone used to prove the DAC path.
+- =main/rig_shared.h= :: Shared packet and state types for TX and RX.
 
-* What this version is (and is not)
+A packet sniffer / monitor node was an early idea. It is *not* part of this
+version. It could come back later as a future extension (=IEM_NODE=MON= is a
+leftover hook in =main/CMakeLists.txt=). Do not treat =sniffer.c= as shipping
+firmware.
+
+How to flash the firmware onto the TX and RX packs:
+
+#+BEGIN_SRC bash
+IEM_NODE=TX idf.py fullclean flash
+IEM_NODE=RX idf.py fullclean flash
+#+END_SRC
+
+=main/CMakeLists.txt= refuses to build if =IEM_NODE= is missing. That is
+intentional so you do not flash the wrong image.
+
+May need to build ESP's libraries in the project root directory first:
+#+BEGIN_SRC bash
+cd ESP32IEM_Pack
+get_idf
+#+END_SRC
+
+** What this version is (and is not)
+
 
 | Topic    | This version                                      | Not this version                          |
 |----------+---------------------------------------------------+-------------------------------------------|
 | Display  | None                                              | A screen or later UI                      |
-| RX power | USB-C from a 10,000 mAh 5 V bank → LM3940 3.3 V   | TP4056 + 2000 mAh LiPo / 3xAA             |
+| RX power | USB-C from a 10,000 mAh 5 V bank -> LM3940 3.3 V  | TP4056 + 2000 mAh LiPo/3xAA (Deprecated)   |
 | TX power | The same kind of 10,000 mAh 5 V bank as the RX    | A different chemistry or one shared bank  |
 | Radio    | ESP32-WROOM-32U + =ANT1= 2.4 GHz U.FL pigtail     | On-module PCB antenna (32E / 32D)         |
 | Audio    | I2S to a PCM5102, then a headphone amp            | I2C (the DAC is I2S)                      |
-| Firmware | C + FreeRTOS + ESP-IDF                            | Arduino or a HAL                          |
+| Firmware | C + FreeRTOS + ESP-IDF                            | Arduino, a HAL, or a sniffer node         |
 | PCB      | Footprint dump / ratsnest only                    | Routed board ready to order               |
 
-TX and RX each get their *own* identical 10,000 mAh bank. Do not power
-both packs from one bank if you want them to roam independently.
+TX and RX each get their *own* identical 10,000 mAh bank. Do not power both
+packs from one bank if you want them to roam independently.
 
-* Current status (late Aug 2026)
-
-| Item | Status |
-|------+--------|
-| TX capture (PCM1808, 32-bit I2S slots, MCLK×256) | Working |
-| ESP-NOW v2 audio packets (720×int16 ≈ 7.5 ms @ 48 kHz) | Working |
-| RX playback (PCM5102) | Working |
-| Pairing + soft-join when ACK is starved | Working |
-| Steady audio on adequate power (e.g. two USB power banks) | Working |
-| Digital path HF (DAC-only + TX tone over air) | Proven crisp |
-| Real jack→ADC timbre (“soft LPF”) + breadboard buzz | Open (analog / layout) |
-| Clean power / low crackle on breadboard | Open (hardware) |
-| RX hierarchical schematic transferred (desktop sync) | On =main= (=KiCad/RX_SKETCHES/=) |
-| Datasheet net / 0805 HandSolder schematic fixes | Open — review in PR #2 |
-| TFT UI / polished product firmware | Not the focus yet |
-
-Frozen / reference branches:
-
-- ~working_audio_v1~ — first known streaming snapshot
-- ~working_audio_v2~ — best reconnect + steady audio snapshot so far
-- ~main~ — shipping TX/RX + archived isolation tests under ~main/debugging/~
-
-Long-form CER notes: [[file:docs/BENCH_REALIZATIONS.txt][docs/BENCH_REALIZATIONS.txt]].
-Isolation procedure: [[file:docs/SOUND_PROFILE_TESTS.txt][docs/SOUND_PROFILE_TESTS.txt]].
-
-* Findings (2026-08-21 sound-profile night) — CER summary
-
-** Claim: Soft-LPF on *digital* audio is ruled out
-
-- *Evidence:* ~RX_DAC_TEST~ sine_8k / chirp crisp; ~TX_TONE~ over air into
-  shipping RX also crisp; direct laptop→IEMs bright.
-- *Reasoning:* Known-bright PCM survives packing + ESP-NOW + PCM5102.
-  Dullness that appears only with the real PCM1808 / jack path is not
-  “ESP-NOW filtering highs.”
-
-** Claim: Real-music dullness + buzz is analog / breadboard / level
-
-- *Evidence:* Real music much quieter than digital tones; laptop <30% ≈
-  noise; gain×8 louder but more crackle; 1 µF VIN caps marginal; shorter
-  3.5 mm cable did not kill buzz; open GND dropped center (vocals/bass).
-- *Reasoning:* Weak ADC level sits near the noise floor; Dupont / shared
-  ground / breakout limits look like LPF+buzz. PCB layout is the next
-  falsification — not more firmware EQ.
-
-** Claim: TX_TONE steady ticks were mostly a FreeRTOS pace bug
-
-- *Evidence:* ~pdMS_TO_TICKS(8)~ == 0 at ~FREERTOS_HZ=100~; RX queue drops
-  flooded; ~esp_timer~ 7.5 ms pace fixed most ticks (code in
-  ~main/debugging/~).
-- *Reasoning:* Shipping TX paces via blocking I2S reads; tone mode had
-  to invent realtime pacing.
-
-** Claim: Buzz may be a breadboard limitation (plus possible USB ground loop)
-
-- *Evidence:* Persists with shorter cable; can improve when TX is on a
-  power bank vs same-laptop USB+jack; digital path without ADC is clean.
-- *Reasoning:* Ground loops and long analog jumpers are expected on a
-  bench; a short-trace PCB with datasheet coupling/decoupling is the
-  proper A/B.
-
-* Repo map
+** Repo map
 
 #+BEGIN_SRC
 main/                  ESP-IDF C firmware (FreeRTOS)
-  rig_shared.h/.c      Shared packet / state + Wi-Fi / ESP-NOW init
-  tx.c                 Transmitter — done for this version
+  rig_shared.h         Shared packet / state types (TX and RX)
+  tx.c                 Transmitter --- done for this version
   rx.c                 Receiver entry
-  debugging/           Isolation tests, archives, optional RX_DBG (not shipping)
+  square_wave_test.c   Bench I2S tone for the DAC path
 KiCad/RX_SKETCHES/     RX hierarchical schematic (WIP)
 KiCad/TX_SKETCHES/     TX placeholder
 KiCad/Custom_Part_Downloads/  SnapEDA symbols / footprints
-docs/                  Bench CER notes + isolation procedure
-firmware_out/          Stamped binaries (gitignored)
 #+END_SRC
 
-* Hardware (bring-up + RX KiCad)
+** Hardware (RX 1.0.0 KiCad)
 
-** Roles
+Hierarchical sheets, in signal order:
 
-| Pack | MCU | Audio IC | Role |
-|------+-----+----------+------|
-| TX | ESP32-WROOM-32U (ext antenna) | PCM1808 | I2S master RX ← ADC |
-| RX | ESP32-WROOM-32U + U.FL | PCM5102 | I2S master TX → DAC |
+1. =pwr_mgmt= --- USB-C (CC pulldowns), CP2102C UART bridge, LM3940 5 V -> 3.3 V
+2. =esp_rx= --- ESP32-WROOM-32U + =ANT1= (U.FL pigtail / 2.4 GHz antenna)
+3. =dac= --- PCM5102
+4. =vol_ctrl= --- dual-gang log pot + 0% switch
+5. =amp= --- MAX97220A to the 3.5 mm jack
 
-** RX hierarchical sheets (signal order)
+*** Firmware I2S map (do not change these GPIOs)
 
-1. =pwr_mgmt= — USB-C (CC pulldowns), CP2102C UART bridge, LM3940 5 V → 3.3 V
-2. =esp_rx= — ESP32-WROOM-32U + =ANT1= (U.FL pigtail / 2.4 GHz antenna)
-3. =dac= — PCM5102
-4. =vol_ctrl= — dual-gang log pot + 0% switch
-5. =amp= — MAX97220A to the 3.5 mm jack
+RX contract is =main/rx.c= on branch =main= (=DOUT_PIN 25=). TX uses
+=DIN_PIN 35= on the *transmitter* board only.
 
-** Firmware I2S map (do not "improve" these GPIOs)
+| Hierarchical label | ESP32 GPIO | Firmware name                                      |
+|--------------------+------------+----------------------------------------------------|
+| =BCK=              | IO33       | =BCK_PIN=                                          |
+| =LRCLK=            | IO32       | =LRCK_PIN=                                         |
+| =DOUT=             | IO25       | =DOUT_PIN= (ESP *out* -> PCM5102 pin *DIN*)        |
 
-These match the working breadboard and =main/debugging/square_wave_test.c=:
+Hardware change log (what / why / evidence): =docs/hardware_revisions.org=.
 
-| Hierarchical label | ESP32 GPIO | Firmware name |
-|--------------------+------------+---------------|
-| =BCK=              | IO33       | =BCK_PIN= |
-| =LRCLK=            | IO32       | =LRCK_PIN= |
-| =DIN=              | IO25       | =DOUT_PIN= (ESP data *out* to the DAC data *in*) |
+UART programming: =TXD= = TXD0/IO1, =RXD= = RXD0/IO3. Auto-program straps:
+=ESP_EN= = EN, =ESP_IO0= = IO0.
 
-UART programming: =TXD= = TXD0/IO1, =RXD= = RXD0/IO3. Auto-program
-straps: =ESP_EN= = EN, =ESP_IO0= = IO0.
+*** Antenna (=ANT1= on =esp_rx=)
 
-** Antenna (=ANT1= on =esp_rx=)
+The *32U* module has a U.FL connector and *no PCB antenna*. =ANT1= is a BOM /
+documentation part: a *2.4 GHz, 50 ohm antenna on a U.FL / IPEX pigtail* that
+mates to the connector already on the module. It is not wired to a GPIO. It has
+no PCB footprint --- you buy the pigtail, you do not etch an antenna.
 
-The *32U* module has a U.FL connector and *no PCB antenna*. =ANT1= is a
-BOM / documentation part: a *2.4 GHz, 50 Ω antenna on a U.FL / IPEX
-pigtail* that mates to the connector already on the module. It is not
-wired to a GPIO. It has no PCB footprint — you buy the pigtail, you do
-not etch an antenna.
+*** Analog (PCM5102 datasheet vs experiments)
 
-If you want an on-board antenna later, that is a different module
-(WROOM-32E / 32D), not a missing copper pour on the 32U.
+The PCM5102 datasheet analog network for a ~10 kOhm load is already on the DAC
+sheet (=R16=/=R17= 470 ohm, =C20=/=C21= 2.2 nF):
 
-** I2S notes that matter
+=OUTL/OUTR -> 470 ohm series -> =DAC_OUT=, with *2.2 nF from that node to GND*.
 
-- PCM1808 in slave mode wants *64 BCK/frame* → configure *32-bit stereo*
-  Philips slots. 16-bit slots (32 BCK/frame) → silent ADC.
-- MCLK ×256 is a valid PCM1808 ratio and matched our working builds.
-  A casual jump to 24-bit data + MCLK×384 broke a known-good path —
-  only revisit with a rollback bin ready.
-- PCM5102: FMT low = I2S; DEMP low/NC = de-emphasis off.
-- PCM1808 VIN: AC-couple with ~1 µF (TI app circuit; internal ~60 kΩ
-  sets ~2.7 Hz HPF). Do *not* add an external 60 kΩ for that formula.
+That ~10 kOhm load is mainly the *dual-gang pot* (10 kOhm), which sits right after
+=DAC_OUT=. Keep the pot; leave the 470 ohm + 2.2 nF alone unless you change that
+load a lot.
 
-** Power (the lesson that unlocked pairing)
+MAX97220*A* (and B/E) has *no* fixed Zin --- input resistance is your external
+=RIN= (=AV = -RF/RIN=; RF typically 4.7 kOhm--100 kOhm). =RIN= is now *47 kOhm*
+and =RF= is *4.7 kOhm*, and all eight parts are *populated* (no longer DNP).
+Changing =RF= does *not* require retuning the DAC RC. See
+[[*Volume, gain, and audible-band response][Volume, gain, and audible-band response]]
+for why those values, and for the loudness math.
+MAX97220*C*/*D* are *fixed +6 dB* (internal Rs); wrong if you want resistor-set
+max loudness.
 
-Marginal power on the TX pack looks exactly like "RF is broken":
+The experimental 1 kOhm / 10 ohm pad on =vol_ctrl= is *DNP*, with a short across
+the 1 kOhm positions so an empty series part does not open the audio path. You
+do *not* need that pad for level safety --- filtered =DAC_OUT= can feed the pot
+directly (see =docs/hardware_revisions.org=).
 
-- TX on weak battery → often never receives pairing ads.
-- TX on laptop USB → pairs; opening ~idf.py monitor~ / pyserial can
-  still *reboot* the board via CP2102 DTR/RTS → audio drops.
-- Two decent USB power banks on *both* packs → instant pair, louder
-  audio (more supply noise / crackle without caps).
+*** Volume, gain, and audible-band response
 
-For listening tests, prefer dedicated supplies. Use USB for flash and
-short log peeks. Add bulk electrolytics + 0.1 µF at codec rails before
-chasing "digital crackle."
+All numbers here are reproduced on the schematic itself: the gain budget is on
+the =amp= sheet, the filter audit is on the =dac= sheet.
 
-** Pack architecture (mechanical first)
+**** Gain budget
 
-Plastic shell ~Altoids *size* (not metal tin). Antenna and volume pot on
-*opposite corners of the top face*; USB-C / coiled battery power enter
-at the *bottom* (battery off-pack); 3.5 mm IEM jack on a *side face*.
-Keep pot traces away from the antenna keepout. No DIY impedance matching
-— the module already brings 50 Ω to U.FL.
+Two resistor groups set the gain, and each group must stay internally matched or
+the pseudo-differential balance (CMRR) is lost:
 
-** RX DAC / line toward pot (PCM5102)
+| Group  | Parts             | Value  | Role             |
+|--------+-------------------+--------+------------------|
+| =RF=   | R1, R3, R9, R10   | 4.7 k  | gain numerator   |
+| =RIN=  | R2, R4, R5, R6    | 47 k   | gain denominator |
 
-- Follow the TI PCM5102 datasheet *OUTL / OUTR* example aimed at a
-  *LINE IN* into a *~10 kΩ* load — *page 27* (series R + shunt C on both
-  channels). That is =R16=/=R17= 470 Ω + =C20=/=C21= 2.2 nF toward
-  =PRE_POT=.
-- Feed PRE_POT into a *10 kΩ log dual-gang* pot; wipers =POST_POT= drive
-  the headphone amp.
-- The experimental 1 kΩ / 10 Ω pad on =vol_ctrl= is *DNP*, with a short
-  across the 1 kΩ positions so an empty series part does not open the
-  audio path.
+R1/R10 are the feedback resistors, R3/R9 are the matching shunts on the =IN+=
+legs. R4/R2 are the input series resistors, R5/R6 their matching partners.
 
-** Amp gain resistors (leave for later)
+| Stage                              | Expression       |     dB |
+|------------------------------------+------------------+--------|
+| =R16=/=R17= + =VR1= divider        | 10k / (470 + 10k) |  -0.40 |
+| Amp gain =RF/RIN=                  | 4.7k / 47k        | -20.00 |
+| *Total*                            |                   | *-20.40* (x0.0955) |
 
-MAX97220A voltage gain is *fixed +3.5 dB* on the A variant. Input
-network resistors (GROUP A / GROUP B on the paper desk schematic) stay
-*DNP* on hand-built protos so you can try values. Populate them (start
-10 kΩ) only if you order a fully assembled board. Use a MAX97220*D* if
-you want resistor-programmed gain.
+The PCM5102A puts out *2.1 Vrms* at full scale, so with =VR1= wide open:
 
-** TX ADC (PCM1808)
+: Vout = 2.1 x 0.0955 = 0.201 Vrms at J1
 
-- Series *~1 µF* into VINL / VINR; AGND–DGND under the package; VREF /
-  VCC / VDD local 0.1 µF (+ bulk where the datasheet shows).
-- Match breakout reality: many modules already have rail caps; VIN
-  coupling is what was often missing on the breadboard.
+**** Why 47 k and not the datasheet's 10 k
 
-** Hand assembly / passives
+The 10 kOhm in the typical application circuit is a generic reference, not a
+design for a 2.1 Vrms source driving sensitive IEMs. Raising =RIN= fixes three
+things at once, and raising the pot value instead would only fix the second:
 
-- Default resistors and most ceramic caps to *0805 HandSolder*
-  footprints (longer pads) for a first hand-built proto.
-- *0603* is doable with practice; *0402* / *0201* are a pain — avoid for
-  hand assembly.
-- ICs, USB-C, 3.5 mm jack, pot, SOT-23, and the WROOM module *cannot*
-  become 0805 — those packages are the part. TQFN / WQFN still need hot
-  air / hot plate or a board house.
-- Renaming footprint *fields* in the schematic does not resize copper.
-  After footprint or net changes: *Update PCB from Schematic*.
+1. *Gain.* Unity gain hands the DAC's full 2.1 Vrms straight to the IEM.
+2. *Pot taper.* A 10 kOhm =RIN= loads a 10 kOhm pot 1:1, which squashes the taper
+   and makes the top of the range behave badly. 47 k gives a 4.7x ratio.
+3. *Bass rolloff.* The coupling caps work against =RIN=, not against the pot. At
+   10 k the corner sat at *33.9 Hz*, costing *-5.87 dB at 20 Hz*. At 47 k with
+   the 1 uF caps it is 3.4 Hz.
 
-** Datasheet audit (known issues; fixes live on PR #2)
+Do *not* also fit a larger pot. 47 k =RIN= with a 50 k pot puts the loading ratio
+back at ~1:1 and undoes point 2.
 
-Checked against PCM5102 / PCM5102A, MAX97220A, LM3940, CP2102C, and
-ESP32-WROOM-32U notes. These are the mistakes found on the transferred
-schematic. The schematic fixes are on branch
-=cursor/rx-schematic-wip-fixes-738e= (PR #2) — review before merging.
+**** Loudness math
 
-| Issue | Spec | Intended fix |
-|-------+------+--------------|
-| DAC 470R+2.2nF on =LDOO= / not on =OUTL=/=OUTR= | Filter on pins 6/7; =LDOO= needs 0.1 µF to GND | Rewire filter to outs; add =C28= on =LDOO= |
-| Flying cap off =CAPP=/=CAPM= pin ends | 2.2 µF between pins 2 and 4 | Wire to actual pin ends |
-| Headphone jack on =PVSS=/=SVSS= | Those are charge-pump / BIAS rails | Tip==OUTL=, Ring==OUTR=, Sleeve=GND; =C29= on =PVSS= |
-| CP2102C =VIO= left off =VDD= | =VIO= = I/O rail @ 3.3 V | Tie =VIO= to =VDD=; pull =~{RST}= up |
-| LM3940 missing 0.47 µF Cin | Datasheet Cin + 33 µF low-ESR Cout | Add Cin; prefer tantalum on Cout if ceramic ESR is too low |
-| ESP =IO0= with no pull-up | Strap high for normal boot | 10 k to +3V3 |
+: Peak SPL = IEM sensitivity (dB/Vrms) + 20 x log10(Vout)
+
+Manufacturers quote sensitivity two different ways. If yours is in *dB/mW* you
+must convert to *dB/Vrms* first, using the headphone impedance Z in ohms:
+
+: dB/Vrms = dB/mW + 10 x log10(1000 / Z)
+
+That falls out of =P = V^2/Z=. One volt into Z ohms delivers =1000/Z= milliwatts,
+and converting a power ratio to dB is =10 x log10=. At Z = 1000 ohms the two
+figures are identical; below that dB/Vrms is the larger number.
+
+| IEM               | Spec               |     Z | dB/Vrms | Peak SPL at max volume |
+|-------------------+--------------------+-------+---------+------------------------|
+| KZ ZS10 Pro X     | 112 dB (as dB/mW)  | 29 R  |   127.4 | 113.4 dB               |
+| KZ, +3 dB tol.    | 115 dB/mW          | 29 R  |   130.4 | 116.4 dB               |
+| Moondrop Aria     | 122 dB/Vrms        | 32 R  |   122.0 | 108.0 dB               |
+
+*Caveat worth checking yourself:* KZ publishes "112±3dB" without stating the
+reference. Treating it as dB/mW is the conservative reading (it makes the IEM
+127 dB/Vrms, i.e. louder). If it is actually already dB/Vrms, max volume is a
+much tamer 98 dB. Moondrop's figure is unambiguous --- they state dB/Vrms.
+
+**** Sources
+
+- Conversion formula, =dB(V) = dB(mW) - 10 x log10(Z/1000)=:
+  [[https://en.wikipedia.org/wiki/Headphones#Sensitivity][Wikipedia, Headphones -- Sensitivity]]
+- Same formula with a worked example and a calculator:
+  [[https://audiocalcs.uk/headphones-and-iem/headphone-sensitivity-calculator/][AudioCalcs, Headphone Sensitivity Calculator]] and
+  [[https://www.omnicalculator.com/everyday-life/headphone-power][Omni Calculator, Headphone Power]]
+- Full algebraic derivation from =P = V^2/R=:
+  [[https://www.head-fi.org/threads/db-per-milliwhat-efficiency-vs-sensitivity-vs-how-loud-do-they-really-go.168037/][Head-Fi, "dB per milliWHAT?"]]
+- Moondrop Aria, 122 dB/Vrms @ 1 kHz, 32 R ±15%:
+  [[https://moondroplab.com/en/products/aria][MOONDROP official product page]]
+- KZ ZS10 Pro X, 29 R, 112±3 dB:
+  [[https://www.linsoul.com/products/kz-zs10-pro-x][Linsoul product page]]
+- PCM5102A full-scale output (2.1 Vrms) and mode-pin behaviour: TI PCM510xA
+  datasheet. MAX97220 gain =AV = -RF/RIN=: Analog Devices/Maxim MAX9722x datasheet.
+
+Manufacturer sensitivity specs are frequently optimistic. If you want to be
+rigorous, use third-party measurements for the IEM you actually care about and
+re-run the formula above.
+
+**** Filter audit
+
+Only *two* reactive components sit in the audio path. Everything else in the
+chain is resistive, and because the MAX97220 uses a ground-referenced
+DirectDrive output, =J1= needs no output coupling cap and has none --- so there
+is no output pole at all.
+
+| # | Network                                | Type            | Corner   | Error in band     |
+|---+----------------------------------------+-----------------+----------+-------------------|
+| 1 | =R16=/=R17= 470 R with =C20=/=C21= 2.2 nF | reconstruction  | 161 kHz  | -0.07 dB @ 20 kHz |
+| 2 | =C1=/=C4= 1 uF into =RIN= 47 k         | input coupling  | 3.4 Hz   | -0.12 dB @ 20 Hz  |
+
+Network 1 is loaded by =VR1=, so the resistance setting that corner is 470 R in
+parallel with the 10 kOhm pot, which is 449 R:
+=fc = 1 / (2 x pi x 449 x 2.2n) = 161 kHz=.
+
+Network 2 sees =RIN= directly, because the inverting input is a virtual ground:
+=fc = 1 / (2 x pi x 47k x 1u) = 3.4 Hz=.
+
+=C2=/=C3= form the matching leg on the =IN+= inputs. They carry no signal, so
+they set noise and CMRR rather than frequency response. They are *1 uF as well*:
+the two halves of each pseudo-differential pair have to track at low frequencies
+or CMRR degrades down there, so all four caps must be changed together.
+
+Resulting deviation across the audible band:
+
+| Frequency | Deviation |
+|-----------+-----------|
+| 20 Hz     | -0.12 dB  |
+| 30 Hz     | -0.06 dB  |
+| 50 Hz     | -0.02 dB  |
+| 100 Hz    |  0.00 dB  |
+| 1 kHz     |  0.00 dB  |
+| 10 kHz    | -0.02 dB  |
+| 20 kHz    | -0.07 dB  |
+
+For comparison, the old 10 k =RIN= gave -5.87 dB at 20 Hz and -3.56 dB at 30 Hz,
+and 47 k with the original 0.47 uF caps gave -0.53 dB at 20 Hz.
+
+**** Why 1 uF and not 0.47 uF
+
+Flatness is the smaller half of the reason. The bigger one is distortion: Class
+II ceramics (X7R and friends) are nonlinear, and the distortion they contribute
+scales with the signal voltage developed *across* the cap. A coupling cap only
+develops appreciable voltage near its corner, so the low end is exactly where a
+ceramic misbehaves.
+
+| C_in    | Xc @ 20 Hz | Signal across cap @ 20 Hz | @ 50 Hz | Corner  |
+|---------+------------+---------------------------+---------+---------|
+| 0.47 uF | 16.9 kOhm  | 33.9%                     | 14.3%   | 7.20 Hz |
+| 1 uF    | 8.0 kOhm   | 16.7%                     | 6.8%    | 3.39 Hz |
+| 2.2 uF  | 3.6 kOhm   | 7.7%                      | 3.1%    | 1.54 Hz |
+
+At 0.47 uF a third of the 20 Hz signal sat across the dielectric. 1 uF halves
+that. 2.2 uF would halve it again, but a 1.54 Hz corner passes more subsonic
+rumble and DC drift into the amp for +0.09 dB of flatness, so 1 uF is the stop
+point --- conventional practice puts a coupling corner around 3--5 Hz.
+
+All four are the same =C_0805_2012Metric_Pad1.18x1.45mm_HandSolder= footprint as
+before, so this is a value-only change with no layout impact. Specify *X7R or
+better* and avoid Y5V/Z5U, whose capacitance collapses with temperature and bias
+and would move the corner around unpredictably.
+
+**** Changing the gain later
+
+Raise =RF= (R1, R3, R9, R10) together and leave =RIN= alone:
+
+| =RF=  | Gain      | Vout      | KZ ZS10 Pro X | Moondrop Aria |
+|-------+-----------+-----------+---------------+---------------|
+| 4.7 k | -20.4 dB  | 0.201 Vrms | 113.4 dB     | 108.0 dB      |
+| 10 k  | -13.8 dB  | 0.427 Vrms | 120.0 dB     | 114.6 dB      |
+
+Do not go past 10 k. Risk of hearing damage climbs steeply above ~120 dB SPL.
+Since all eight resistors share one 0805 hand-solder footprint, gain is chosen at
+build time --- there is no need for spare DNP trim positions on the board.
+
+*** Hand assembly
+
+Every schematic resistor and capacitor now uses the KiCad *0805 hand-solder*
+footprint (longer pads):
+
+- =Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder=
+- =Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder=
+
+Buy 0805 parts. ICs, the USB-C jack, the 3.5 mm jack, the pot, SOT-23
+transistors, and the WROOM module *cannot* become 0805 --- those packages are
+the part. TQFN / WQFN still need a hot plate, hot air, or a board house.
+
+The =.kicad_pcb= footprint *names* were renamed, but the copper pads are still
+the old 0201 geometry until you *Update PCB from Schematic* in KiCad.
+
+*** Datasheet audit (what was wrong, what we changed)
+
+Checked against the PCM5102 / PCM5102A, MAX97220A, LM3940, CP2102C, and
+ESP32-WROOM-32U hardware notes.
+
+| Issue | Spec | Fix on this branch |
+|-------+------+--------------------|
+| DAC 470R+2.2nF on =LDOO= / not on =OUTL=/=OUTR= | Filter belongs on pins 6/7. =LDOO= pin 18 needs 0.1 uF to GND | Rewired =R16=/=R17= to =OUTL=/=OUTR=. Added =C28= 0.1 uF on =LDOO= |
+| Flying cap 2.54 mm off =CAPP=/=CAPM= pin ends | 2.2 uF between pins 2 and 4 | Extra wires to the actual pin ends |
+| Headphone jack on =PVSS=/=SVSS= | Those are the -V charge-pump / BIAS rails. Audio is =OUTL=/=OUTR=. Sleeve is GND | Tip==OUTL=, Ring==OUTR=, Sleeve=GND. =C29= 1 uF =PVSS= to GND. =SVSS= tied to =PVSS= |
+| CP2102C =VIO= left off =VDD= | =VIO= = I/O rail, same 3.3 V as the ESP | Wire =VIO= to =VDD=. =R29= 1 k pulls =~{RST}= to =VIO= |
+| LM3940 missing 0.47 uF Cin | Datasheet: 0.47 uF on IN, 33 uF low-ESR on OUT | Added =C31= 0.47 uF. Keep =C23= 33 uF; if it is ceramic, ESR can be *too low* --- prefer tantalum or add ~0.5 ohm |
+| ESP =IO0= with no pull-up | Strap should sit high for normal boot | =R30= 10 k to +3V3 |
+| =D1= VBUS clamp on the *switched* +5V rail | An ESD clamp has to sit on the pin that is actually exposed to a finger | Moved =D1= pin 2 to the connector-side rail, now named =VBUS_RAW= (=J6= VBUS + =SW4= input) |
+
+**** Why =D1= moved to the unswitched side
+
+=D1= is an =SP0503BAHT=, a four-line TVS array: one common anode on GND and three
+independent cathodes. Two of those cathodes clamp =D+= and =D-= and did not move.
+The third was clamping =+5V=, which is the rail *after* =SW4=.
+
+The point of a TVS is to shunt a static discharge to ground before it reaches
+anything fragile. The place a discharge actually enters this board is the USB-C
+connector, because that is the only conductor a person can touch. With the clamp
+behind the power switch, flipping =SW4= to OFF disconnects the clamp from the
+connector and leaves =J6='s VBUS pin unprotected --- so the board is *least*
+protected in the state where it is most likely to be handled, unplugged, and
+tossed in a bag. Moving the clamp to =VBUS_RAW= puts it on the exposed pin
+permanently.
+
+This does *not* compromise the off state you asked for. A TVS is an open circuit
+below its standoff voltage; it conducts only during a transient. =SW4= still
+breaks the rail feeding =U4=, =U5=, and everything downstream, so OFF is still
+genuinely dead --- the only thing now sitting on the connector side is a diode
+that draws leakage in the nanoamp range.
 
 Still true / do not "fix" into something else:
 
-- I2S GPIOs stay IO33 / IO32 / IO25.
+- I2S GPIOs stay IO33 / IO32 / IO25 (breadboard + =square_wave_test.c=).
 - USB-C =Rd= 5.1 k on CC1/CC2 is correct for a UFP / power-bank sink.
-- Amp input 10 k resistors stay DNP on a hand-built proto.
-- LM3940 in SOT-223 will get hot at 5 V → 3.3 V under load — copper /
-  thermal vias at layout time.
+- CP2102C =R25= 22.1 k / =R26= 47.5 k is the *VBUS* divider, not a =VIO= divider.
+- Amp gain resistors are *populated*, not DNP. An unpopulated =RF= leaves the
+  MAX97220 with no feedback path, so it runs open loop and slams to the rails ---
+  that is louder and less safe than a wrong gain, not quieter.
+- LM3940 in SOT-223 will get hot at 5 V -> 3.3 V under ESP TX + amp load --- copper pour / thermal vias at layout time.
 
-* Common KiCad / first-board mistakes
+** Current status
 
-Check this list every time you move a part or add a hierarchical label.
+- [X] Breadboard RX path plays (ESP32 I2S -> PCM5102 -> amp -> IEMs)
+- [X] =tx.c= transmitter firmware for this version
+- [X] Repo + KiCad folder split (=RX_SKETCHES= / =TX_SKETCHES=)
+- [X] RX hierarchical schematic transferred from the breadboard (WIP)
+- [X] Hierarchical labels rewired; =ANT1= added on =esp_rx=
+- [X] Datasheet net fixes (DAC outs, amp jack, CP2102 =VIO=, LM3940 Cin)
+- [X] Finish the RX firmware path that consumes packets into I2S
+- [ ] Passives set to 0805 HandSolder footprints
+- [ ] Buy / fit the U.FL pigtail; confirm ESP-NOW range
+- [ ] Run ERC, then floorplan and route the RX PCB
+- [ ] TX schematic (same 10,000 mAh USB-C bank idea)
 
-** 1. Rotating a symbol does not remap pin numbers
+No display work on this revision. No sniffer / monitor node on this revision.
 
-Pin 3 is still =EN= after a 270° rotate. KiCad only rotates the
-*drawing* and the *sheet coordinates* of the pins around the symbol
-origin. Hierarchical labels and wires that stay put will attach to
-whichever pin rotated *into that spot*.
+** My first-board mistakes
 
-A schematic "group" (or selecting everything and moving together) only
-keeps relative geometry. It does *not* permanently glue a label to a
-pin name. After any rotate: click each pin, read the name in the status
-bar, then put the label on *that* pin. Do not assume "left side is
-still EN."
+ The list below is the stuff that I already made mistakes on. Listed so I can check it every time
+ I move a part or add a hierarchical label.
 
-** 2. Hierarchical labels connect through wires, not vibes
+*** 1. Rotating a symbol does not remap pin numbers
+
+Pin 3 is still =EN= after a 270 degree rotate. KiCad only rotates the *drawing*
+and the *sheet coordinates* of the pins around the symbol origin. Hierarchical
+labels and wires that stay put will attach to whichever pin rotated into that
+spot.
+
+After any rotate: click each pin, read the name, then move the label onto
+*that* pin. Do not assume "left side is still EN."
+
+*** 2. Hierarchical labels connect through wires, not vibes
 
 A label sitting near a pin is not connected. ERC and the ratsnest follow
-*wires and pin ends*. After a rotate, a label can look "on" the chip and
-still sit on empty space or on the wrong pin (=ESP_IO0= on =EN=, =BCK=
-on =DEMP=, =SHDN_SIGNAL= on =C1N=).
+*wires and pin ends*. After a rotate, a label can look "on" the chip and still
+sit on empty space or on the wrong pin (=ESP_IO0= on =EN=, =BCK= on =DEMP=,
+=SHDN_SIGNAL= on =C1N=).
 
-** 3. Same-ish names are different pins
+Triple-check every hierarchical label against the *pin name*, not the side of
+the box.
 
-| You meant                      | Easy to hit instead     | What happens |
-|--------------------------------+-------------------------+--------------|
-| PCM5102 =BCK=/=DIN=/=LRCK=     | =DEMP=/=XSMT=/=FMT=     | DAC never gets PCM |
-| PCM5102 =OUTL=/=OUTR=          | =LDOO=/=VNEG=           | Filter on the 1.8 V LDO pin |
-| MAX97220 =~{SHDN}=             | =C1N= (charge-pump)     | Mute broken; VSS breaks |
-| MAX97220 =OUTL=/=OUTR=         | =PVSS=/=SVSS= (BIAS)    | Jack on charge-pump rail |
-| ESP =TXD0=/=RXD0=              | =SENSOR_VN= / empty     | USB-C UART programming dies |
-| I2S                            | I2C                     | Wrong bus entirely |
+*** 3. Same-ish names are different pins
 
-** 4. Firmware GPIO numbers are the contract
+| You meant                         | Easy to hit instead      | What happens                              |
+|-----------------------------------+--------------------------+-------------------------------------------|
+| PCM5102 =BCK= / =DIN= / =LRCK=    | =DEMP= / =XSMT= / =FMT=  | DAC never gets PCM; clocks toggle config  |
+| PCM5102 =OUTL= / =OUTR=           | =LDOO= / =VNEG=          | Analog filter on the 1.8 V LDO pin        |
+| MAX97220 =~{SHDN}=                | =C1N= (charge-pump cap)  | Volume switch does not mute; VSS breaks   |
+| MAX97220 =OUTL= / =OUTR=          | =PVSS= / =SVSS= (BIAS)   | Jack sits on the charge-pump rail         |
+| ESP =TXD0= / =RXD0=               | =SENSOR_VN= / empty      | USB-C UART programming dies               |
+| I2S                               | I2C                      | Wrong bus, wrong pins, wrong mental model |
 
-=#define BCK_PIN 33= is IO33 on the module, period. Do not "clean up"
-the schematic onto other GPIOs unless you change the C defines too.
+Read the pin *name* in the status bar before you drop the label.
 
-** 5. The footprint field is a part you have to buy and solder
+*** 4. Firmware GPIO numbers are the contract
 
-If the field says =R_0201_…=, you will get 0201s. For hand-built protos
-use =*_HandSolder= 0805, then *Update PCB from Schematic*.
+=#define BCK_PIN 33= is IO33 on the module, period. Do not "clean up" the
+schematic onto IO18/19/23 unless you change the C defines too. Label =DIN= on
+the DAC is the ESP's *DOUT*.
 
-** 6. DNP does not delete the net
+*** 5. The footprint field is a part you have to buy and solder
 
-KiCad "Do not populate" still leaves the wires. DNP a *series* resistor
-→ path goes open unless you add a solder bridge. DNP a *shunt* → empty
-pads are fine.
+If the field says =R_0201_0603Metric=, you will get 0201s. Bulk 10 uF parts
+basically do not exist in 0201, and you will not hand-assemble them. For a
+hand-built proto use the =*_HandSolder= 0805 footprint (longer iron pads), then
+*Update PCB from Schematic* so the copper matches.
 
-** 7. 32U vs 32E, A vs D, datasheet vs doodle
+*** 6. DNP does not delete the net
 
-- *32U* = U.FL only. *32E/32D* = PCB antenna.
-- *MAX97220A* is not *MAX97220D* (gain mode).
-- Prefer the datasheet app circuit over a bench pad unless you measured why.
+KiCad "Do not populate" still leaves the schematic wires. If you DNP a *series*
+resistor, the path goes open unless you add a solder-bridge / short. If you DNP
+a *shunt*, leaving the pads empty is correct (no short to GND).
 
-** 8. The =.kicad_pcb= is not a board until it has Edge.Cuts and tracks
+*** 7. 32U vs 32E, A vs D, datasheet vs doodle
 
-A pile of footprints with a ratsnest is a placeholder. Do not send it to
-a fab.
+- *32U* = U.FL only. *32E/32D* = PCB antenna. Pick one and BOM the matching RF
+  parts.
+- *MAX97220A/B/E* = external gain (=RF/RIN=). *C/D* = fixed +6 dB. Letter matters.
+- Prefer the datasheet application circuit (470 ohm + 2.2 nF here) over a pad
+  you tried on the bench, unless you measured why the pad is better.
 
-** 9. Power and analog will buzz on a breadboard
+*** 9. Power and analog will buzz on a breadboard
 
-Long jumpers + no ground plane + ESP32 radio next to a DAC is a
-buzz/hiss machine. That does not automatically mean the circuit is wrong.
+Long jumpers, no ground plane, and an ESP32 radio next to a DAC is a buzz/hiss
+machine. That does not automatically mean the circuit is wrong. A PCB with
+short I2S, local decoupling, and a solid GND will almost certainly be quieter.
+It is not guaranteed to be silent on the first spin.
 
-** 10. Keep the project notes honest
 
-If the schematic is USB-C + LDO and no display, =README.org= must not
-still say LiPo + TFT, Arduino, or a HAL that is not in the tree.
-
-* Firmware overview
-
-** Build / flash (ESP-IDF)
-
-~IEM_NODE~ is *configure-time*. Wrong node + stale build = wrong image
-on the wrong pack. =main/CMakeLists.txt= refuses to build if =IEM_NODE=
-is missing — intentional.
-
-#+begin_src bash
-source ~/esp/esp-idf/export.sh   # or your IDF install
-
-# Shipping transmitter / receiver
-IEM_NODE=TX idf.py reconfigure build
-IEM_NODE=TX idf.py -p /dev/ttyUSB0 flash
-
-IEM_NODE=RX idf.py reconfigure build
-IEM_NODE=RX idf.py -p /dev/ttyUSB0 flash
-
-# Archived isolation builds (main/debugging/)
-IEM_NODE=RX_DAC_TEST idf.py reconfigure build flash
-IEM_NODE=TX_TONE idf.py reconfigure build flash
-IEM_NODE=TX_BUZZ_DEBUG idf.py reconfigure build flash
-#+end_src
-
-Stamped binaries (gitignored): ~firmware_out/~.
-
-** Main sources
-
-| File | Purpose |
-|------+---------|
-| ~main/tx.c~ | Shipping TX FSM: idle → pair → capture/stream |
-| ~main/rx.c~ | Shipping RX FSM: pair → playback; soft-join / repair ads |
-| ~main/rig_shared.h~ / ~.c~ | Packet layouts, Wi‑Fi / ESP-NOW init, PS_NONE |
-| ~main/debugging/~ | Isolation builds, archives, optional RX_DBG (not shipping) |
-
-** Protocol sketch
-
-1. RX advertises a short ~IEM_RX_…~ alias (broadcast, and unicast to last
-   TX when known).
-2. TX queues the request, ~esp_now_add_peer~, ACKs ~PAIR_SUCCESS~, then
-   streams ~audio_packet_t~.
-3. If ACKs are starved by audio, RX *soft-joins* on a correctly sized
-   audio packet (app-layer proof of delivery).
-4. TX may clear a dead peer on MAC send-fail / timeout so it can idle
-   and accept a new advert.
-5. Prefer not starting DAC playback on a lone 1-byte ~0x01~ ACK (any
-   nearby ESP can spoof that and leave RX mute-and-not-advertising).
-
-** FreeRTOS / dual core (what you bump into first)
-
-- Wi‑Fi / ESP-NOW callbacks run in the Wi‑Fi task — keep them short
-  (queue work; do not ~esp_now_add_peer~ / heavy I2S in the callback).
-- Audio capture (TX) and playback (RX) are pinned to core 1 with a
-  dedicated stack size (~AUDIO_TASK_STACK~).
-- Pointer pools + FreeRTOS queues bound latency (drop-oldest under
-  load) instead of unbounded buffering.
-
-* Learning path (recommended order)
-
-1. Blink / UART logging on ESP-IDF (prove the toolchain).
-2. Square wave → PCM5102 (prove DAC + I2S pins).
-3. PCM1808 capture → log peaks (prove ADC clocks / bit packing).
-4. Tiny ESP-NOW ping, then grow to v2 payload size.
-5. *Fix power* so both packs can transmit Wi‑Fi without brownout.
-6. Pairing FSM + reconnect.
-7. Digital tone isolation (DAC-only, then TX tone over air).
-8. Only then: PCB layout / amp / timbre on a real board.
-
-Reading datasheets is not optional on this project — the PCM1808 BCK
-rule alone is a multi-hour footgun if you skip §serial audio interface.
-
-* Known open issues
-
-- Real jack→ADC dull / LPF-like timbre (analog / breadboard; digital
-  path proven OK).
-- Breadboard crackle / supply noise (caps, grounds, short I2S).
-- Reconnect still imperfect under bad power or USB serial reboots.
-- Product UI / display path deferred.
-- KiCad PCB outlines still stubby — schematic fixes in PR #2, then
-  ERC / floorplan / route.
-- TX schematic still a placeholder.
-
-* Author
+** Author
 
 Damian Luciano Muschamp

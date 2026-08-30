@@ -1,0 +1,105 @@
+#+TITLE: RX capacitor buy list (type by location)
+#+AUTHOR: Damian Luciano Muschamp
+#+OPTIONS: toc:2 num:nil
+
+* Purpose
+
+What *type* of capacitor to buy for each RX schematic location --- ceramic vs
+polarized --- so the BOM matches the datasheets. Values match
+=KiCad/RX_SKETCHES/= as of 2026-08-25; re-check refs if you renumber parts.
+
+Package default for hand-built boards: *0805* (or the HandSolder footprints
+already on the symbols). Voltage rating: use *≥6.3 V* on 3.3 V rails; *≥10 V*
+is safer. Prefer *X7R* (or X5R) for ceramics unless noted.
+
+* Quick rule
+
+| Use | Type |
+|-----+------|
+| Charge-pump flying / hold caps | *Always ceramic* (never electrolytic) |
+| HF bypass next to IC pins (0.1 uF) | *Ceramic* |
+| Input coupling / small filters | *Ceramic* |
+| Large bulk on 3.3 V where a =+= is drawn | *Polarized OK* (tantalum / electrolytic) *or* ceramic MLCC |
+| LM3940 =OUT= 33 uF | *Tantalum (or Al + tant)* with ESR in the LM3940 band --- not a random ultra-low-ESR ceramic |
+
+* DAC sheet (=dac=) --- PCM5102
+
+| Ref | Value | Buy | Why / where |
+|-----+-------+-----+-------------|
+| =C12= | 10 uF | *Polarized* (=Device:C_Polarized= on sheet) *or* 10 uF ceramic | Bulk on DVDD/AVDD/CPVDD to GND. =+= to *+3V3* if polarized. |
+| =C13=, =C16=, =C17=, =C19= | 0.1 uF | *Ceramic* | Local HF bypass (supplies / LDOO). |
+| =C14= | 2.2 uF | *Ceramic* | CAPP--CAPM flying cap. *Not* polarized. |
+| =C15= | 2.2 uF | *Ceramic* | VNEG to GND (VNEG is *-3.3 V*). *Not* polarized. |
+| =C20=, =C21= | 2.2 nF | *Ceramic* (C0G/NP0 nice, X7R OK) | Analog out filter shunt after 470 R on =OUTL=/=OUTR=. |
+
+Do *not* put electrolytics on =C14=/=C15=. TI expects ~2.2 uF ceramics on the
+charge pump; larger values can stress the pump.
+
+* Amp sheet (=amp=) --- MAX97220A
+
+Datasheet: low-ESR *ceramic*, X7R preferred. No polarized parts required.
+
+| Ref | Value | Buy | Why / where |
+|-----+-------+-----+-------------|
+| =C7= | 1 uF | *Ceramic* | Charge-pump flying (=C1P=--=C1N=). |
+| =C6= | 1 uF | *Ceramic* | Charge-pump hold / =PVSS= network. |
+| =C8=, =C9= | 1 uF | *Ceramic* | =PVDD= / =SVDD= bypass to GND. |
+| =C10= | 0.1 uF | *Ceramic* | Extra HF / =BIAS= path as drawn. |
+| =C1=--=C4= | 0.47 uF | *Ceramic* | Input coupling (pseudo-diff). |
+
+* Power management (=pwr_mgmt=) --- LM3940 + CP2102
+
+| Ref | Value | Buy | Why / where |
+|-----+-------+-----+-------------|
+| =C23= | 33 uF | *Solid tantalum* (preferred) or Al electrolytic + small tant; watch *ESR* | LM3940 =OUT=. Minimum 33 uF; ESR must stay in the datasheet window. If polarized: =+= on *+3V3*. Consider marking =C_Polarized= on the sheet. |
+| =C22= | 0.47 uF | *Ceramic* | LM3940 =IN= minimum local. |
+| =C30= | 22 uF | *Ceramic* MLCC *or* polarized bulk | Extra bulk on USB / 5 V in (larger than the 0.47 uF minimum is fine). |
+| =C24=, =C26= | 4.7 uF | *Ceramic* | CP2102 local bulk (VDD / bus as drawn). |
+| =C25=, =C27= | 0.1 uF | *Ceramic* | CP2102 HF bypass. |
+
+* ESP RX (=esp_rx=) --- WROOM module
+
+| Ref | Value | Buy | Why / where |
+|-----+-------+-----+-------------|
+| =C5= | 22 uF | *Ceramic* MLCC (typical) | Module / 3V3 bulk. Polarized OK if you prefer; =+= to +3V3. |
+| =C11=, =C31= | 0.1 uF | *Ceramic* | Local bypass (EN timing / rails as drawn). |
+
+* Volume control (=vol_ctrl=)
+
+No capacitors on this sheet.
+
+* Shopping checklist (aggregated)
+
+Buy at least:
+
+- Ceramic 0.1 uF 0805 --- many (bypass)
+- Ceramic 0.47 uF 0805 --- amp inputs + LM3940 Cin
+- Ceramic 1 uF 0805 X7R --- MAX97220 charge pump + VDD bypass
+- Ceramic 2.2 uF 0805 --- PCM5102 charge pump (=C14=, =C15=)
+- Ceramic 2.2 nF --- DAC out filter (=C20=, =C21=)
+- Ceramic 4.7 uF --- CP2102
+- Ceramic or polarized 10 uF --- DAC bulk (=C12=)
+- Ceramic 22 uF --- ESP / USB bulk (=C5=, =C30=)
+- *Tantalum (or ESR-safe) 33 uF* --- LM3940 out (=C23=) ***do not skip ESR***
+
+* PCM5102 clock mode (ESP RX) --- PLL vs "PCM"
+
+These are different ideas:
+
+1. *Audio data* --- You always send *I2S / PCM samples* from the ESP (=DOUT= ->
+   DAC =DIN=, plus =BCK= / =LRCK=). Firmware is I2S master; format switch
+   =FMT= low = I2S.
+
+2. *System clock source* --- PCM5102 either:
+   - *PLL mode* --- tie =SCK= to *GND*; chip makes its internal clock from
+     =BCK=/=LRCK= (datasheet PLL operation).
+   - *External SCK / non-PLL* --- drive a real system clock into =SCK=
+     (needs an MCLK from the ESP or an oscillator).
+
+*For this RX pack: use PLL mode* (=SCK= grounded). That matches the schematic
+note and the usual ESP32 I2S master setup (BCK/LRCK/DOUT only; no MCLK pin in
+=rx.c=). You are *not* choosing "PCM instead of PLL" --- you use *PLL for the
+clock* and *I2S/PCM for the data*.
+
+Refs: PCM5102 datasheet system-clock / PLL sections; ESP-IDF I2S std config
+with =mclk = I2S_GPIO_UNUSED=.

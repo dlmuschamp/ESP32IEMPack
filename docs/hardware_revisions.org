@@ -1,0 +1,127 @@
+#+TITLE: Hardware revisions and change log (RX KiCad)
+#+AUTHOR: Damian Luciano Muschamp
+#+OPTIONS: toc:2 num:nil
+
+* Purpose
+
+Record *what* changed on the RX schematic and *why*, with the evidence
+(datasheet / firmware / bench). Use this when re-opening a sheet months later
+so you do not re-litigate every net.
+
+Firmware GPIO contract lives in =main/rx.c= / =main/tx.c= on branch =main=
+(not on experimental KiCad-only branches that may stub =rx.c=).
+
+* Signal path (RX)
+
+#+BEGIN_SRC
+USB-C / power-bank 5V -> LM3940 -> 3V3
+CP2102C (bus-powered) <-> ESP32 UART + auto-program (EN / IO0)
+ESP32 I2S -> PCM5102 -> (470R + 2.2nF) DAC_OUT
+         -> dual-gang pot -> POST_POT -> MAX97220A -> 3.5 mm jack
+#+END_SRC
+
+* 2026-08-22 --- review of experimental KiCad fixes branch
+
+Branch under review: =cursor/rx-schematic-wip-fixes-738e= (treat as
+experimental). Compared against =main= schematics and datasheets while
+editing on the laptop.
+
+** Power management (=pwr_mgmt=)
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| Keep CP2102C *bus-powered*: =VREGIN= <- USB / power-bank *5V*; =VDD= tied to =VIO=; local 4.7u + 0.1u; =PWR_FLAG= on that rail | CP2102C datasheet Fig 2.1 (bus-powered). Chip is *not* fed from the LM3940 3V3 rail. |
+| =R27= 1k pulls =~{RST}= to VDD/VIO | Datasheet: 1k on RSTb to VIO (or VDD when VIO=VDD). |
+| Keep =R25=/=R26= 22.1k/47.5k as *VBUS sense divider* (not a VIO divider) | CP2102C / USBXpress VBUS abs-max and VIH notes. |
+| Keep LM3940 Cin *22uF* (with optional 0.47uF at IN); do *not* remove bulk to "match" the 0.47uF callout | Datasheet Cin >= 0.47uF is a *minimum*. Larger local bulk is better on a USB/power-bank 5V rail. |
+| Keep Cout *33uF* (ESR in band); optional bump to 47uF same chemistry | Datasheet minimum 33uF; larger helps transients but ESR still rules. Prefer tantalum / correct ESR over a lone low-ESR 0805 ceramic. |
+| =PWR_FLAG= on CP2102 VDD does *not* mean global board =+3V3= | Flag only satisfies ERC "net is driven". Pack 3V3 remains LM3940 =OUT=. |
+
+** ESP32 sheet (=esp_rx=)
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| Prefer redraw / fresh symbol over salvaging post-rotate wiring | Rotating a symbol moves pin *positions*; labels do not stay bound to pin *names*. |
+| Hier labels =BCK=/=LRCLK=/=DOUT=/=TXD=/=RXD=/=ESP_EN=/=ESP_IO0= must match other sheets *exactly* | Hierarchical labels are the same net across sheets; name mismatch = open net. |
+| =DOUT= on *GPIO25* (module pin for IO25); not GPIO35 | =main/rx.c=: =DOUT_PIN 35= is *wrong for RX*. RX uses =DOUT_PIN 25=. TX uses =DIN_PIN 35= (input-only) on the TX board. |
+| UART crossed: ESP =TXD0/IO1= net =TXD= -> CP2102 *RXD*; ESP =RXD0/IO3= net =RXD= -> CP2102 *TXD* | Standard UART cross; DevKit-style USB-UART. |
+| =ESP_EN= / =ESP_IO0= at the EN/IO0 junctions (pull-ups + transistor collectors) | Espressif DevKitC auto-program + esptool boot-mode docs. Transistors *pull low*; 10k pull-ups hold high for run mode. |
+| EN: 10k to 3V3 + ~0.1uF to GND (DevKit-like). IO0: 10k to 3V3; *no* large C to GND | Official DevKit puts the reset timing C on *EN*, not a fat cap on IO0. |
+| =ANT1= U.FL pigtail = BOM / documentation only | WROOM-32U has on-module U.FL; no GPIO antenna net. |
+
+Refs:
+- https://docs.espressif.com/projects/esptool/en/latest/esp32/advanced-topics/boot-mode-selection.html
+- ESP32-DevKitC schematic (auto program truth table)
+
+** DAC sheet (=dac=)
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| *Restored* =dac.kicad_sch= from branch =main= (discarded experimental "broken" wiring) | Experimental pass had attached I2S nets to =DEMP=/=FLT=/=XSMT=/=FMT= and put FLT/XSMT switches on =BCK=/=DIN= --- classic rotate damage. Pre-fix ("old") topology matched the PCM5102 datasheet. |
+| Renamed hier label =DIN= -> =DOUT= (still wired to PCM5102 pin *DIN*) | Matches =rx.c= =DOUT_PIN=. Chip pin name stays DIN (DAC data *in*). |
+| Keep SW2 -> =FLT=, SW3 -> =XSMT=; =SCK= to GND (PLL mode) | PCM5102 datasheet config pins; grounding SCK selects internal PLL. |
+| Keep analog out filter: =OUTL/OUTR= -> 470R -> =DAC_OUT_*=, 2.2nF to GND | Already matched PCM5102 recommended network for ~10k load. No change needed. |
+
+** Volume / pre-pot divider (=vol_ctrl=)
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| Do *not* require an extra resistive pad before the pot | PCM5102 already filters on the DAC sheet. The dual-gang pot *is* the volume divider. |
+| Experimental 1k/10R (~40 dB) pad: leave *DNP*; short across the 1k so the path is not open | Bench experiment, not datasheet-required. With DNP + short, pot input ~= filtered =DAC_OUT=. |
+| Can treat pre-pot audio as =DAC_OUT_L/R= feeding the pot directly | Same electrical idea: no extra attenuation stage. Keep the *pot* (and 0% =SHDN= switch). Do *not* wire =DAC_OUT= straight into the amp unless you want fixed full volume. |
+
+** Amp sheet (=amp=)
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| Restored topology from =main= / pre-fix amp (jack on =OUTL=/=OUTR=, pseudo-diff input from =POST_POT_IN_*=) | Experimental "mixed" sheet had label/shift issues; old connectivity was the intended MAX97220A path. |
+| Mark =R1=--=R6=, =R9=, =R10= as *DNP* (Do Not Populate) for hand-built protos | =MAX97220A= (A/B/E) sets gain externally: =AV = -RF/RIN= (datasheet Fig 5; RF 4.7k--100k). These Rs *are* the gain network for the A part (pseudo-diff / single-ended app circuit). =C=/=D= are fixed +6 dB --- wrong if you want bench-tuned max loudness. Populate matched ~10k to start on a fully assembled board. |
+| Keep =SHDN_SIGNAL= from dual-gang pot for true 0% volume | Active-low shutdown; better than DAC soft-mute alone for "off". |
+| Keep =R22= 100k from =SHDN_SIGNAL= to GND | Not a pot-datasheet value. MAX97220 =~{SHDN}= must be *driven* high to run / low to shut down (VIH 1.4 V, VIL 0.4 V, ~1 uA leakage) --- it must not float. Pot switch (PTN09) is mechanical only: =COM= <- +3V3, =N.O.= -> =SHDN=. At full CCW the switch opens; 100k pulls =~{SHDN}= low so the amp stays off. When you turn up, =N.O.= closes and hard-ties =SHDN= to 3V3 (~33 uA through 100k). 10k--1M also works; 100k is a weak default. |
+
+** Process / tooling notes
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| Experimental KiCad branch may stub =main/rx.c= | That branch is schematic-focused; firmware source of truth is =origin/main=. Restore with =git checkout main -- main/....= if needed. |
+| Prefer screenshots in =~/Pictures= + this log over committing huge PDFs | Datasheets can be fetched; *your* wiring is what must be reviewed. Optional local =docs/spec_sheets/= is fine if gitignored. |
+
+* 2026-08-30 --- gain network, coupling caps, ESD clamp
+
+** Amp (=amp=)
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| =R1=/=R3=/=R9=/=R10= -> *4.7k*, =R2=/=R4=/=R5=/=R6= -> *47k*, all *populated* (no longer DNP) | =AV = -RF/RIN= = -20 dB. Fixes three things at once: tames the DAC's 2.1 Vrms into sensitive IEMs, gives the 10k pot a 4.7x loading ratio instead of 1:1, and moves the coupling corner off the audible band. An unpopulated =RF= is *not* a safe default --- it leaves the amp open loop. |
+| =C1=--=C4= 0.47uF -> *1uF* (all four, X7R min.) | Corner 7.2 Hz -> 3.4 Hz, -0.53 dB -> -0.12 dB at 20 Hz. Also halves the signal developed across the ceramic at 20 Hz (34% -> 17%), reducing Class-II dielectric distortion where it actually occurs. =C2=/=C3= are the matching =IN+= legs and must track =C1=/=C4= or LF CMRR degrades. Same 0805 footprint --- value-only change. |
+| Stop at 1uF, do not fit 2.2uF | 1.54 Hz corner buys only +0.09 dB and passes more subsonic rumble / DC drift. Convention is a 3--5 Hz coupling corner. |
+| =C28= 1uF added on +3V3/GND | Amp sheet omitted pin 13; part existed on the PCB with no schematic counterpart (parity error). |
+
+** Power management (=pwr_mgmt=)
+
+| Change | Reason / evidence |
+|--------+-------------------|
+| =D1= pin 2 moved from =+5V= to the connector-side rail, now named =VBUS_RAW= | =SP0503BAHT= is a 4-line TVS (common anode, three cathodes). The =D+=/=D-= cathodes were already correct; the third was clamping the rail *after* =SW4=, so with the switch OFF the exposed =J6= VBUS pin had no clamp --- unprotected exactly when the board is most likely to be handled and unplugged. Does not affect the OFF state: a TVS is open below its standoff voltage, and =SW4= still breaks the rail to =U4=/=U5=. |
+| Pulldowns =R31=/=R32= 100k on =FLT_SEL= / =XSMT_SEL=; =DEMP= and =FMT= strapped to GND | PCM5102 mode pins must not float with the switches open. |
+| =SW3= (soft mute): =XSMT_SEL= moved from pin 3 to pin 1, NC flag moved pin 3 | All three switches are SPDT with *pin 2 (B) as the common*; the unwired throw is the rest position. =SW3= is placed rot 90, so pin 1 is NORTH and pin 3 is SOUTH. Wanted SOUTH = mute, so SOUTH must be the *open* throw (pulled low by =R32= = muted). Was backwards. |
+
+Design convention now consistent across all three switches: *the open throw is
+the safe default* --- =SW4= open = powered off, =SW2= open = normal-latency FIR
+("quality") filter, =SW3= open = muted. Enabling anything requires deliberately
+sliding onto the +V throw.
+| 4x =Mechanical:MountingHole= (=REF1=--=REF4=) added to root sheet | Were PCB-only; showed as =extra_footprint= schematic-parity errors. |
+
+*** Follow-up required in KiCad
+
+The =D1= change is a *netlist* change, so the PCB is now out of date. Run *Update
+PCB from Schematic*, then rip up and reroute the single trace from =D1= pad 2 ---
+it is still on the =+5V= copper. The cap value changes need no layout work.
+
+* Open / next
+
+- Reroute =D1= pad 2 to =VBUS_RAW= on the PCB (see above), then re-run DRC with
+  =--schematic-parity --severity-all=.
+- Finish =vol_ctrl= cleanup (confirm DNP pad + =DAC_OUT= -> pot).
+- Amp visual ERC / label pass after restore.
+- Then TX schematic (mirror shared power / ESP / antenna; PCM1808 instead of PCM5102).
+- PCB layout after both schematics are stable.

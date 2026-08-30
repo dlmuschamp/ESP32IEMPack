@@ -1,17 +1,20 @@
-# IDE / editor
-.vs/
-.vscode/
-.projectile
-.cursor_session_token
-.cache/
-
-# Build artifacts (local only — regenerate with idf.py)
-build/
-main/build/
-build.debug.txt
-build_debug.txt
 *log
 *restore
 
-# Stamped flash binaries
-firmware_out/
+# KiCad local/editor state and caches
+*.kicad_prl
+*-backups/
+fp-info-cache
+.history/
+
+# ESP-IDF build output
+/build/
+/firmware_out/
+
+# Generated exports of README.org
+README.html
+README.tex
+README.typ
+
+# Local session state
+.cursor_session_token
