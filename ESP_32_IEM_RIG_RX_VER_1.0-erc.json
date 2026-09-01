@@ -1,0 +1,121 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-08-31T22:08:23",
+    "ignored_checks": [
+        {
+            "description": "Global label only appears once in the schematic",
+            "key": "single_global_label"
+        },
+        {
+            "description": "Four connection points are joined together",
+            "key": "four_way_junction"
+        },
+        {
+            "description": "SPICE model issue",
+            "key": "simulation_model_issue"
+        },
+        {
+            "description": "Assigned footprint doesn't match footprint filters",
+            "key": "footprint_filter"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning"
+    ],
+    "kicad_version": "10.0.6",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/98787dcf-424f-4647-bb79-9127f0f74bda",
+            "violations": [
+                {
+                    "description": "The current configuration does not include the symbol library 'LM3940IMPX-3.3_NOPB'",
+                    "items": [
+                        {
+                            "description": "Symbol U4 [LM3940IMPX-3.3_NOPB]",
+                            "pos": {
+                                "x": 0.508,
+                                "y": 1.1557
+                            },
+                            "uuid": "a5871eec-950c-4198-a7a8-37fb03cc3d61"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "Symbol 'Antenna' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol ANT1 [Antenna]",
+                            "pos": {
+                                "x": 0.6477,
+                                "y": 0.3175
+                            },
+                            "uuid": "7c4e9d12-8f3a-4b61-9e20-1d5c8a74b6e3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'PCM1808PWG4'",
+                    "items": [
+                        {
+                            "description": "Symbol U1 [PCM1808PWG4]",
+                            "pos": {
+                                "x": 1.3462,
+                                "y": 0.6604
+                            },
+                            "uuid": "51fd00e8-bae9-4bc2-b3a6-cf8648fced33"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                }
+            ]
+        },
+        {
+            "path": "/Power Management/",
+            "uuid_path": "/98787dcf-424f-4647-bb79-9127f0f74bda/6e12d95a-ec67-48a8-b98e-82576ae3682c",
+            "violations": []
+        },
+        {
+            "path": "/ESP Transmitter/",
+            "uuid_path": "/98787dcf-424f-4647-bb79-9127f0f74bda/12633c0c-fb68-4c25-af81-bead6c15ab98",
+            "violations": [
+                {
+                    "description": "Both ESP_IO0 and SCK are attached to the same items; ESP_IO0 will be used in the netlist",
+                    "items": [
+                        {
+                            "description": "Hierarchical Label 'ESP_IO0'",
+                            "pos": {
+                                "x": 1.27,
+                                "y": 0.762
+                            },
+                            "uuid": "9e6d1a67-56ef-40be-91c2-7cd6a59c62cc"
+                        },
+                        {
+                            "description": "Hierarchical Label 'SCK'",
+                            "pos": {
+                                "x": 1.27,
+                                "y": 0.7874
+                            },
+                            "uuid": "f0a6d496-08de-457f-a1df-328f1d1a89c7"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "multiple_net_names"
+                }
+            ]
+        },
+        {
+            "path": "/ADC/",
+            "uuid_path": "/98787dcf-424f-4647-bb79-9127f0f74bda/21ceb167-c50e-480a-ba2d-de2280d740ad",
+            "violations": []
+        }
+    ],
+    "source": "ESP_32_IEM_RIG_RX_VER_1.0.kicad_sch"
+}

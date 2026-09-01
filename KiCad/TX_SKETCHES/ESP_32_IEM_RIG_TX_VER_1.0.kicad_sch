@@ -1,0 +1,513 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "98787dcf-424f-4647-bb79-9127f0f74bda")
+	(paper "A5")
+	(title_block
+		(title "ESP32U-WROOM Wireless IEM Transmitter")
+		(date "2026-08-04")
+		(rev "1.0.0")
+		(company "Damian Muschamp")
+		(comment 1 "Signal: TRS line-in -> PCM1808 ADC -> ESP32 I2S -> ESP-NOW to RX pack.")
+		(comment 2 "PCM1808: I2S slave (MD0/MD1 low). FMT low = I2S serial format.")
+		(comment 3 "Firmware: BCK=33 LRCK=32 DIN=35 SCK/MCLK=0 (IO0 shared with boot strap).")
+		(comment 4 "USB-C UART flash via CP2102. Same 10k mAh bank as RX (separate pack).")
+	)
+	(lib_symbols)
+	(text "DONE"
+		(exclude_from_sim no)
+		(at 37.846 51.562 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "238c5e62-7a39-4ffe-8eec-763b3b22d37b")
+	)
+	(text "DONE"
+		(exclude_from_sim no)
+		(at 97.028 49.022 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "41341440-8c93-4242-b91e-a06447196251")
+	)
+	(text "DONE"
+		(exclude_from_sim no)
+		(at 160.02 50.546 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "50cbc441-90ac-46ea-936b-6bd64bfebc6e")
+	)
+	(text "TRS jack -> PCM1808 -> ESP32 captures I2S and streams audio packets to paired RX over ESP-NOW."
+		(exclude_from_sim no)
+		(at 96.266 39.37 0)
+		(effects
+			(font
+				(size 0.889 0.889)
+			)
+		)
+		(uuid "832171c3-30f3-42ca-b09d-48c9960d1af7")
+	)
+	(text "Passives: 0805 HandSolder pads. Update PCB from Schematic.\nANT1 U.FL pigtail. No display. ICs stay their real packages."
+		(exclude_from_sim no)
+		(at 18.796 110.49 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bf47873e-f752-472d-a402-804634affdb0")
+	)
+	(text "Sets 5V and 3V3 using LDO.\nPowered by a 10,000 mAh 5V/2.0A USB-C bank\n(identical bank type as the RX; each pack has its own).\nUSB-C 16 pin.\nSupports USB-C updates via UART."
+		(exclude_from_sim no)
+		(at 39.878 38.862 0)
+		(effects
+			(font
+				(size 1.016 1.016)
+			)
+		)
+		(uuid "e1b4084b-9d81-4171-befe-072019be5c9d")
+	)
+	(text "PCM1808 I2S slave. MD0/MD1/FMT strapped low.\nESP32 is I2S master (see esp_tx sheet note).\n"
+		(exclude_from_sim no)
+		(at 159.766 38.354 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "f06c4d90-c13a-4761-9054-74b347757743")
+	)
+	(wire
+		(pts
+			(xy 124.46 57.15) (xy 16.51 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "037c3b39-559e-487d-b14b-0a54511e1d1f")
+	)
+	(wire
+		(pts
+			(xy 62.23 26.67) (xy 67.31 26.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "139190d6-0cf0-445e-b926-928d56a33116")
+	)
+	(wire
+		(pts
+			(xy 123.19 26.67) (xy 127 26.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "393e54f5-172d-489b-b5fd-84d2381b74d6")
+	)
+	(wire
+		(pts
+			(xy 123.19 29.21) (xy 127 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "47178711-a440-4018-baec-331d6a85ce43")
+	)
+	(wire
+		(pts
+			(xy 62.23 29.21) (xy 67.31 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "51dc57d7-2498-4077-b80c-5fa573cfbc57")
+	)
+	(wire
+		(pts
+			(xy 124.46 34.29) (xy 124.46 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5c7da388-b1cd-44f2-8cff-ab3bd6774593")
+	)
+	(wire
+		(pts
+			(xy 16.51 57.15) (xy 16.51 24.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7ddc24a0-4691-48d2-bc29-9504e61140c6")
+	)
+	(wire
+		(pts
+			(xy 123.19 34.29) (xy 124.46 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7eb01057-8672-490e-92bd-5405cb587fd5")
+	)
+	(wire
+		(pts
+			(xy 16.51 24.13) (xy 17.78 24.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82d1c5d2-6375-4f07-aadd-65c03cb95e65")
+	)
+	(wire
+		(pts
+			(xy 62.23 24.13) (xy 67.31 24.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b4005bc8-e591-473b-b002-b982172ed462")
+	)
+	(wire
+		(pts
+			(xy 123.19 31.75) (xy 127 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b6500876-717f-41b2-80cd-fc8734a9f9b5")
+	)
+	(wire
+		(pts
+			(xy 123.19 24.13) (xy 127 24.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ea45c610-2d41-4c56-b1a4-5636f6a61450")
+	)
+	(sheet
+		(at 67.31 21.59)
+		(size 55.88 33.02)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "12633c0c-fb68-4c25-af81-bead6c15ab98")
+		(property "Sheetname" "ESP Transmitter"
+			(at 67.31 20.8784 0)
+			(show_name yes)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "esp_tx.kicad_sch"
+			(at 67.31 55.1946 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "BCK" output
+			(at 123.19 24.13 0)
+			(uuid "21b4b003-76d9-45e2-8072-0c393cd07bee")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ESP_EN" input
+			(at 67.31 24.13 180)
+			(uuid "96a318f9-c40d-441e-9a33-67472bae3b32")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ESP_IO0" input
+			(at 67.31 26.67 180)
+			(uuid "b85011f9-4774-42bc-a1ed-eb0584a5a2ef")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "TXD" input
+			(at 67.31 29.21 180)
+			(uuid "daee5680-b351-4118-97fb-f1881691aa78")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "RXD" output
+			(at 123.19 34.29 0)
+			(uuid "f3acd868-16a7-4006-b3ba-a0411fa52b27")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "DIN" input
+			(at 123.19 26.67 0)
+			(uuid "b05febdc-b03a-4b7b-83cd-a93e1cdd6162")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "LRCK" output
+			(at 123.19 29.21 0)
+			(uuid "61119ba5-f003-4bb7-8d98-f09c41fac474")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "SCK" output
+			(at 123.19 31.75 0)
+			(uuid "96331651-21ab-4591-ac11-d03a739f2886")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_TX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 127 21.59)
+		(size 63.5 33.02)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "21ceb167-c50e-480a-ba2d-de2280d740ad")
+		(property "Sheetname" "ADC"
+			(at 127 20.8784 0)
+			(show_name yes)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "adc.kicad_sch"
+			(at 127 55.1946 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "BCK" input
+			(at 127 24.13 180)
+			(uuid "b8134391-61c6-4e2e-94f4-7d29d09d66bc")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "DIN" output
+			(at 127 26.67 180)
+			(uuid "6b91db6f-3d47-45ec-beef-012d9e828c22")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "LRCK" input
+			(at 127 29.21 180)
+			(uuid "47337056-0747-4a75-b4a0-62fc3feb4c0e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "SCK" input
+			(at 127 31.75 180)
+			(uuid "fc498a47-6bf5-47d5-8a4a-7239165cdbb3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_TX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 17.78 21.59)
+		(size 44.45 33.02)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "6e12d95a-ec67-48a8-b98e-82576ae3682c")
+		(property "Sheetname" "Power Management"
+			(at 17.78 20.8784 0)
+			(show_name yes)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "pwr_mgmt.kicad_sch"
+			(at 17.78 55.1946 0)
+			(show_name yes)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "RXD" input
+			(at 17.78 24.13 180)
+			(uuid "eac1f830-9d62-404e-a702-2f1fb8d06e86")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ESP_EN" output
+			(at 62.23 24.13 0)
+			(uuid "47a996f4-8f8d-44a3-bfa3-1c91afa8e8d3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ESP_IO0" output
+			(at 62.23 26.67 0)
+			(uuid "e24e758c-a918-420a-8d77-2da6e0f5666b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "TXD" output
+			(at 62.23 29.21 0)
+			(uuid "6e27448e-2562-4924-adcd-fb4bf83ff680")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "ESP_32_IEM_RIG_TX_VER_1.0"
+				(path "/98787dcf-424f-4647-bb79-9127f0f74bda"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)
