@@ -1,30 +1,66 @@
 * ESP32 Wireless IEM Pack
 
 A first-pass wireless in-ear monitor (IEM) system: one ESP32 transmitter pack
-and one ESP32 receiver pack (with support for up to 7 receiver packs). The RX path
-is ~ESP-NOW -> ESP32 -> I2S -> PCM5102 DAC -> volume pot -> MAX97220A headphone amp -> 3.5 mm jack~.
+and one ESP32 receiver pack (with support for up to 7 receiver packs).
 
-This repo is a work in progress. The breadboard version plays audio. The KiCad
-project in =KiCad/RX_SKETCHES/= is that breadboard transferred onto hierarchical
-sheets --- not a finished layout. There is *no display on this version*.
+- *RX path:* ESP-NOW -> ESP32 -> I2S -> PCM5102 DAC -> dual-gang volume pot ->
+  MAX97220A headphone amp -> 3.5 mm jack
+- *TX path:* TRS line-in -> PCM1808 ADC -> ESP32 I2S -> ESP-NOW to paired RX
 
-** First project
+*v1.0 boards are routed and quoted for fab* (JLCPCB Gerbers / BOM / CPL under
+each =jlcpcb/production_files/=). Silk / cosmetic artwork may still change;
+electrical intent for this spin is frozen. There is *no display on this version*
+(a screen is a later idea, not this revision).
 
-This is my first self-guided embedded systems project,
-and the first time using C, ESP32s, reading datasheets / spec sheets, and
-KiCad. The notes and "common mistakes" section below document what I struggled
-with and how I managed it.
+** First project --- how this happened
+
+This is my first self-guided embedded systems project. Before late July 2026 I
+had not written C for firmware, had not used ESP-IDF / FreeRTOS, had not read
+audio or RF datasheets for a real build, and had never opened KiCad or laid out
+a PCB. Pretty much everything that led to these boards was learned on the spot.
+
+I started on a *breadboard with breakout boards* --- ESP32 modules, PCM5102,
+amp, mess of jumpers --- without knowing if any of it would work. After a lot
+of trial and error (wrong I2S slot formats, muted DAC, power noise, ESP-NOW
+quirks), the breadboard path played audio. That proof is what made transferring
+the design into KiCad worth doing.
+
+The notes and "common mistakes" section below are the scars from that process.
 
 Capacitor *types* to buy (ceramic vs polarized) by schematic location:
 =docs/capacitor_bom.org=. PCM5102 on the RX is *PLL mode* (=SCK= to GND) with
 I2S data from the ESP --- see that file.
 
+** Timeline (repo + calendar)
+
+| When | What |
+|------+------|
+| *2026-07-29* | Repo =init= (GitHub created ~2026-07-30) |
+| *~2026-07-31* | Breadboard bring-up in earnest (starter code, then square-wave / DAC path) |
+| *2026-08-01* | Working 440 Hz I2S tone; Philips slot fix for unmuted DAC |
+| *2026-08-04 -- 08* | RX hierarchical schematics; ERC; RX schematic v1.0.0 |
+| *2026-08-15* | TX audio path work (PCM1808 / 32-bit I2S slots) |
+| *2026-08-30* | RX PCB layout complete; JLCPCB parts mapped; first production export |
+| *2026-08-31* | RX schematics finished for v1; TX schematic draft committed |
+| *2026-09-01 -- 02* | TX PCB layout + shared-part LCSC alignment; both boards ready to order |
+
+From first commit to order-ready boards is about *five weeks* (~35 calendar
+days: 2026-07-29 -> 2026-09-02). Git history on =main= has *42 commits* across
+*16 days with commits*. Clustering those commit timestamps (sessions split when
+gaps exceed ~3 h) gives a *lower bound on the order of ~30 hours* of
+repo-visible work --- that undercounts dead ends, breadboard evenings without a
+commit, and KiCad sessions that never landed in git. Real wall-clock time is
+higher.
+
+This ran in parallel with *Arbor Live* ops work at roughly *10--15 hours per
+week* (~50--75 hours across the same five weeks). The IEM pack was nights and
+leftover bandwidth, not a full-time build.
+
 ** Firmware
 
 All application code is *C*. It runs on *FreeRTOS* under *ESP-IDF*, using the
 related Espressif libraries (ESP-NOW / Wi-Fi, I2S, ADC, LEDC, NVS). There is
-*no Arduino* in this projec and *no hardware abstraction layer* --- the
-firmware calls ESP-IDF APIs directly.
+*no hardware abstraction layer* --- the firmware calls ESP-IDF APIs directly.
 
 - =main/tx.c= :: Transmitter. Done for this version (ESP-NOW, ADC pot,
   audio packet path).
@@ -54,18 +90,93 @@ cd ESP32IEM_Pack
 get_idf
 #+END_SRC
 
+** Firmware design philosophy
+
+I did not start with a fixed architecture diagram. The philosophy below is what
+*emerged* once the breadboard proved audio could move, and once ESP-NOW + I2S
+constraints became real. Almost every choice in =main/tx.c=, =main/rx.c=, and
+=main/rig_shared.h= is intentional --- latency, robustness, and keeping the
+Wi-Fi task thin.
+
+*** Explicit state machines (not a pile of flags)
+
+TX and RX each run a small mode enum driven from =app_main= (=TX_MODE_*= /
+=RX_MODE_*=): boot → idle/pairing → transmit/playback, with helpers like
+=run_idling_state= / =run_transmitting_state= / =run_audio_playback_state=.
+
+Why: pairing, link loss, and audio streaming are different contracts. A state
+machine makes illegal transitions obvious (e.g. do not enqueue audio while still
+advertising), keeps =recv_cb= from becoming a second control plane, and matches
+how I already think about systems --- events in, one current mode out. Soft
+reconnect (audio-sized frames from a known TX while still pairing) is a
+*deliberate* exception with a named path (=try_soft_reconnect_from_audio=), not
+an accidental fall-through.
+
+*** Packet *size* is the type tag
+
+On the wire there is no separate "opcode" header for the common path. Handlers
+branch on =data_size=:
+
+- pairing request ≈ =sizeof(pairing_req_packet_t)= (alias string)
+- pairing ACK/NACK = 1 byte (=PAIR_ACK_LEN=; legacy =sizeof(pair_state_t)= also
+  accepted on RX)
+- audio = =sizeof(audio_packet_t)= (720 interleaved =int16= samples → 1440 B)
+
+Why: ESP-NOW already gives you length. Another type byte would cost payload
+budget and another branch on every ~7.5 ms audio frame. Distinct struct sizes
+make the hot path a few integer compares. Wrong-sized frames are ignored (with
+rate-limited logs while pairing so a TX audio flood cannot spam the console at
+~133 Hz).
+
+*** Low overhead on the audio path (bitwise / packing / queues of pointers)
+
+Audio is the budget that matters. Design choices that keep CPU and copies down:
+
+- *Pack once.* I2S often delivers 32-bit slot words; TX shifts with =>>= 16= into
+  =int16= PCM for the air format (PCM1808 / slot width forced this; the shift is
+  the cheap conversion, not a float path).
+- *Big enough packets.* 720 samples @ 48 kHz ≈ 7.5 ms/packet, ~133 pkt/s --- far
+  less ESP-NOW and queue pressure than 2--3 ms packets, while staying under
+  ESP-NOW v2 max (=_Static_assert= on =audio_packet_t=).
+- *Pointer-pool jitter buffer on RX.* Queues carry =audio_packet_t *= into a
+  fixed pool, not full packet copies on every hop; playback pins to another core
+  with a short pre-buffer so the first I2S write does not underrun.
+- *Keep heavy work off Wi-Fi callbacks.* Pairing work is queued to the state
+  machine; =esp_now_add_peer= and I2S enable happen in safe contexts. Send
+  pacing waits for =send_cb= so bursts do not disorder callbacks / =NO_MEM=.
+- *Silence is zeros, not a skipped send* while transmitting, so the RX timeout
+  logic sees a live link instead of a mysterious gap.
+
+None of this was "optimize everything." It was: find the hot path, make the
+common case boring and cheap, and put complexity in pairing / reconnect where
+milliseconds matter less than correctness.
+
+*** What I refused to do (for v1)
+
+- No HAL wrapping ESP-IDF --- I wanted to learn the real APIs.
+- No sniffer/monitor node in the shipping image (hook left in CMake only).
+- No display firmware on this revision.
+- Unencrypted ESP-NOW for now (explicit TODO, not forgotten security theater).
+
+*** Files to read
+
+- =main/rig_shared.h= --- packet structs, sample counts, ESP-NOW v2 gate
+- =main/tx.c= --- TX modes, size-filtered pairing recv, I2S → pack → send
+- =main/rx.c= --- RX modes, size-based dispatch, soft join, pointer-pool playback
+
 ** What this version is (and is not)
 
 
-| Topic    | This version                                      | Not this version                          |
-|----------+---------------------------------------------------+-------------------------------------------|
-| Display  | None                                              | A screen or later UI                      |
-| RX power | USB-C from a 10,000 mAh 5 V bank -> LM3940 3.3 V  | TP4056 + 2000 mAh LiPo/3xAA (Deprecated)   |
-| TX power | The same kind of 10,000 mAh 5 V bank as the RX    | A different chemistry or one shared bank  |
-| Radio    | ESP32-WROOM-32U + =ANT1= 2.4 GHz U.FL pigtail     | On-module PCB antenna (32E / 32D)         |
-| Audio    | I2S to a PCM5102, then a headphone amp            | I2C (the DAC is I2S)                      |
-| Firmware | C + FreeRTOS + ESP-IDF                            | Arduino, a HAL, or a sniffer node         |
-| PCB      | Footprint dump / ratsnest only                    | Routed board ready to order               |
+| Topic    | This version (v1.0 order spin)                   | Not this version                         |
+|----------+--------------------------------------------------+------------------------------------------|
+| Display  | None                                             | A screen or later UI                     |
+| RX power | USB-C from a 10,000 mAh 5 V bank -> LM3940 3.3 V | TP4056 + 2000 mAh LiPo/3xAA (Deprecated) |
+| TX power | The same kind of 10,000 mAh 5 V bank as the RX   | A different chemistry or one shared bank |
+| Radio    | ESP32-WROOM-32U/UE + =ANT1= 2.4 GHz U.FL pigtail | On-module PCB antenna (32E / 32D)        |
+| RX audio | I2S -> PCM5102 -> pot -> MAX97220A -> jack       | I2C audio (DAC/ADC here are I2S)         |
+| TX audio | TRS -> PCM1808 ADC -> I2S -> ESP-NOW             | Shared ADC/DAC IC across TX and RX       |
+| Firmware | C + FreeRTOS + ESP-IDF                           | A HAL, or a sniffer / monitor node       |
+| PCB      | RX + TX routed, DRC-clean enough to fab          | Final silk art / v2 mechanical polish    |
 
 TX and RX each get their *own* identical 10,000 mAh bank. Do not power both
 packs from one bank if you want them to roam independently.
@@ -78,12 +189,22 @@ main/                  ESP-IDF C firmware (FreeRTOS)
   tx.c                 Transmitter --- done for this version
   rx.c                 Receiver entry
   square_wave_test.c   Bench I2S tone for the DAC path
-KiCad/RX_SKETCHES/     RX hierarchical schematic (WIP)
-KiCad/TX_SKETCHES/     TX placeholder
-KiCad/Custom_Part_Downloads/  SnapEDA symbols / footprints
+KiCad/RX_SKETCHES/     RX v1 schematic + routed PCB + jlcpcb/ exports
+KiCad/TX_SKETCHES/     TX v1 schematic + routed PCB + jlcpcb/ exports
+KiCad/Custom_Part_Downloads/  SnapEDA / custom symbols and footprints
+docs/                  Cap BOM, hardware revisions, price notes, bench notes
 #+END_SRC
 
-** Hardware (RX 1.0.0 KiCad)
+Production uploads (Gerber zip + BOM + CPL):
+
+- =KiCad/RX_SKETCHES/jlcpcb/production_files/=
+- =KiCad/TX_SKETCHES/jlcpcb/production_files/=
+
+Hand-fit / not on the fab BOM: ESP32 modules (=U2=), =ANT1= U.FL pigtails
+(both boards), RX dual-gang pot =VR1= (=PTN09S2-H10120K1A= --- DigiKey/Mouser;
+not on LCSC).
+
+** Hardware (RX 1.0 KiCad)
 
 Hierarchical sheets, in signal order:
 
@@ -92,6 +213,12 @@ Hierarchical sheets, in signal order:
 3. =dac= --- PCM5102
 4. =vol_ctrl= --- dual-gang log pot + 0% switch
 5. =amp= --- MAX97220A to the 3.5 mm jack
+
+** Hardware (TX 1.0 KiCad)
+
+1. =pwr_mgmt= --- same USB-C / CP2102C / LM3940 pattern as RX
+2. =esp_tx= --- ESP32-WROOM-32U + =ANT1=
+3. =adc= --- PCM1808 (I2S slave; MD0/MD1/FMT strapped low) + TRS line-in
 
 *** Firmware I2S map (do not change these GPIOs)
 
@@ -366,19 +493,19 @@ Still true / do not "fix" into something else:
   that is louder and less safe than a wrong gain, not quieter.
 - LM3940 in SOT-223 will get hot at 5 V -> 3.3 V under ESP TX + amp load --- copper pour / thermal vias at layout time.
 
-** Current status
+** Current status (2026-09-02)
 
 - [X] Breadboard RX path plays (ESP32 I2S -> PCM5102 -> amp -> IEMs)
-- [X] =tx.c= transmitter firmware for this version
+- [X] =tx.c= / =rx.c= firmware for this version
 - [X] Repo + KiCad folder split (=RX_SKETCHES= / =TX_SKETCHES=)
-- [X] RX hierarchical schematic transferred from the breadboard (WIP)
-- [X] Hierarchical labels rewired; =ANT1= added on =esp_rx=
-- [X] Datasheet net fixes (DAC outs, amp jack, CP2102 =VIO=, LM3940 Cin)
-- [X] Finish the RX firmware path that consumes packets into I2S
-- [ ] Passives set to 0805 HandSolder footprints
-- [ ] Buy / fit the U.FL pigtail; confirm ESP-NOW range
-- [ ] Run ERC, then floorplan and route the RX PCB
-- [ ] TX schematic (same 10,000 mAh USB-C bank idea)
+- [X] RX + TX hierarchical schematics; shared =pwr_mgmt= / ESP patterns
+- [X] Passives on 0805 HandSolder footprints; LCSC mapped for JLCPCB
+- [X] RX PCB routed; TX PCB routed; Edge.Cuts ~90.5 x 55.25 mm (Altoids-ish)
+- [X] Gerbers + BOM + CPL exported for both boards
+- [ ] Order bare PCBs + LCSC parts; combine shipment
+- [ ] Buy / fit ESP modules, U.FL pigtails, RX =VR1= pot; hand assembly / bring-up
+- [ ] Confirm ESP-NOW range and audio on fabricated boards
+- [ ] Optional: silk / logo artwork respin (non-functional)
 
 No display work on this revision. No sniffer / monitor node on this revision.
 
