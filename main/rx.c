@@ -6,6 +6,9 @@
  * Boot → pair (broadcast alias) → audio playback on core 1. ESP-NOW callbacks
  * only enqueue / update mode; I2S writes stay off the Wi-Fi task. On link loss
  * the pack returns to pairing and flushes the audio queue.
+ *
+ * Latency tip (hardware): close SW2 so FLT selects IIR (~0.07 ms) instead of
+ * the default normal FIR (~0.46 ms). Firmware cannot set FLT; switch only.
  */
 
 #include "driver/i2s_common.h"
@@ -43,12 +46,14 @@
 // resets TX via CP2102 DTR and was leaving RX mute until manual reboot).
 #define REPAIR_ADVERTISE_AFTER_MS 400
 // Pointer-pool jitter buffer (queues hold pointers, not full packets).
-// 12 × ~7.5 ms ≈ 90 ms worst case; drop-oldest keeps latency bounded.
-#define NUM_QUEUE_SLOTS 12
-// Start playback after this many packets so the first I2S write doesn't underrun.
-#define PLAYBACK_PREBUFFER_PACKETS 3
-// Match one audio packet per DMA descriptor for low I2S path delay.
-#define I2S_DMA_DESC_NUM 4
+// 16 × 2.5 ms ≈ 40 ms worst case; drop-oldest keeps latency bounded.
+#define NUM_QUEUE_SLOTS 16
+// Start after 2 packets (5 ms) — was 3×7.5=22.5 ms. One packet is too brittle
+// at 400 pkt/s if the first I2S write races the next ESP-NOW arrival.
+#define PLAYBACK_PREBUFFER_PACKETS 2
+// Match one audio packet per DMA descriptor. Keep desc count low so RX does
+// not sit on a multi-packet DMA backlog (each desc ≈ one packet period).
+#define I2S_DMA_DESC_NUM 3
 #define I2S_DMA_FRAME_NUM AUDIO_FRAMES_PER_PACKET
 // Above Wi-Fi callbacks enough to drain the queue under burst load.
 #define AUDIO_TASK_PRIO 12
@@ -653,9 +658,11 @@ void app_main(void) {
             ESP_ERROR_CHECK(init_unique_alias());
             ESP_ERROR_CHECK(init_audio_queue());
             ESP_ERROR_CHECK(init_i2s_pcm5102());
-            RX_DBG_LOGI("boot ok; audio_packet_t=%u B samples=%d",
+            RX_DBG_LOGI("boot ok; audio_packet_t=%u B samples=%d (~%d us/pkt)",
                         (unsigned)sizeof(audio_packet_t),
-                        AUDIO_DATA_NUM_SAMPLES);
+                        AUDIO_DATA_NUM_SAMPLES,
+                        (int)((AUDIO_FRAMES_PER_PACKET * 1000000LL) /
+                              SAMPLE_RATE));
             cur_mode = RX_MODE_PAIRING;
             break;
         }

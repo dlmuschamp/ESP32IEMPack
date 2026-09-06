@@ -109,10 +109,10 @@ static inline void fill_tone_stereo(int16_t *out, tone_mode_t mode,
 }
 
 /**
- * @brief Pace one packet to realtime (360 frames @ 48 kHz = 7.5 ms).
+ * @brief Pace one packet to realtime (AUDIO_FRAMES_PER_PACKET @ SAMPLE_RATE).
  *
- * Do NOT use pdMS_TO_TICKS(8): with CONFIG_FREERTOS_HZ=100 that truncates to
- * 0 ticks, so TX_TONE floods ESP-NOW and RX queue-drops (steady crackle).
+ * Do NOT use pdMS_TO_TICKS for sub-10 ms periods: with CONFIG_FREERTOS_HZ=100
+ * that truncates to 0 ticks, so TX_TONE floods ESP-NOW and RX queue-drops.
  * Pass a zeroed int64_t once; updated in place across calls.
  */
 static inline void tone_pace_packet(int64_t *next_due_us)

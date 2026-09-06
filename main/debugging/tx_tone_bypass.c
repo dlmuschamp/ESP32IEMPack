@@ -19,6 +19,7 @@
 #include "driver/i2s_std.h"
 #include "driver/i2s_types.h"
 #include "esp_now.h"
+#include "esp_timer.h"
 #include "esp_wifi_types_generic.h"
 #include "freertos/idf_additions.h"
 #include "freertos/projdefs.h"
@@ -58,15 +59,16 @@
 // Poll period while idling for peers or watching peer count while transmitting.
 #define MODE_POLL_INTERVAL_MS 50
 // Match one audio packet per DMA descriptor for low I2S path delay.
-#define I2S_DMA_DESC_NUM 4
+#define I2S_DMA_DESC_NUM 3
 #define I2S_DMA_FRAME_NUM AUDIO_FRAMES_PER_PACKET
 #define AUDIO_TASK_PRIO 12
 #define AUDIO_TASK_CORE 1
 // How many times to fire PAIR_SUCCESS (audio TX can starve a single ACK).
 #define PAIR_ACK_REPEAT 8
 // After a re-pair request, skip this many audio sends so ACKs get airtime.
-// ~8 * 7.5 ms ≈ 60 ms of silence for pairing frames to land.
-#define PAIR_ACK_AUDIO_SKIP 16
+// ~24 * 2.5 ms ≈ 60 ms of silence for pairing frames to land.
+#define PAIR_ACK_AUDIO_SKIP 24
+#define SEND_IN_FLIGHT_WAIT_US 4000
 // No MAC-layer send success for this long → peer is gone (ESP-IDF: send_cb
 // returns FAIL when destination does not exist / frame never ACKed at MAC).
 #define TX_LINK_TIMEOUT_MS 1500
@@ -112,12 +114,11 @@ static volatile bool send_in_flight = false;
 // I2S delivers one 32-bit word per slot; pack down to int16 for packets.
 static int32_t raw_audio_samples[AUDIO_DATA_NUM_SAMPLES];
 #endif
-// Keep off the audio task stack — sizeof(audio_packet_t) is ~1.4 KB.
+// Keep off the audio task stack — sizeof(audio_packet_t) is 480 B @ 2.5 ms pkts.
 static audio_packet_t tx_packet;
 
 static esp_now_rate_config_t peer_rate_cfg = {
-    // 12M is more robust than 24M in moderate crowd / multipath; airtime for
-    // a 1440 B v2 frame is still well under our 7.5 ms packet period.
+    // 12M is more robust than 24M; 480 B airtime is tiny vs 2.5 ms period.
     .rate = WIFI_PHY_RATE_12M,
     .phymode = WIFI_PHY_MODE_11G,
     .ersu = false,
@@ -352,7 +353,7 @@ static void audio_capture_task(void *pvParameters) {
             ESP_LOGI(TONE, "mode=%s", tone_mode_name(tone_mode));
         }
         fill_tone_stereo(tx_packet.audio_data, tone_mode, &tone_phase, &tone_clock);
-        /* Wall-clock pace: I2S ADC normally blocks ~7.5 ms per packet. */
+        /* Wall-clock pace: I2S ADC normally blocks one packet period. */
         tone_pace_packet(&tone_next_due_us);
 #else
         size_t bytes_read = 0;
@@ -396,12 +397,13 @@ static void audio_capture_task(void *pvParameters) {
             continue;
         }
 
-        // Pace sends to send_cb (ESP-IDF recommendation). Cap wait so a stuck
-        // CB cannot freeze capture forever.
-        TickType_t wait_start = xTaskGetTickCount();
-        while (send_in_flight &&
-               (xTaskGetTickCount() - wait_start) < pdMS_TO_TICKS(10)) {
-            vTaskDelay(pdMS_TO_TICKS(1));
+        // Pace sends to send_cb (ESP-IDF recommendation). µs deadline — with
+        // CONFIG_FREERTOS_HZ=100, pdMS_TO_TICKS(1..9) is 0 and a 10 ms tick is
+        // already four packet periods.
+        const int64_t wait_deadline_us =
+            esp_timer_get_time() + SEND_IN_FLIGHT_WAIT_US;
+        while (send_in_flight && esp_timer_get_time() < wait_deadline_us) {
+            taskYIELD();
         }
 
         send_in_flight = true;

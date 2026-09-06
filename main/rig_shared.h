@@ -19,9 +19,16 @@
 // esp_now_get_version().
 #define MAX_ESPNOW_PAYLOAD_BYTES ESP_NOW_MAX_DATA_LEN_V2
 // Interleaved stereo int16s per packet. Must be even (L/R pairs).
-// 720 samples = 360 frames @ 48 kHz ≈ 7.5 ms/packet, 1440 B (< 1470 v2 max),
-// ~133 pkt/s — much less ESP-NOW / queue pressure than 2–3 ms packets.
-#define AUDIO_DATA_NUM_SAMPLES 720
+//
+// lower_latency_optimizations branch — aim ~10 ms e2e (was 7.5 ms packets /
+// ~40 ms typical). 240 samples = 120 frames @ 48 kHz = 2.5 ms/packet, 480 B,
+// 400 pkt/s. Breadboard struggled at ~2 ms; 2.5 ms is the first retry with
+// send_cb pacing + pointer-pool RX. If drops return, bump toward 288 (3 ms)
+// before giving up on the 10 ms goal.
+//
+// Rough budget @ 2.5 ms pkt, prebuffer 2, IIR FLT on PCM5102:
+//   TX fill 2.5 + air ~0.5 + RX prebuffer 5 + RX DMA ~2.5 + codec ~0.1 ≈ 10–11 ms
+#define AUDIO_DATA_NUM_SAMPLES 240
 #define AUDIO_FRAMES_PER_PACKET (AUDIO_DATA_NUM_SAMPLES / 2)
 #define ALIAS_BUFFER_SIZE 16
 #define MAC_ADDRESS_LEN 6

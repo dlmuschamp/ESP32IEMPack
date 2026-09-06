@@ -120,13 +120,13 @@ branch on =data_size=:
 - pairing request ≈ =sizeof(pairing_req_packet_t)= (alias string)
 - pairing ACK/NACK = 1 byte (=PAIR_ACK_LEN=; legacy =sizeof(pair_state_t)= also
   accepted on RX)
-- audio = =sizeof(audio_packet_t)= (720 interleaved =int16= samples → 1440 B)
+- audio = =sizeof(audio_packet_t)= (240 interleaved =int16= samples → 480 B)
 
 Why: ESP-NOW already gives you length. Another type byte would cost payload
-budget and another branch on every ~7.5 ms audio frame. Distinct struct sizes
+budget and another branch on every ~2.5 ms audio frame. Distinct struct sizes
 make the hot path a few integer compares. Wrong-sized frames are ignored (with
 rate-limited logs while pairing so a TX audio flood cannot spam the console at
-~133 Hz).
+~400 Hz).
 
 *** Low overhead on the audio path (bitwise / packing / queues of pointers)
 
@@ -135,12 +135,14 @@ Audio is the budget that matters. Design choices that keep CPU and copies down:
 - *Pack once.* I2S often delivers 32-bit slot words; TX shifts with =>>= 16= into
   =int16= PCM for the air format (PCM1808 / slot width forced this; the shift is
   the cheap conversion, not a float path).
-- *Big enough packets.* 720 samples @ 48 kHz ≈ 7.5 ms/packet, ~133 pkt/s --- far
-  less ESP-NOW and queue pressure than 2--3 ms packets, while staying under
-  ESP-NOW v2 max (=_Static_assert= on =audio_packet_t=).
+- *Low-latency packets (this branch).* 240 samples @ 48 kHz = 2.5 ms/packet,
+  ~400 pkt/s --- aggressive vs the old 7.5 ms / ~133 pkt/s breadboard-stable
+  choice. Relies on =send_cb= pacing + RX pointer-pool. If ESP-NOW drops climb,
+  step toward 288 samples (3 ms) before abandoning the ~10 ms e2e target.
 - *Pointer-pool jitter buffer on RX.* Queues carry =audio_packet_t *= into a
   fixed pool, not full packet copies on every hop; playback pins to another core
-  with a short pre-buffer so the first I2S write does not underrun.
+  with a short pre-buffer (2 packets / 5 ms) so the first I2S write does not
+  underrun. PCM5102: close =SW2= (FLT=IIR) for ~0.4 ms less DAC filter delay.
 - *Keep heavy work off Wi-Fi callbacks.* Pairing work is queued to the state
   machine; =esp_now_add_peer= and I2S enable happen in safe contexts. Send
   pacing waits for =send_cb= so bursts do not disorder callbacks / =NO_MEM=.

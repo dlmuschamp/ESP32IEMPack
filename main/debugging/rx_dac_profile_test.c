@@ -20,7 +20,7 @@
 #define LRCK_PIN 32
 #define BCK_PIN 33
 #define DOUT_PIN 25
-#define I2S_DMA_DESC_NUM 4
+#define I2S_DMA_DESC_NUM 3
 #define I2S_DMA_FRAME_NUM AUDIO_FRAMES_PER_PACKET
 #define MODE_HOLD_MS 8000
 
